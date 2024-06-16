@@ -11,8 +11,11 @@ pub struct IntGene {
 
 impl IntGene {
     pub fn new(min: i32, max: i32) -> Self {
+        let (min, max) = if min > max { (max, min) } else { (min, max) };
+        let mut rand = rand::thread_rng();
+
         IntGene {
-            value: rand::thread_rng().gen_range(min..=max),
+            value: rand.gen_range(min..max),
             min,
             max,
         }

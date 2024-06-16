@@ -19,7 +19,12 @@ impl<TGene> UniformCrossover<TGene> where TGene: Gene<TGene>{
     }
 
     fn cross_chromosomes(&self, chrom_one: &mut Chromosome<TGene>, chrom_two: &mut Chromosome<TGene>) {
-
+        for i in 0..std::cmp::min(chrom_one.len(), chrom_two.len()) {
+            if rand::random::<f32>() < self.probability {
+                chrom_one.set(i, chrom_two.get(i).clone());
+                chrom_two.set(i, chrom_one.get(i).clone());
+            }
+        }
     }
 
     fn cross_genotypes(&self, geno_one: &mut Genotype<TGene>, geno_two: &mut Genotype<TGene>) {
@@ -69,8 +74,3 @@ impl<TGene> Recombinator<TGene> for UniformCrossover<TGene>
         }
     
 }
-
-// impl<TGene> Crossover<TGene> for UniformCrossover 
-//     where TGene: Gene<TGene>
-// {
-// }

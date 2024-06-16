@@ -24,6 +24,22 @@ impl<TGene> Chromosome<TGene>
     pub fn as_mut_slice(&mut self) -> &mut [TGene] {
         &mut self.genes
     }
+
+    pub fn get(&self, index: usize) -> &TGene {
+        &self.genes[index]
+    }
+
+    pub fn get_mut(&mut self, index: usize) -> &mut TGene {
+        &mut self.genes[index]
+    }
+
+    pub fn set(&mut self, index: usize, gene: TGene) {
+        self.genes[index] = gene;
+    }
+
+    pub fn len(&self) -> usize {
+        self.genes.len()
+    }
 }
 
 impl<TGene> Clone for Chromosome<TGene>

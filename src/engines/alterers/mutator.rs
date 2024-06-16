@@ -5,14 +5,12 @@ use crate::engines::genome::population::Population;
 use crate::engines::alterers::{Alterer, Mutation};
 use crate::engines::genome::genotype::Genotype;
 
-pub struct Mutator
-{
+pub struct Mutator {
     pub mutation_probability: f32,
     pub scaled_range: i32,
 }
 
-impl Mutator
-{
+impl Mutator {
     pub fn new(mutation_rate: f32) -> Self {
         Mutator {
             mutation_probability: mutation_rate.powf(1.0 / 3.0),

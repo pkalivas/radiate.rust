@@ -14,9 +14,9 @@ use engines::alterers::uniform_crossover::UniformCrossover;
 
 fn main() {
 
-    let temp = IntGene::new(0, 10);
     let engine = GeneticEngine::builder()
         .codex(get_int_codex(1, 10, 0, 100))
+        .offspring_fraction(0.95)
         .alterers(vec![
             Box::new(UniformCrossover::new(0.5)),
             Box::new(Mutator::new(0.001)),

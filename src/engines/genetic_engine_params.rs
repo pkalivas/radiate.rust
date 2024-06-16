@@ -68,12 +68,6 @@ impl<TGene, T> GeneticEngineParams<TGene, T>
         self
     }
 
-    // pub fn alterers(mut self, alterers: Vec<impl Alterer<TGene> + 'static>) -> Self {
-    //     self.alterers = Some(alterers.into_iter().map(|alterer| Box::new(alterer) as Box<dyn Alterer<TGene>>).collect());
-    //     self
-    // }
-
-
     pub fn build(mut self) -> GeneticEngine<TGene, T> {
         self.build_population();
         
