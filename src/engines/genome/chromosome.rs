@@ -16,6 +16,14 @@ impl<TGene> Chromosome<TGene>
     pub fn from_vec(genes: Vec<TGene>) -> Self {
         Chromosome { genes }
     }
+
+    pub fn as_slice(&self) -> &[TGene] {
+        &self.genes
+    }
+
+    pub fn as_mut_slice(&mut self) -> &mut [TGene] {
+        &mut self.genes
+    }
 }
 
 impl<TGene> Clone for Chromosome<TGene>

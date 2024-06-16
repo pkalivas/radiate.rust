@@ -1,22 +1,22 @@
 
 pub struct Score {
-    pub value: f64
+    pub value: f32
 }
 
 impl Score {
-    pub fn from_float(value: f64) -> Self {
+    pub fn from_float(value: f32) -> Self {
         Score { value }
     }
 
     pub fn from_int(value: i32) -> Self {
-        Score { value: value as f64 }
+        Score { value: value as f32 }
     }
 
     pub fn from_string(value: &str) -> Self {
-        Score { value: value.parse::<f64>().unwrap() }
+        Score { value: value.parse::<f32>().unwrap() }
     }
 
-    pub fn to_float(&self) -> f64 {
+    pub fn to_float(&self) -> f32 {
         self.value
     }
 

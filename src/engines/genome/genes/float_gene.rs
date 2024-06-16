@@ -10,18 +10,18 @@ pub struct FloatGene {
 }
 
 impl FloatGene {
-    pub fn new() -> Self {
+    pub fn new(min: f32, max: f32) -> Self {
         FloatGene { 
-            allele: random::<f32>(),
-            min: f32::MIN,
-            max: f32::MAX
+            allele: random::<f32>() * (max - min) + min,
+            min,
+            max
          }
     }
 }
 
 impl Gene<FloatGene> for FloatGene {
     fn new_instance(&self) -> FloatGene {
-        FloatGene::new()
+        FloatGene::new(self.min, self.max)
     }
 
     fn is_valid(&self) -> bool {

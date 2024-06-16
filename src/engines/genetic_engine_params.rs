@@ -2,6 +2,9 @@ use crate::engines::genome::genes::gene::Gene;
 use crate::engines::codex::Codex;
 use crate::engines::genome::population::Population;
 use crate::engines::score::Score;
+use crate::engines::genetic_engine::GeneticEngine;
+
+use super::genome::phenotype::Phenotype;
 
 pub struct GeneticEngineParams<TGene, T>
     where TGene : Gene<TGene> 
@@ -11,7 +14,7 @@ pub struct GeneticEngineParams<TGene, T>
     pub offspring_fraction: f32,
     pub codex: Option<Codex<TGene, T>>,
     pub population: Option<Population<TGene>>,
-    pub fitness_func: Option<fn(&T) -> Score>
+    pub fitness_fn: Option<Box<dyn Fn(&T) -> Score>>
 }
 
 impl<TGene, T> GeneticEngineParams<TGene, T>
@@ -24,7 +27,7 @@ impl<TGene, T> GeneticEngineParams<TGene, T>
             offspring_fraction: 0.8,
             codex: None,
             population: None,
-            fitness_func: None
+            fitness_fn: None
         }
     }
 
@@ -53,8 +56,28 @@ impl<TGene, T> GeneticEngineParams<TGene, T>
         self
     }
 
-    pub fn fitness_func(mut self, fitness_func: fn(&T) -> Score) -> Self {
-        self.fitness_func = Some(fitness_func);
+    pub fn fitness_func(mut self, fitness_func: impl Fn(&T) -> Score + 'static) -> Self {
+        self.fitness_fn = Some(Box::new(fitness_func));
         self
+    }
+
+    pub fn build(mut self) -> GeneticEngine<TGene, T> {
+        self.build_population();
+        
+        GeneticEngine::new(self)
+    }
+
+    fn build_population(&mut self) {
+        let population = match &self.population {
+            None => {
+                let individuals = Population::from_func(self.population_size as usize, || {
+                    Phenotype::from_genotype(self.codex.as_ref().unwrap().encode())
+                });
+                Some(individuals)
+            },
+            Some(pop) => Some(pop.clone())
+        };
+
+        self.population = population;
     }
 }
