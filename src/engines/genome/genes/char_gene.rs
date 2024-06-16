@@ -1,4 +1,4 @@
-use crate::engine::genome::genes::gene::{Gene, Allele};
+use crate::engines::genome::genes::gene::{Gene, Allele};
  
 const ALPHABET: &str = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!\"$%&/()=?`{[]}\\+~*#';.:,-_<>|@^'";
 
@@ -14,8 +14,12 @@ impl CharGene {
 }
 
 impl Gene<CharGene> for CharGene {
-    fn new_instance() -> CharGene {
+    fn new_instance(&self) -> CharGene {
         CharGene::new()
+    }
+
+    fn is_valid(&self) -> bool {
+        true
     }
 
     fn from_gene(gene: &CharGene) -> CharGene {

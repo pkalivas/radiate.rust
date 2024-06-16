@@ -1,13 +1,13 @@
-mod engine;
+mod engines;
 
-use engine::codex::Codex;
-use engine::genome::genes::gene::{Allele, NumericGene};
-use engine::genome::genotype::Genotype;
-use engine::genome::genes::float_gene::FloatGene;
-use engine::genome::genes::char_gene::CharGene;
-use engine::genome::chromosome::Chromosome;
-use engine::genome::phenotype::Phenotype;
-use engine::genome::population::Population;
+use engines::codex::Codex;
+use engines::genome::genes::gene::{Allele, NumericGene};
+use engines::genome::genotype::Genotype;
+use engines::genome::genes::float_gene::FloatGene;
+use engines::genome::genes::char_gene::CharGene;
+use engines::genome::chromosome::Chromosome;
+use engines::genome::phenotype::Phenotype;
+use engines::genome::population::Population;
 
 fn main() {
     let float_genotype = create_float_genotype(3, 2);

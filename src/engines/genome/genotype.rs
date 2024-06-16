@@ -1,5 +1,5 @@
-use crate::engine::genome::genes::gene::Gene;
-use crate::engine::genome::chromosome::Chromosome;
+use crate::engines::genome::genes::gene::Gene;
+use crate::engines::genome::chromosome::Chromosome;
 
 pub struct Genotype<TGene>
     where TGene: Gene<TGene>

@@ -1,5 +1,5 @@
-use crate::engine::genome::genes::gene::Gene;
-use crate::engine::genome::genotype::Genotype;
+use crate::engines::genome::genes::gene::Gene;
+use crate::engines::genome::genotype::Genotype;
 
 pub struct Codex<TGene, T>
     where TGene : Gene<TGene>

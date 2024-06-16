@@ -1,7 +1,6 @@
-use crate::engine::genome::genes::gene::Gene;
-use crate::engine::genome::genotype::Genotype;
-use crate::engine::genome::chromosome::Chromosome;
-use crate::engine::score::Score;
+use crate::engines::genome::genes::gene::Gene;
+use crate::engines::genome::genotype::Genotype;
+use crate::engines::score::Score;
 
 pub struct Phenotype<TGene>
     where TGene: Gene<TGene>
@@ -17,28 +16,10 @@ impl<TGene> Phenotype<TGene>
         &self.genotype
     }
 
-    pub fn genotype_mut(&mut self) -> &mut Genotype<TGene> {
-        &mut self.genotype
-    }
-
     pub fn from_genotype(genotype: Genotype<TGene>) -> Self {
         Phenotype {
             genotype,
             score: None,
-        }
-    }
-
-    pub fn from_vec(chromosomes: Vec<Chromosome<TGene>>) -> Self {
-        Phenotype {
-            genotype: Genotype::from_vec(chromosomes),
-            score: None
-        }
-    }
-
-    pub fn from_slice(chromosomes: &[Chromosome<TGene>]) -> Self {
-        Phenotype {
-            genotype: Genotype::from_slice(chromosomes),
-            score: None
         }
     }
 }
