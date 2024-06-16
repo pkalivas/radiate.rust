@@ -7,7 +7,7 @@ pub trait Gene<TGene> : Clone + PartialEq
     where TGene: Gene<TGene>
 {
     fn new_instance() -> TGene;
-    fn from_gene(gene: TGene) -> TGene;
+    fn from_gene(gene: &TGene) -> TGene;
 }
 
 pub trait NumericGene<TGene, T> : Gene<TGene> + Allele<T>

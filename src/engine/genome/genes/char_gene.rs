@@ -14,12 +14,11 @@ impl CharGene {
 }
 
 impl Gene<CharGene> for CharGene {
-    
     fn new_instance() -> CharGene {
         CharGene::new()
     }
 
-    fn from_gene(gene: CharGene) -> CharGene {
+    fn from_gene(gene: &CharGene) -> CharGene {
         CharGene { allele: gene.allele }
     }
 }

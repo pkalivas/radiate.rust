@@ -1,53 +1,56 @@
 use crate::engine::genome::genes::gene::Gene;
-use crate::engine::genome::genes::float_gene::FloatGene;
 use crate::engine::genome::genotype::Genotype;
-use crate::engine::genome::chromosome::Chromosome;
-use crate::engine::genome::genes::gene::Allele;
 
-pub trait Codex<TGene, T>
+pub struct Codex<TGene, T>
     where TGene : Gene<TGene>
 {
-    fn encode(&self) -> Genotype<TGene>;
-    fn decode(&self, genotype: &Genotype<TGene>) -> T;
+    pub encoder: Option<Box<dyn Fn() -> Genotype<TGene>>>,
+    pub decoder: Option<fn(&Genotype<TGene>) -> T>
 }
 
-
-pub struct FloatCodex {
-    pub num_chromosomes: usize,
-    pub num_genes: usize
-}
-
-impl FloatCodex {
-    pub fn new(num_chromosomes: usize, num_genes: usize) -> Self {
-        FloatCodex {
-            num_chromosomes,
-            num_genes,
-        }
-    }
-}
-
-impl Codex<FloatGene, Vec<Vec<f32>>> for FloatCodex {
-    fn encode(&self) -> Genotype<FloatGene> {
-        Genotype { 
-            chromosomes: (0..self.num_chromosomes)
-                .into_iter()
-                .map(|_| {
-                    Chromosome {
-                        genes: (0..self.num_genes)
-                            .into_iter()
-                            .map(|_| FloatGene::new())
-                            .collect::<Vec<FloatGene>>()
-                    }
-                })
-                .collect::<Vec<Chromosome<FloatGene>>>()
+impl<TGene, T> Codex<TGene, T>
+    where TGene : Gene<TGene>
+{
+    pub fn new() -> Self {
+        Codex {
+            encoder: None,
+            decoder: None
         }
     }
 
-    fn decode(&self, genotype: &Genotype<FloatGene>) -> Vec<Vec<f32>> {
-        genotype.chromosomes.iter().map(|chromosome| {
-            chromosome.genes.iter().map(|gene| {
-                *gene.allele()
-            }).collect::<Vec<f32>>()
-        }).collect::<Vec<Vec<f32>>>()
+    pub fn encode(&self) -> Genotype<TGene> {
+        match &self.encoder {
+            Some(encoder) => encoder(),
+            None => panic!("Encoder not set")
+        }
+    }
+
+    pub fn decode(&self, genotype: &Genotype<TGene>) -> T {
+        match &self.decoder {
+            Some(decoder) => decoder(genotype),
+            None => panic!("Decoder not set")
+        }
+    }
+
+    pub fn spawn(&self, num: i32) -> Vec<T> {
+        (0..num).into_iter().map(|_| {
+            self.decode(&self.encode())
+        }).collect::<Vec<T>>()
+    } 
+
+    pub fn spawn_genotypes(&self, num: i32) -> Vec<Genotype<TGene>> {
+        (0..num).into_iter().map(|_| {
+            self.encode()
+        }).collect::<Vec<Genotype<TGene>>>()
+    }
+
+    pub fn encoder(mut self, encoder: impl Fn() -> Genotype<TGene> + 'static) -> Self {
+        self.encoder = Some(Box::new(encoder));
+        self
+    }
+
+    pub fn decoder(mut self, decoder: fn(&Genotype<TGene>) -> T) -> Self {
+        self.decoder = Some(decoder);
+        self
     }
 }

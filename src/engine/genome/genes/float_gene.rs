@@ -18,7 +18,7 @@ impl Gene<FloatGene> for FloatGene {
         FloatGene::new()
     }
 
-    fn from_gene(gene: FloatGene) -> FloatGene {
+    fn from_gene(gene: &FloatGene) -> FloatGene {
         FloatGene { allele: gene.allele }
     }
 }
