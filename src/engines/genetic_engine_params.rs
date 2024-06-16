@@ -3,8 +3,8 @@ use crate::engines::codex::Codex;
 use crate::engines::genome::population::Population;
 use crate::engines::score::Score;
 use crate::engines::genetic_engine::GeneticEngine;
-
-use super::genome::phenotype::Phenotype;
+use crate::engines::genome::phenotype::Phenotype;
+use crate::engines::alterers::Alterer;
 
 pub struct GeneticEngineParams<TGene, T>
     where TGene : Gene<TGene> 
@@ -12,6 +12,7 @@ pub struct GeneticEngineParams<TGene, T>
     pub population_size: i32,
     pub max_phenotype_age: i32,
     pub offspring_fraction: f32,
+    pub alterers: Option<Vec<Box<dyn Alterer<TGene>>>>,
     pub codex: Option<Codex<TGene, T>>,
     pub population: Option<Population<TGene>>,
     pub fitness_fn: Option<Box<dyn Fn(&T) -> Score>>
@@ -25,6 +26,7 @@ impl<TGene, T> GeneticEngineParams<TGene, T>
             population_size: 100,
             max_phenotype_age: 25,
             offspring_fraction: 0.8,
+            alterers: None,
             codex: None,
             population: None,
             fitness_fn: None
@@ -56,10 +58,21 @@ impl<TGene, T> GeneticEngineParams<TGene, T>
         self
     }
 
-    pub fn fitness_func(mut self, fitness_func: impl Fn(&T) -> Score + 'static) -> Self {
+    pub fn fitness_fn(mut self, fitness_func: impl Fn(&T) -> Score + 'static) -> Self {
         self.fitness_fn = Some(Box::new(fitness_func));
         self
     }
+
+    pub fn alterers(mut self, alterers: Vec<Box<dyn Alterer<TGene>>>) -> Self {
+        self.alterers = Some(alterers);
+        self
+    }
+
+    // pub fn alterers(mut self, alterers: Vec<impl Alterer<TGene> + 'static>) -> Self {
+    //     self.alterers = Some(alterers.into_iter().map(|alterer| Box::new(alterer) as Box<dyn Alterer<TGene>>).collect());
+    //     self
+    // }
+
 
     pub fn build(mut self) -> GeneticEngine<TGene, T> {
         self.build_population();

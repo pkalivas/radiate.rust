@@ -17,6 +17,38 @@ impl<TGene> Genotype<TGene>
     pub fn from_vec(chromosomes: Vec<Chromosome<TGene>>) -> Self {
         Genotype { chromosomes }
     }
+
+    pub fn as_slice(&self) -> &[Chromosome<TGene>] {
+        &self.chromosomes
+    }
+
+    pub fn as_mut_slice(&mut self) -> &mut [Chromosome<TGene>] {
+        &mut self.chromosomes
+    }
+
+    pub fn get(&self, index: usize) -> &Chromosome<TGene> {
+        &self.chromosomes[index]
+    }
+
+    pub fn get_mut(&mut self, index: usize) -> &mut Chromosome<TGene> {
+        &mut self.chromosomes[index]
+    }
+
+    pub fn set(&mut self, index: usize, chromosome: Chromosome<TGene>) {
+        self.chromosomes[index] = chromosome;
+    }
+
+    pub fn len(&self) -> usize {
+        self.chromosomes.len()
+    }
+
+    pub fn iter(&self) -> std::slice::Iter<Chromosome<TGene>> {
+        self.chromosomes.iter()
+    }
+
+    pub fn iter_mut(&mut self) -> std::slice::IterMut<Chromosome<TGene>> {
+        self.chromosomes.iter_mut()
+    }
 }
 
 impl<TGene> Clone for Genotype<TGene>

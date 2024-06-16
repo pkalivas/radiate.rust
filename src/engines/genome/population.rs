@@ -37,6 +37,20 @@ impl<TGene> Population<TGene>
         self.individuals.get_mut(index)
     }
 
+    pub fn set(&mut self, index: usize, individual: Phenotype<TGene>) {
+        self.individuals[index] = individual;
+        self.is_sorted = false;
+    }
+
+    pub fn iter(&self) -> std::slice::Iter<Phenotype<TGene>> {
+        self.individuals.iter()
+    }
+
+    pub fn iter_mut(&mut self) -> std::slice::IterMut<Phenotype<TGene>> {
+        self.is_sorted = false;
+        self.individuals.iter_mut()
+    }
+
     pub fn len(&self) -> usize {
         self.individuals.len()
     }
@@ -65,7 +79,18 @@ impl<TGene> Population<TGene>
             is_sorted: false,
         }
     }
+}
 
+impl<TGene> FromIterator<Phenotype<TGene>> for Population<TGene>
+    where TGene: Gene<TGene>
+{
+    fn from_iter<I: IntoIterator<Item=Phenotype<TGene>>>(iter: I) -> Self {
+        let individuals = iter.into_iter().collect();
+        Population {
+            individuals,
+            is_sorted: false
+        }
+    }
 }
 
 impl<TGene> Clone for Population<TGene>

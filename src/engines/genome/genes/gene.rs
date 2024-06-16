@@ -14,8 +14,8 @@ pub trait Gene<TGene> : Clone + PartialEq
 pub trait BoundGene<TGene, T> : Gene<TGene> + Allele<T>
     where TGene: BoundGene<TGene, T>
 {
-    fn min() -> T;
-    fn max() -> T;
+    fn min(&self) -> &T;
+    fn max(&self) -> &T;
 }
 
 pub trait NumericGene<TGene, T> : BoundGene<TGene, T>

@@ -1,4 +1,3 @@
-use std::fmt::Debug;
 use rand::random;
 
 use crate::engines::genome::genes::gene::{Gene, Allele, NumericGene, BoundGene};
@@ -66,12 +65,12 @@ impl NumericGene<FloatGene, f32> for FloatGene {
 }
 
 impl BoundGene<FloatGene, f32> for FloatGene {
-    fn min() -> f32 {
-        f32::MIN
+    fn min(&self) -> &f32 {
+        &self.min
     }
 
-    fn max() -> f32 {
-        f32::MAX
+    fn max(&self) -> &f32 {
+        &self.max
     }
 }
 
@@ -91,7 +90,7 @@ impl PartialEq for FloatGene {
     }
 }
 
-impl Debug for FloatGene {
+impl std::fmt::Debug for FloatGene {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.allele)
     }
