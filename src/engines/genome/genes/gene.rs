@@ -8,7 +8,7 @@ pub trait Gene<TGene> : Clone + PartialEq
 {
     fn new_instance(&self) -> TGene;
     fn is_valid(&self) -> bool;
-    fn from_gene(gene: &TGene) -> TGene;
+    fn from_gene(&self, gene: &TGene) -> TGene;
 }
 
 pub trait BoundGene<TGene, T> : Gene<TGene> + Allele<T>

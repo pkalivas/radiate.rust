@@ -35,7 +35,7 @@ impl Gene<IntGene> for IntGene {
         true
     }
 
-    fn from_gene(gene: &IntGene) -> IntGene {
+    fn from_gene(&self, gene: &IntGene) -> IntGene {
         IntGene {
             value: gene.value,
             min: gene.min,

@@ -28,7 +28,7 @@ fn run_string_evolve() {
             Box::new(Mutator::new(0.001)),
         ])
         .fitness_fn(|genotype: &String| {
-            let target = "Hello, World!";
+            let target = "Chicago, IL";
             let mut score = target.len();
             for (i, c) in genotype.chars().enumerate() {
                 if c == target.chars().nth(i).unwrap() {

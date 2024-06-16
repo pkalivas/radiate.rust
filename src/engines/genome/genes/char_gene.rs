@@ -22,7 +22,7 @@ impl Gene<CharGene> for CharGene {
         true
     }
 
-    fn from_gene(gene: &CharGene) -> CharGene {
+    fn from_gene(&self, gene: &CharGene) -> CharGene {
         CharGene { allele: gene.allele }
     }
 }
