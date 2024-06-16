@@ -10,15 +10,11 @@ impl<TGene> Chromosome<TGene>
     where TGene: Gene<TGene>
 {
     pub fn from_slice(genes: &[TGene]) -> Self {
-        Chromosome {
-            genes: genes.to_vec(),
-        }
+        Chromosome { genes: genes.to_vec() }
     }
 
     pub fn from_vec(genes: Vec<TGene>) -> Self {
-        Chromosome {
-            genes,
-        }
+        Chromosome { genes }
     }
 }
 

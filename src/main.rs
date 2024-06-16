@@ -5,6 +5,7 @@ use engine::genome::genotype::Genotype;
 use engine::genome::genes::float_gene::FloatGene;
 use engine::genome::genes::char_gene::CharGene;
 use engine::genome::chromosome::Chromosome;
+use engine::codex::FloatCodex;
 use engine::genome::phenotype::Phenotype;
 use engine::genome::population::Population;
 
@@ -22,7 +23,10 @@ fn main() {
 
     // println!("{:?}", population);
 
-    let codex = engine::codex::FloatCodex::new(3, 2);
+    let codex = FloatCodex { 
+        num_chromosomes: 2,
+        num_genes: 3 
+    };
 
     let encoded_genotype = codex.encode();
     let decoded_genotype = codex.decode(&encoded_genotype);
