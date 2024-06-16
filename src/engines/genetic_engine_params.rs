@@ -4,7 +4,7 @@ use crate::engines::genome::population::Population;
 use crate::engines::score::Score;
 use crate::engines::genetic_engine::GeneticEngine;
 use crate::engines::genome::phenotype::Phenotype;
-use crate::engines::alterers::Alterer;
+use crate::engines::alterers::alter::Alter;
 
 pub struct GeneticEngineParams<TGene, T>
     where TGene : Gene<TGene> 
@@ -12,7 +12,7 @@ pub struct GeneticEngineParams<TGene, T>
     pub population_size: i32,
     pub max_phenotype_age: i32,
     pub offspring_fraction: f32,
-    pub alterers: Option<Vec<Box<dyn Alterer<TGene>>>>,
+    pub alterers: Option<Vec<Box<dyn Alter<TGene>>>>,
     pub codex: Option<Codex<TGene, T>>,
     pub population: Option<Population<TGene>>,
     pub fitness_fn: Option<Box<dyn Fn(&T) -> Score>>
@@ -63,7 +63,7 @@ impl<TGene, T> GeneticEngineParams<TGene, T>
         self
     }
 
-    pub fn alterers(mut self, alterers: Vec<Box<dyn Alterer<TGene>>>) -> Self {
+    pub fn alterers(mut self, alterers: Vec<Box<dyn Alter<TGene>>>) -> Self {
         self.alterers = Some(alterers);
         self
     }

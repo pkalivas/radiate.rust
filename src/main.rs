@@ -3,6 +3,7 @@ mod engines;
 use engines::codex::Codex;
 use engines::engine::Engine;
 use engines::genetic_engine::GeneticEngine;
+use engines::genome::genes::char_gene::CharGene;
 use engines::genome::genes::gene::Allele;
 use engines::genome::genes::int_gene::IntGene;
 use engines::genome::genotype::Genotype;
@@ -13,10 +14,40 @@ use engines::alterers::mutator::Mutator;
 use engines::alterers::uniform_crossover::UniformCrossover;
 
 fn main() {
+    // run_min_sum();
+    run_string_evolve();
+}
 
+fn run_string_evolve() {
     let engine = GeneticEngine::builder()
+        .population_size(1000)
+        .offspring_fraction(0.8)
+        .codex(get_char_codex(1, 10))
+        .alterers(vec![
+            Box::new(UniformCrossover::new(0.5)),
+            Box::new(Mutator::new(0.001)),
+        ])
+        .fitness_fn(|genotype: &String| {
+            let target = "Hello, World!";
+            let mut score = target.len();
+            for (i, c) in genotype.chars().enumerate() {
+                if c == target.chars().nth(i).unwrap() {
+                    score -= 1;
+                }
+            }
+
+            Score::from_int(score as i32)
+        })
+        .build();
+
+    engine.run();
+}
+
+fn run_min_sum() {
+    let engine = GeneticEngine::builder()
+        .population_size(1000)
+        .offspring_fraction(0.8)
         .codex(get_int_codex(1, 10, 0, 100))
-        .offspring_fraction(0.95)
         .alterers(vec![
             Box::new(UniformCrossover::new(0.5)),
             Box::new(Mutator::new(0.001)),
@@ -34,6 +65,32 @@ fn main() {
         .build();
 
     engine.run();
+}
+
+fn get_char_codex(num_chromosomes: i32, num_genes: i32) -> Codex<CharGene, String> {
+    Codex::new()
+        .encoder(move || {
+            Genotype { 
+                chromosomes: (0..num_chromosomes)
+                    .into_iter()
+                    .map(|_| {
+                        Chromosome {
+                            genes: (0..num_genes)
+                                .into_iter()
+                                .map(|_| CharGene::new())
+                                .collect::<Vec<CharGene>>()
+                        }
+                    })
+                    .collect::<Vec<Chromosome<CharGene>>>()
+            }
+        })
+        .decoder(|genotype| {
+            genotype.chromosomes.iter().map(|chromosome| {
+                chromosome.genes.iter().map(|gene| {
+                    *gene.allele() as u8 as char
+                }).collect::<String>()
+            }).collect::<String>()
+        })
 }
 
 fn get_float_codex(num_chromosomes: i32, num_genes: i32, min: f32, max: f32) -> Codex<FloatGene, Vec<Vec<f32>>> {

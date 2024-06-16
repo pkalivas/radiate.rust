@@ -40,7 +40,7 @@ impl<TGene, T> Engine for GeneticEngine<TGene, T>
         let alterers = self.params.alterers.as_ref().unwrap();
         let mut population = self.params.population.as_ref().unwrap().clone();
         
-        for i in 0..500 {
+        for i in 0..200 {
 
             for idx in 0..population.len() {
                 let individual = population.get_mut(idx).unwrap();
@@ -57,7 +57,7 @@ impl<TGene, T> Engine for GeneticEngine<TGene, T>
             let best_phenotype = population.get(0).unwrap();
             let decoded = codex.decode(&best_phenotype.genotype);
 
-            println!("Best Phenotype: {:?}", decoded);
+            println!("{:?}: {:?}", i, decoded);
 
             let survivors = population.iter()
                 .take(self.surivor_count())

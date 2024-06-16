@@ -2,7 +2,7 @@ use crate::engines::genome::chromosome::Chromosome;
 use crate::engines::genome::genes::gene::Gene;
 use crate::engines::genome::phenotype::Phenotype;
 use crate::engines::genome::population::Population;
-use crate::engines::alterers::{Alterer, Mutation};
+use crate::engines::alterers::alter::{Alter, Mutate};
 use crate::engines::genome::genotype::Genotype;
 
 pub struct Mutator {
@@ -19,7 +19,7 @@ impl Mutator {
     }
 }
 
-impl<TGene> Alterer<TGene> for Mutator
+impl<TGene> Alter<TGene> for Mutator
     where TGene : Gene<TGene>
 {
     fn alter(&self, population: &mut Population<TGene>) {
@@ -38,7 +38,7 @@ impl<TGene> Alterer<TGene> for Mutator
     }
 }
 
-impl<TGene> Mutation<TGene> for Mutator
+impl<TGene> Mutate<TGene> for Mutator
     where TGene : Gene<TGene>
 {
     fn mutate_genotype(&self, genotype: &mut Genotype<TGene>) {
