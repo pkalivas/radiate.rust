@@ -1,43 +1,37 @@
 use crate::engine::genome::genes::gene::Gene;
 
-pub struct Chromosome<TGene, T>
-    where TGene: Gene<TGene, T>
+pub struct Chromosome<TGene>
+    where TGene: Gene<TGene>
 {
     pub genes: Vec<TGene>,
-    phantom: std::marker::PhantomData<T>
 }
 
-impl<TGene, T> Chromosome<TGene, T>
-    where TGene: Gene<TGene, T>
+impl<TGene> Chromosome<TGene>
+    where TGene: Gene<TGene>
 {
     pub fn from_slice(genes: &[TGene]) -> Self {
         Chromosome {
             genes: genes.to_vec(),
-            phantom: std::marker::PhantomData
         }
     }
 
     pub fn from_vec(genes: Vec<TGene>) -> Self {
         Chromosome {
             genes,
-            phantom: std::marker::PhantomData
         }
     }
 }
 
-impl<TGene, T> Clone for Chromosome<TGene, T>
-    where TGene: Gene<TGene, T>
+impl<TGene> Clone for Chromosome<TGene>
+    where TGene: Gene<TGene>
 {
     fn clone(&self) -> Self {
-        Chromosome {
-            genes: self.genes.clone(),
-            phantom: std::marker::PhantomData
-        }
+        Chromosome { genes: self.genes.clone() }
     }
 }
 
-impl<TGene, T> PartialEq for Chromosome<TGene, T>
-    where TGene: Gene<TGene, T>
+impl<TGene> PartialEq for Chromosome<TGene>
+    where TGene: Gene<TGene>
 {
     fn eq(&self, other: &Self) -> bool {
         for (a, b) in self.genes.iter().zip(other.genes.iter()) {
@@ -50,8 +44,8 @@ impl<TGene, T> PartialEq for Chromosome<TGene, T>
     }
 }
 
-impl<TGene, T> std::fmt::Debug for Chromosome<TGene, T>
-    where TGene: Gene<TGene, T> + std::fmt::Debug
+impl<TGene> std::fmt::Debug for Chromosome<TGene>
+    where TGene: Gene<TGene> + std::fmt::Debug
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "[")?;

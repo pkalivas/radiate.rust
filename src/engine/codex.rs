@@ -2,9 +2,9 @@ use crate::engine::genome::genes::gene::Gene;
 
 use super::genome::genotype::Genotype;
 
-pub trait Codex<TGene, T, TK>
-    where TGene : Gene<TGene, T>
+pub trait Codex<TGene, T>
+    where TGene : Gene<TGene>
 {
-    fn encode(&self) -> Genotype<TGene, T>;
-    fn decode(&self, genotype: Genotype<TGene, T>) -> TK;
+    fn encode(&self) -> Genotype<TGene>;
+    fn decode(&self, genotype: Genotype<TGene>) -> T;
 }

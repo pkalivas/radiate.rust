@@ -15,14 +15,14 @@ fn main() {
     println!("{:?}", char_genotype);
 
     let population = Population::from_func(10, || {
-        let genotype = create_char_genotype(3, 2);
+        let genotype = create_char_genotype(10, 1);
         return Phenotype::from_genotype(genotype);
     });
 
     println!("{:?}", population);
 }
 
-fn create_char_genotype(gene_count: i32, chromosome_count: i32) -> Genotype<CharGene, char> {
+fn create_char_genotype(gene_count: i32, chromosome_count: i32) -> Genotype<CharGene> {
     let chromosomes = (0..chromosome_count)
         .into_iter()
         .map(|_| {
@@ -33,12 +33,12 @@ fn create_char_genotype(gene_count: i32, chromosome_count: i32) -> Genotype<Char
 
             return Chromosome::from_vec(genes);
         })
-        .collect::<Vec<Chromosome<CharGene, char>>>();
+        .collect::<Vec<Chromosome<CharGene>>>();
 
     return Genotype::from_vec(chromosomes);
 }
 
-fn create_float_genotype(gene_count: i32, chromosome_count: i32) -> Genotype<FloatGene, f32> {
+fn create_float_genotype(gene_count: i32, chromosome_count: i32) -> Genotype<FloatGene> {
     let chromosomes = (0..chromosome_count)
         .into_iter()
         .map(|_| {
@@ -49,7 +49,7 @@ fn create_float_genotype(gene_count: i32, chromosome_count: i32) -> Genotype<Flo
 
             return Chromosome::from_vec(genes);
         })
-        .collect::<Vec<Chromosome<FloatGene, f32>>>();
+        .collect::<Vec<Chromosome<FloatGene>>>();
 
     return Genotype::from_vec(chromosomes);
 }

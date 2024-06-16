@@ -1,5 +1,5 @@
-use crate::engine::genome::genes::gene::Gene;
-
+use crate::engine::genome::genes::gene::{Gene, Allele};
+ 
 const ALPHABET: &str = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!\"$%&/()=?`{[]}\\+~*#';.:,-_<>|@^'";
 
 pub struct CharGene {
@@ -13,18 +13,20 @@ impl CharGene {
     }
 }
 
-impl Gene<CharGene, char> for CharGene {
+impl Gene<CharGene> for CharGene {
     
-    fn allele(&self) -> &char {
-        &self.allele
-    }
-
     fn new_instance() -> CharGene {
         CharGene::new()
     }
 
-    fn from_value(value: char) -> CharGene {
-        CharGene { allele: value }
+    fn from_gene(gene: CharGene) -> CharGene {
+        CharGene { allele: gene.allele }
+    }
+}
+
+impl Allele<char> for CharGene {
+    fn allele(&self) -> &char {
+        &self.allele
     }
 }
 

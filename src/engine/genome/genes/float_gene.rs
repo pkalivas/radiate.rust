@@ -3,6 +3,8 @@ use rand::random;
 
 use crate::engine::genome::genes::gene::Gene;
 
+use super::gene::Allele;
+
 pub struct FloatGene {
     pub allele: f32
 }
@@ -13,18 +15,20 @@ impl FloatGene {
     }
 }
 
-impl Gene<FloatGene, f32> for FloatGene {
-    
-    fn allele(&self) -> &f32 {
-        &self.allele
-    }
+impl Gene<FloatGene> for FloatGene {
 
     fn new_instance() -> FloatGene {
         FloatGene::new()
     }
 
-    fn from_value(value: f32) -> FloatGene {
-        FloatGene { allele: value }
+    fn from_gene(gene: FloatGene) -> FloatGene {
+        FloatGene { allele: gene.allele }
+    }
+}
+
+impl Allele<f32> for FloatGene {
+    fn allele(&self) -> &f32 {
+        &self.allele
     }
 }
 

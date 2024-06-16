@@ -1,26 +1,26 @@
 use crate::engine::genome::genes::gene::Gene;
 use crate::engine::genome::chromosome::Chromosome;
 
-pub struct Genotype<TGene, T>
-    where TGene: Gene<TGene, T>
+pub struct Genotype<TGene>
+    where TGene: Gene<TGene>
 {
-    pub chromosomes: Vec<Chromosome<TGene, T>>
+    pub chromosomes: Vec<Chromosome<TGene>>
 }
 
-impl<TGene, T> Genotype<TGene, T>
-    where TGene: Gene<TGene, T>
+impl<TGene> Genotype<TGene>
+    where TGene: Gene<TGene>
 {
-    pub fn from_slice(chromosomes: &[Chromosome<TGene, T>]) -> Self {
+    pub fn from_slice(chromosomes: &[Chromosome<TGene>]) -> Self {
         Genotype { chromosomes: chromosomes.to_vec() }
     }
 
-    pub fn from_vec(chromosomes: Vec<Chromosome<TGene, T>>) -> Self {
+    pub fn from_vec(chromosomes: Vec<Chromosome<TGene>>) -> Self {
         Genotype { chromosomes }
     }
 }
 
-impl<TGene, T> Clone for Genotype<TGene, T>
-    where TGene: Gene<TGene, T>
+impl<TGene> Clone for Genotype<TGene>
+    where TGene: Gene<TGene>
 {
     fn clone(&self) -> Self {
         Genotype {
@@ -29,16 +29,16 @@ impl<TGene, T> Clone for Genotype<TGene, T>
     }
 }
 
-impl<TGene, T> PartialEq for Genotype<TGene, T>
-    where TGene: Gene<TGene, T>
+impl<TGene> PartialEq for Genotype<TGene>
+    where TGene: Gene<TGene>
 {
     fn eq(&self, other: &Self) -> bool {
         self.chromosomes == other.chromosomes
     }
 }
 
-impl<TGene, T> std::fmt::Debug for Genotype<TGene, T>
-    where TGene: Gene<TGene, T> + std::fmt::Debug
+impl<TGene> std::fmt::Debug for Genotype<TGene>
+    where TGene: Gene<TGene> + std::fmt::Debug
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "[")?;
