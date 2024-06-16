@@ -1,9 +1,7 @@
 use std::fmt::Debug;
 use rand::random;
 
-use crate::engine::genome::genes::gene::Gene;
-
-use super::gene::Allele;
+use crate::engine::genome::genes::gene::{Gene, Allele, NumericGene};
 
 pub struct FloatGene {
     pub allele: f32
@@ -16,7 +14,6 @@ impl FloatGene {
 }
 
 impl Gene<FloatGene> for FloatGene {
-
     fn new_instance() -> FloatGene {
         FloatGene::new()
     }
@@ -29,6 +26,24 @@ impl Gene<FloatGene> for FloatGene {
 impl Allele<f32> for FloatGene {
     fn allele(&self) -> &f32 {
         &self.allele
+    }
+}
+
+impl NumericGene<FloatGene, f32> for FloatGene {
+    fn add(&self, other: &impl NumericGene<FloatGene, f32>) -> FloatGene {
+        FloatGene { allele: self.allele + *other.allele() }
+    }
+
+    fn sub(&self, other: &impl NumericGene<FloatGene, f32>) -> FloatGene {
+        FloatGene { allele: self.allele - *other.allele() }
+    }
+
+    fn mul(&self, other: &impl NumericGene<FloatGene, f32>) -> FloatGene {
+        FloatGene { allele: self.allele * *other.allele() }
+    }
+
+    fn div(&self, other: &impl NumericGene<FloatGene, f32>) -> FloatGene {
+        FloatGene { allele: self.allele / *other.allele() }
     }
 }
 

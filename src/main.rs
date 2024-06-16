@@ -1,6 +1,7 @@
 mod engine;
 
 use engine::codex::Codex;
+use engine::genome::genes::gene::NumericGene;
 use engine::genome::genotype::Genotype;
 use engine::genome::genes::float_gene::FloatGene;
 use engine::genome::genes::char_gene::CharGene;

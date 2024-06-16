@@ -28,34 +28,26 @@ impl FloatCodex {
 
 impl Codex<FloatGene, Vec<Vec<f32>>> for FloatCodex {
     fn encode(&self) -> Genotype<FloatGene> {
-        let mut chromosomes = Vec::with_capacity(self.num_chromosomes);
-
-        for _ in 0..self.num_chromosomes {
-            let mut genes = Vec::with_capacity(self.num_genes);
-
-            for _ in 0..self.num_genes {
-                genes.push(FloatGene::new());
-            }
-
-            chromosomes.push(Chromosome::from_vec(genes));
+        Genotype { 
+            chromosomes: (0..self.num_chromosomes)
+                .into_iter()
+                .map(|_| {
+                    Chromosome {
+                        genes: (0..self.num_genes)
+                            .into_iter()
+                            .map(|_| FloatGene::new())
+                            .collect::<Vec<FloatGene>>()
+                    }
+                })
+                .collect::<Vec<Chromosome<FloatGene>>>()
         }
-
-        Genotype::from_slice(&chromosomes)
     }
 
     fn decode(&self, genotype: &Genotype<FloatGene>) -> Vec<Vec<f32>> {
-        let mut decoded = Vec::with_capacity(self.num_chromosomes);
-
-        for chromosome in &genotype.chromosomes {
-            let mut genes = Vec::with_capacity(self.num_genes);
-
-            for gene in &chromosome.genes {
-                genes.push(*gene.allele());
-            }
-
-            decoded.push(genes);
-        }
-
-        decoded
+        genotype.chromosomes.iter().map(|chromosome| {
+            chromosome.genes.iter().map(|gene| {
+                *gene.allele()
+            }).collect::<Vec<f32>>()
+        }).collect::<Vec<Vec<f32>>>()
     }
 }
