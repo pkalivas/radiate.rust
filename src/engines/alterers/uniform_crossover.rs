@@ -36,23 +36,13 @@ impl<TGene> Recombine<TGene> for UniformCrossover
     where TGene: Gene<TGene> 
 {    
     fn recombine(&self, population: &mut Population<TGene>, parent_indexes: &[usize]) {
-        let pheno_one = population.get(parent_indexes[0]).unwrap();
-        let pheno_two = population.get(parent_indexes[1]).unwrap();
-
-        let mut geno_one = pheno_one.genotype.clone();
-        let mut geno_two = pheno_two.genotype.clone();
+        let mut geno_one = population.get(parent_indexes[0]).genotype().clone();
+        let mut geno_two = population.get(parent_indexes[1]).genotype().clone();
 
         self.cross_genotypes(&mut geno_one, &mut geno_two);
 
-        population.set(parent_indexes[0], Phenotype {
-            genotype: geno_one,
-            score: None
-        });
-
-        population.set(parent_indexes[1], Phenotype {
-            genotype: geno_two,
-            score: None
-        });
+        population.set(parent_indexes[0], Phenotype::from_genotype(geno_one));
+        population.set(parent_indexes[1], Phenotype::from_genotype(geno_two));
     }
 }
 

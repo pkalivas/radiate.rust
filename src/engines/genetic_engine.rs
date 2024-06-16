@@ -1,3 +1,5 @@
+use std::thread::Thread;
+
 use crate::engines::genome::genes::gene::Gene;
 use crate::engines::genetic_engine_params::GeneticEngineParams;
 use crate::engines::engine::Engine;
@@ -54,7 +56,7 @@ impl<TGene, T> Engine for GeneticEngine<TGene, T>
 
             population.sort();
 
-            let best_phenotype = population.get(0).unwrap();
+            let best_phenotype = population.get(0);
             let decoded = codex.decode(&best_phenotype.genotype);
 
             println!("{:?}: {:?}", i, decoded);

@@ -28,8 +28,9 @@ impl<TGene> Population<TGene>
         self.is_sorted = false;
     }
 
-    pub fn get(&self, index: usize) -> Option<&Phenotype<TGene>> {
-        self.individuals.get(index)
+    pub fn get(&self, index: usize) -> &Phenotype<TGene> {
+        self.individuals.get(index) 
+            .expect("Index out of bounds")
     }
 
     pub fn get_mut(&mut self, index: usize) -> Option<&mut Phenotype<TGene>> {

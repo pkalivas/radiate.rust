@@ -18,8 +18,8 @@ pub trait Recombine<TGene> : Alter<TGene>
 pub trait Crossover<TGene> : Recombine<TGene>
     where TGene : Gene<TGene>
 {
-    fn cross_chromosomes(&self, chrom_one: &mut Chromosome<TGene>, chrom_two: &mut Chromosome<TGene>);
     fn cross_genotypes(&self, geno_one: &mut Genotype<TGene>, geno_two: &mut Genotype<TGene>);
+    fn cross_chromosomes(&self, chrom_one: &mut Chromosome<TGene>, chrom_two: &mut Chromosome<TGene>);
 }
 
 pub trait Mutate<TGene> : Alter<TGene>
