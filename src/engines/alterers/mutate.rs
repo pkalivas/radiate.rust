@@ -1,12 +1,13 @@
-use crate::engines::alterers::alter::Alter;
 use crate::engines::genome::chromosome::Chromosome;
 use crate::engines::genome::genes::gene::Gene;
 use crate::engines::genome::genotype::Genotype;
 
-pub trait Mutate<TGene>: Alter<TGene>
+pub trait Mutate<TGene>
 where
     TGene: Gene<TGene>,
 {
+    fn mutation_rate(&self) -> f32;
+
     fn mutate_genotype(&self, genotype: &mut Genotype<TGene>, range: i32, probability: f32) {
         for chromosome in genotype.iter_mut() {
             if rand::random::<i32>() > range {

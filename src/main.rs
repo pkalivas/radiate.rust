@@ -1,5 +1,6 @@
 mod engines;
 
+use engines::alterers::alter::Alterer;
 use engines::alterers::mutator::Mutator;
 use engines::alterers::uniform_crossover::UniformCrossover;
 use engines::codex::Codex;
@@ -14,8 +15,12 @@ use engines::genome::genotype::Genotype;
 use engines::score::Score;
 
 fn main() {
+    let now = std::time::Instant::now();
+
     // run_min_sum();
     run_string_evolve("Chicago, IL");
+
+    println!("Elapsed: {:?}", now.elapsed());
 }
 
 fn run_string_evolve(target: &'static str) {
@@ -26,8 +31,8 @@ fn run_string_evolve(target: &'static str) {
         .offspring_fraction(0.8)
         .codex(codex)
         .alterers(vec![
-            Box::new(UniformCrossover::new(0.5)),
-            Box::new(Mutator::new(0.001)),
+            Alterer::Mutator(0.001),
+            Alterer::UniformCrossover(0.5),
         ])
         .fitness_fn(|genotype: &String| {
             Score::from_usize(genotype.chars().zip(target.chars()).fold(
@@ -49,25 +54,25 @@ fn run_string_evolve(target: &'static str) {
 }
 
 fn run_min_sum() {
-    let engine = GeneticEngine::builder()
-        .population_size(1000)
-        .offspring_fraction(0.8)
-        .codex(get_int_codex(1, 10, 0, 100))
-        .alterers(vec![
-            Box::new(UniformCrossover::new(0.5)),
-            Box::new(Mutator::new(0.001)),
-        ])
-        .fitness_fn(|genotype: &Vec<Vec<i32>>| {
-            let mut sum = 0;
-            for chromosome in genotype {
-                for gene in chromosome {
-                    sum += gene;
-                }
-            }
+    // let engine = GeneticEngine::builder()
+    //     .population_size(1000)
+    //     .offspring_fraction(0.8)
+    //     .codex(get_int_codex(1, 10, 0, 100))
+    //     .alterers(vec![
+    //         Box::new(UniformCrossover::new(0.5)),
+    //         Box::new(Mutator::new(0.001)),
+    //     ])
+    //     .fitness_fn(|genotype: &Vec<Vec<i32>>| {
+    //         let mut sum = 0;
+    //         for chromosome in genotype {
+    //             for gene in chromosome {
+    //                 sum += gene;
+    //             }
+    //         }
 
-            Score::from_int(sum)
-        })
-        .build();
+    //         Score::from_int(sum)
+    //     })
+    //     .build();
 }
 
 fn get_char_codex(num_chromosomes: usize, num_genes: usize) -> Codex<CharGene, String> {

@@ -1,18 +1,22 @@
 use crate::engines::alterers::crossover::Crossover;
 use crate::engines::genome::genes::gene::Gene;
 
-pub struct UniformCrossover {
+pub struct MultiPointCrossover {
     pub probability: f32,
 }
 
-impl UniformCrossover {
+impl MultiPointCrossover {
     pub fn new(probability: f32) -> Self {
-        UniformCrossover { probability }
+        MultiPointCrossover { probability }
     }
 }
 
-impl<TGene> Crossover<TGene> for UniformCrossover where TGene: Gene<TGene> {
+impl<TGene> Crossover<TGene> for MultiPointCrossover
+where
+    TGene: Gene<TGene>,
+{
     fn crossover_rate(&self) -> f32 {
         self.probability
     }
 }
+

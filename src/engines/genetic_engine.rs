@@ -7,6 +7,8 @@ use crate::engines::genome::genes::gene::Gene;
 use crate::engines::genome::population::Population;
 use crate::engines::score::Score;
 
+use super::alterers::alter::AlterWrap;
+
 pub struct GeneticEngine<TGene, T>
 where
     TGene: Gene<TGene>,
@@ -43,6 +45,11 @@ where
         population.sort();
     }
 
+    pub fn alter(&self, population: &mut Population<TGene>) {
+        let alterer = self.params.alterer.as_ref().unwrap();
+        alterer.alter(population);
+    }
+
     pub fn offspring_count(&self) -> usize {
         (self.params.population_size as f32 * self.params.offspring_fraction) as usize
     }
@@ -57,10 +64,6 @@ where
 
     pub fn fitness_fn(&self) -> &dyn Fn(&T) -> Score {
         self.params.fitness_fn.as_ref().unwrap()
-    }
-
-    pub fn alters(&self) -> &Vec<Box<dyn Alter<TGene>>> {
-        self.params.alterers.as_ref().unwrap()
     }
 
     pub fn population(&self) -> &Population<TGene> {
@@ -90,9 +93,7 @@ where
                 .map(|individual| individual.clone())
                 .collect::<Population<TGene>>();
 
-            for alterer in self.alters() {
-                alterer.alter(&mut offspring);
-            }
+            self.alter(&mut offspring);
 
             population.replace(suvivors.into_iter().chain(offspring.into_iter()).collect());
 

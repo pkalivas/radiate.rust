@@ -1,10 +1,15 @@
-use crate::engines::alterers::alter::Alter;
 use crate::engines::codex::Codex;
 use crate::engines::genetic_engine::GeneticEngine;
 use crate::engines::genome::genes::gene::Gene;
 use crate::engines::genome::phenotype::Phenotype;
 use crate::engines::genome::population::Population;
 use crate::engines::score::Score;
+use crate::engines::alterers::alter::{AlterWrap, Alterer};
+use crate::engines::alterers::uniform_crossover::UniformCrossover;
+use crate::engines::alterers::mutator::Mutator;
+
+use super::alterers::composite_alterer::CompositeAlterer;
+
 
 pub struct GeneticEngineParams<TGene, T>
 where
@@ -13,7 +18,8 @@ where
     pub population_size: usize,
     pub max_phenotype_age: i32,
     pub offspring_fraction: f32,
-    pub alterers: Option<Vec<Box<dyn Alter<TGene>>>>,
+    // pub alterers: Option<Vec<Box<dyn Alter<TGene>>>>,
+    pub alterer: Option<CompositeAlterer<TGene>>,
     pub codex: Option<Codex<TGene, T>>,
     pub population: Option<Population<TGene>>,
     pub fitness_fn: Option<Box<dyn Fn(&T) -> Score>>,
@@ -28,7 +34,7 @@ where
             population_size: 100,
             max_phenotype_age: 25,
             offspring_fraction: 0.8,
-            alterers: None,
+            alterer: None,
             codex: None,
             population: None,
             fitness_fn: None,
@@ -65,8 +71,8 @@ where
         self
     }
 
-    pub fn alterers(mut self, alterers: Vec<Box<dyn Alter<TGene>>>) -> Self {
-        self.alterers = Some(alterers);
+    pub fn alterers(mut self, alters: Vec<Alterer>) -> Self {
+        self.alterer = Some(CompositeAlterer::new(alters));
         self
     }
 

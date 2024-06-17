@@ -1,14 +1,15 @@
-use crate::engines::alterers::alter::Alter;
 use crate::engines::genome::chromosome::Chromosome;
 use crate::engines::genome::genes::gene::Gene;
 use crate::engines::genome::genotype::Genotype;
 use crate::engines::genome::phenotype::Phenotype;
 use crate::engines::genome::population::Population;
 
-pub trait Crossover<TGene>: Alter<TGene>
+pub trait Crossover<TGene>
 where
     TGene: Gene<TGene>,
 {
+    fn crossover_rate(&self) -> f32;
+
     fn cross(
         &self,
         population: &mut Population<TGene>,
