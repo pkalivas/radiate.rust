@@ -9,38 +9,45 @@ use engines::genome::genes::int_gene::IntGene;
 use engines::genome::genotype::Genotype;
 use engines::genome::genes::float_gene::FloatGene;
 use engines::genome::chromosome::Chromosome;
+use engines::genome::population::Population;
 use engines::score::Score;
 use engines::alterers::mutator::Mutator;
 use engines::alterers::uniform_crossover::UniformCrossover;
 
 fn main() {
     // run_min_sum();
-    run_string_evolve();
+    run_string_evolve("Chicago, Illinois");
 }
 
-fn run_string_evolve() {
+fn run_string_evolve(target: &'static str) {
+    let codex = get_char_codex(1, target.len());
+    let codex_2 = get_char_codex(1, target.len());
+
     let engine = GeneticEngine::builder()
         .population_size(1000)
         .offspring_fraction(0.8)
-        .codex(get_char_codex(1, 10))
+        .codex(codex)
         .alterers(vec![
             Box::new(UniformCrossover::new(0.5)),
             Box::new(Mutator::new(0.001)),
         ])
-        .fitness_fn(|genotype: &String| {
-            let target = "Chicago, IL";
-            let mut score = target.len();
-            for (i, c) in genotype.chars().enumerate() {
-                if c == target.chars().nth(i).unwrap() {
-                    score -= 1;
+        .fitness_fn(|genotype: &String| Score::from_usize(genotype.chars()
+            .zip(target.chars())
+            .fold(target.len(), |acc, (geno, targ)| {
+                if geno == targ {
+                    acc - 1
+                } else {
+                    acc
                 }
-            }
-
-            Score::from_int(score as i32)
-        })
+            })))
         .build();
 
-    engine.run();
+    engine.run(|pop: &Population<CharGene>| {
+        let best = pop.get(0).genotype();
+        let best_str = codex_2.decode(best);
+        println!("{}", best_str);
+        best_str == target
+    });
 }
 
 fn run_min_sum() {
@@ -64,10 +71,17 @@ fn run_min_sum() {
         })
         .build();
 
-    engine.run();
+    engine.run(|pop: &Population<IntGene>| {
+        let best = pop.get(0).genotype();
+        let best_sum = best.iter().fold(0, |acc, chromosome| {
+            acc + chromosome.iter().fold(0, |acc, gene| acc + gene.allele())
+        });
+        println!("Best: {}", best_sum);
+        best_sum != 0
+    });
 }
 
-fn get_char_codex(num_chromosomes: i32, num_genes: i32) -> Codex<CharGene, String> {
+fn get_char_codex(num_chromosomes: usize, num_genes: usize) -> Codex<CharGene, String> {
     Codex::new()
         .encoder(move || {
             Genotype { 

@@ -33,9 +33,10 @@ impl<TGene> Population<TGene>
             .expect("Index out of bounds")
     }
 
-    pub fn get_mut(&mut self, index: usize) -> Option<&mut Phenotype<TGene>> {
+    pub fn get_mut(&mut self, index: usize) -> &mut Phenotype<TGene> {
         self.is_sorted = false;
-        self.individuals.get_mut(index)
+        self.individuals.get_mut(index) 
+            .expect("Index out of bounds")
     }
 
     pub fn set(&mut self, index: usize, individual: Phenotype<TGene>) {
@@ -82,7 +83,18 @@ impl<TGene> Population<TGene>
     }
 }
 
-impl<TGene> FromIterator<Phenotype<TGene>> for Population<TGene>
+impl<TGene> std::iter::IntoIterator for Population<TGene>
+    where TGene: Gene<TGene>
+{
+    type Item = Phenotype<TGene>;
+    type IntoIter = std::vec::IntoIter<Phenotype<TGene>>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.individuals.into_iter()
+    }
+}
+
+impl<TGene> std::iter::FromIterator<Phenotype<TGene>> for Population<TGene>
     where TGene: Gene<TGene>
 {
     fn from_iter<I: IntoIterator<Item=Phenotype<TGene>>>(iter: I) -> Self {

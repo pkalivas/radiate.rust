@@ -12,6 +12,10 @@ impl Score {
         Score { value: value as f32 }
     }
 
+    pub fn from_usize(value: usize) -> Self {
+        Score { value: value as f32 }
+    }
+
     pub fn from_string(value: &str) -> Self {
         Score { value: value.parse::<f32>().unwrap() }
     }
@@ -26,6 +30,10 @@ impl Score {
 
     pub fn to_string(&self) -> String {
         self.value.to_string()
+    }
+
+    pub fn to_usize(&self) -> usize {
+        self.value as usize
     }
 }
 

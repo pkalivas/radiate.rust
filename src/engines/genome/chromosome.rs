@@ -40,6 +40,10 @@ impl<TGene> Chromosome<TGene>
     pub fn len(&self) -> usize {
         self.genes.len()
     }
+
+    pub fn iter(&self) -> std::slice::Iter<TGene> {
+        self.genes.iter()
+    }
 }
 
 impl<TGene> Clone for Chromosome<TGene>
