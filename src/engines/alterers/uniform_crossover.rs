@@ -52,14 +52,21 @@ impl<TGene> Crossover<TGene> for UniformCrossover
     fn cross_chromosomes(&self, chrom_one: &mut Chromosome<TGene>, chrom_two: &mut Chromosome<TGene>) {
         for i in 0..std::cmp::min(chrom_one.len(), chrom_two.len()) {
             if rand::random::<f32>() < self.probability {
-                chrom_one.set(i, chrom_two.get(i).clone());
-                chrom_two.set(i, chrom_one.get(i).clone());
+                let gene_one = chrom_one.get(i);
+                let gene_two = chrom_two.get(i);
+
+                let new_gene_one = gene_one.from_gene(&gene_two);
+                let new_gene_two = gene_two.from_gene(&gene_one);
+
+                chrom_one.set(i, new_gene_one);
+                chrom_two.set(i, new_gene_two);
             }
         }
     }
     
     fn cross_genotypes(&self, geno_one: &mut Genotype<TGene>, geno_two: &mut Genotype<TGene>) {
-        let chromosome_index = rand::random::<usize>() % std::cmp::min(geno_one.len(), geno_two.len());
+        let min_index = std::cmp::min(geno_one.len(), geno_two.len());
+        let chromosome_index = rand::random::<usize>() % min_index;
 
         let mut chrom_one = geno_one.get_mut(chromosome_index);
         let mut chrom_two = geno_two.get_mut(chromosome_index);

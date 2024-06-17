@@ -25,14 +25,11 @@ impl<TGene> Alter<TGene> for Mutator
     fn alter(&self, population: &mut Population<TGene>) {
         for phenotype in population.iter_mut() {
             if rand::random::<i32>() > self.scaled_range {
-                let mut genotype = phenotype.genotype.clone();
+                let mut genotype = phenotype.genotype().clone();
 
                 self.mutate_genotype(&mut genotype);
 
-                *phenotype = Phenotype {
-                    genotype,
-                    score: None
-                };
+                *phenotype = Phenotype::from_genotype(genotype);
             }
         }
     }
@@ -50,7 +47,7 @@ impl<TGene> Mutate<TGene> for Mutator
     }
 
     fn mutate_chromosome(&self, chromosome: &mut Chromosome<TGene>) {
-        for gene in chromosome.as_mut_slice() {
+        for gene in chromosome.iter_mut() {
             if rand::random::<f32>() < self.mutation_probability {
                 *gene = self.mutate_gene(gene);
             }

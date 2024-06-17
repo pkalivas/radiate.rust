@@ -26,6 +26,10 @@ impl<TGene> Phenotype<TGene>
     pub fn score(&self) -> &Option<Score> {
         &self.score
     }
+
+    pub fn set_score(&mut self, score: Score) {
+        self.score = Some(score);
+    }
 }
 
 impl<TGene> Clone for Phenotype<TGene>

@@ -9,28 +9,8 @@ pub struct Chromosome<TGene>
 impl<TGene> Chromosome<TGene>
     where TGene: Gene<TGene>
 {
-    pub fn from_slice(genes: &[TGene]) -> Self {
-        Chromosome { genes: genes.to_vec() }
-    }
-
-    pub fn from_vec(genes: Vec<TGene>) -> Self {
-        Chromosome { genes }
-    }
-
-    pub fn as_slice(&self) -> &[TGene] {
-        &self.genes
-    }
-
-    pub fn as_mut_slice(&mut self) -> &mut [TGene] {
-        &mut self.genes
-    }
-
     pub fn get(&self, index: usize) -> &TGene {
         &self.genes[index]
-    }
-
-    pub fn get_mut(&mut self, index: usize) -> &mut TGene {
-        &mut self.genes[index]
     }
 
     pub fn set(&mut self, index: usize, gene: TGene) {
@@ -43,6 +23,10 @@ impl<TGene> Chromosome<TGene>
 
     pub fn iter(&self) -> std::slice::Iter<TGene> {
         self.genes.iter()
+    }
+
+    pub fn iter_mut(&mut self) -> std::slice::IterMut<TGene> {
+        self.genes.iter_mut()
     }
 }
 

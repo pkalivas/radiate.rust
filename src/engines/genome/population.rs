@@ -11,21 +11,9 @@ pub struct Population<TGene>
 impl<TGene> Population<TGene>
     where TGene: Gene<TGene>
 {
-    pub fn new() -> Self {
-        Population {
-            individuals: Vec::new(),
-            is_sorted: false
-        }
-    }
-
     pub fn sort(&mut self) {
         self.individuals.sort_by(|a, b| a.partial_cmp(b).unwrap());
         self.is_sorted = true;
-    }
-
-    pub fn add(&mut self, individual: Phenotype<TGene>) {
-        self.individuals.push(individual);
-        self.is_sorted = false;
     }
 
     pub fn get(&self, index: usize) -> &Phenotype<TGene> {
@@ -57,15 +45,9 @@ impl<TGene> Population<TGene>
         self.individuals.len()
     }
 
-    pub fn is_empty(&self) -> bool {
-        self.individuals.is_empty()
-    }
-
-    pub fn from_vec(individuals: Vec<Phenotype<TGene>>) -> Self {
-        Population {
-            individuals,
-            is_sorted: false
-        }
+    pub fn replace(&mut self, individuals: Vec<Phenotype<TGene>>) {
+        self.individuals = individuals;
+        self.is_sorted = false;
     }
 
     pub fn from_func<F>(size: usize, f: F) -> Self

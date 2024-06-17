@@ -9,7 +9,7 @@ use crate::engines::alterers::alter::Alter;
 pub struct GeneticEngineParams<TGene, T>
     where TGene : Gene<TGene> 
 {
-    pub population_size: i32,
+    pub population_size: usize,
     pub max_phenotype_age: i32,
     pub offspring_fraction: f32,
     pub alterers: Option<Vec<Box<dyn Alter<TGene>>>>,
@@ -33,7 +33,7 @@ impl<TGene, T> GeneticEngineParams<TGene, T>
         }
     }
 
-    pub fn population_size(mut self, population_size: i32) -> Self {
+    pub fn population_size(mut self, population_size: usize) -> Self {
         self.population_size = population_size;
         self
     }
@@ -77,10 +77,10 @@ impl<TGene, T> GeneticEngineParams<TGene, T>
     fn build_population(&mut self) {
         let population = match &self.population {
             None => {
-                let individuals = Population::from_func(self.population_size as usize, || {
-                    Phenotype::from_genotype(self.codex.as_ref().unwrap().encode())
-                });
-                Some(individuals)
+                Some(match self.codex.as_ref() {
+                    Some(codex) => Population::from_func(self.population_size, || Phenotype::from_genotype(codex.encode())),
+                    None => panic!("Codex not set")
+                })
             },
             Some(pop) => Some(pop.clone())
         };
