@@ -1,7 +1,6 @@
 use rand::Rng;
 
-use crate::engines::genome::genes::gene::{Gene, Allele, NumericGene, BoundGene};
-
+use crate::engines::genome::genes::gene::{Allele, BoundGene, Gene, NumericGene};
 
 pub struct IntGene {
     value: i32,
@@ -111,3 +110,4 @@ impl std::fmt::Debug for IntGene {
         write!(f, "{}", self.value)
     }
 }
+

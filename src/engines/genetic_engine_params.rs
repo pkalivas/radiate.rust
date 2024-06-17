@@ -1,13 +1,14 @@
-use crate::engines::genome::genes::gene::Gene;
+use crate::engines::alterers::alter::Alter;
 use crate::engines::codex::Codex;
+use crate::engines::genetic_engine::GeneticEngine;
+use crate::engines::genome::genes::gene::Gene;
+use crate::engines::genome::phenotype::Phenotype;
 use crate::engines::genome::population::Population;
 use crate::engines::score::Score;
-use crate::engines::genetic_engine::GeneticEngine;
-use crate::engines::genome::phenotype::Phenotype;
-use crate::engines::alterers::alter::Alter;
 
 pub struct GeneticEngineParams<TGene, T>
-    where TGene : Gene<TGene> 
+where
+    TGene: Gene<TGene>,
 {
     pub population_size: usize,
     pub max_phenotype_age: i32,
@@ -15,11 +16,12 @@ pub struct GeneticEngineParams<TGene, T>
     pub alterers: Option<Vec<Box<dyn Alter<TGene>>>>,
     pub codex: Option<Codex<TGene, T>>,
     pub population: Option<Population<TGene>>,
-    pub fitness_fn: Option<Box<dyn Fn(&T) -> Score>>
+    pub fitness_fn: Option<Box<dyn Fn(&T) -> Score>>,
 }
 
 impl<TGene, T> GeneticEngineParams<TGene, T>
-    where TGene : Gene<TGene> 
+where
+    TGene: Gene<TGene>,
 {
     pub fn new() -> Self {
         GeneticEngineParams {
@@ -29,7 +31,7 @@ impl<TGene, T> GeneticEngineParams<TGene, T>
             alterers: None,
             codex: None,
             population: None,
-            fitness_fn: None
+            fitness_fn: None,
         }
     }
 
@@ -70,21 +72,22 @@ impl<TGene, T> GeneticEngineParams<TGene, T>
 
     pub fn build(mut self) -> GeneticEngine<TGene, T> {
         self.build_population();
-        
+
         GeneticEngine::new(self)
     }
 
     fn build_population(&mut self) {
         let population = match &self.population {
-            None => {
-                Some(match self.codex.as_ref() {
-                    Some(codex) => Population::from_func(self.population_size, || Phenotype::from_genotype(codex.encode())),
-                    None => panic!("Codex not set")
-                })
-            },
-            Some(pop) => Some(pop.clone())
+            None => Some(match self.codex.as_ref() {
+                Some(codex) => Population::from_func(self.population_size, || {
+                    Phenotype::from_genotype(codex.encode())
+                }),
+                None => panic!("Codex not set"),
+            }),
+            Some(pop) => Some(pop.clone()),
         };
 
         self.population = population;
     }
 }
+

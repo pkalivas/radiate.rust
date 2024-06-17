@@ -1,15 +1,17 @@
-use crate::engines::genome::genes::gene::{Gene, Allele};
- 
+use crate::engines::genome::genes::gene::{Allele, Gene};
+
 const ALPHABET: &str = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!\"$%&/()=?`{[]}\\+~*#';.:,-_<>|@^' ";
 
 pub struct CharGene {
-    pub allele: char
+    pub allele: char,
 }
 
 impl CharGene {
     pub fn new() -> Self {
         let index = rand::random::<usize>() % ALPHABET.len();
-        CharGene { allele: ALPHABET.chars().nth(index).unwrap() }
+        CharGene {
+            allele: ALPHABET.chars().nth(index).unwrap(),
+        }
     }
 }
 
@@ -23,7 +25,9 @@ impl Gene<CharGene> for CharGene {
     }
 
     fn from_gene(&self, gene: &CharGene) -> CharGene {
-        CharGene { allele: gene.allele }
+        CharGene {
+            allele: gene.allele,
+        }
     }
 }
 
@@ -35,7 +39,9 @@ impl Allele<char> for CharGene {
 
 impl Clone for CharGene {
     fn clone(&self) -> Self {
-        CharGene { allele: self.allele }
+        CharGene {
+            allele: self.allele,
+        }
     }
 }
 
@@ -50,3 +56,4 @@ impl std::fmt::Debug for CharGene {
         write!(f, "{}", self.allele)
     }
 }
+

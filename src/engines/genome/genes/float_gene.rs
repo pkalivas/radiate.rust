@@ -1,20 +1,20 @@
 use rand::random;
 
-use crate::engines::genome::genes::gene::{Gene, Allele, NumericGene, BoundGene};
+use crate::engines::genome::genes::gene::{Allele, BoundGene, Gene, NumericGene};
 
 pub struct FloatGene {
     pub allele: f32,
     pub min: f32,
-    pub max: f32
+    pub max: f32,
 }
 
 impl FloatGene {
     pub fn new(min: f32, max: f32) -> Self {
-        FloatGene { 
+        FloatGene {
             allele: random::<f32>() * (max - min) + min,
             min,
-            max
-         }
+            max,
+        }
     }
 }
 
@@ -32,10 +32,10 @@ impl Gene<FloatGene> for FloatGene {
     }
 
     fn from_gene(&self, gene: &FloatGene) -> FloatGene {
-        FloatGene { 
+        FloatGene {
             allele: gene.allele,
             min: gene.min,
-            max: gene.max
+            max: gene.max,
         }
     }
 }
@@ -48,19 +48,31 @@ impl Allele<f32> for FloatGene {
 
 impl NumericGene<FloatGene, f32> for FloatGene {
     fn add(&self, other: &impl NumericGene<FloatGene, f32>) -> FloatGene {
-        FloatGene { allele: self.allele + *other.allele(), ..*self }
+        FloatGene {
+            allele: self.allele + *other.allele(),
+            ..*self
+        }
     }
 
     fn sub(&self, other: &impl NumericGene<FloatGene, f32>) -> FloatGene {
-        FloatGene { allele: self.allele - *other.allele(), ..*self }
+        FloatGene {
+            allele: self.allele - *other.allele(),
+            ..*self
+        }
     }
 
     fn mul(&self, other: &impl NumericGene<FloatGene, f32>) -> FloatGene {
-        FloatGene { allele: self.allele * *other.allele(), ..*self}
+        FloatGene {
+            allele: self.allele * *other.allele(),
+            ..*self
+        }
     }
 
     fn div(&self, other: &impl NumericGene<FloatGene, f32>) -> FloatGene {
-        FloatGene { allele: self.allele / *other.allele(), ..*self}
+        FloatGene {
+            allele: self.allele / *other.allele(),
+            ..*self
+        }
     }
 }
 
@@ -76,10 +88,10 @@ impl BoundGene<FloatGene, f32> for FloatGene {
 
 impl Clone for FloatGene {
     fn clone(&self) -> Self {
-        FloatGene { 
+        FloatGene {
             allele: self.allele,
             min: self.min,
-            max: self.max
+            max: self.max,
         }
     }
 }
@@ -95,3 +107,4 @@ impl std::fmt::Debug for FloatGene {
         write!(f, "{}", self.allele)
     }
 }
+

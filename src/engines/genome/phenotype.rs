@@ -3,14 +3,16 @@ use crate::engines::genome::genotype::Genotype;
 use crate::engines::score::Score;
 
 pub struct Phenotype<TGene>
-    where TGene: Gene<TGene>
+where
+    TGene: Gene<TGene>,
 {
     pub genotype: Genotype<TGene>,
     pub score: Option<Score>,
 }
 
 impl<TGene> Phenotype<TGene>
-    where TGene: Gene<TGene>
+where
+    TGene: Gene<TGene>,
 {
     pub fn genotype(&self) -> &Genotype<TGene> {
         &self.genotype
@@ -33,18 +35,20 @@ impl<TGene> Phenotype<TGene>
 }
 
 impl<TGene> Clone for Phenotype<TGene>
-    where TGene: Gene<TGene>
+where
+    TGene: Gene<TGene>,
 {
     fn clone(&self) -> Self {
         Phenotype {
             genotype: self.genotype.clone(),
-            score: self.score.clone()
+            score: self.score.clone(),
         }
     }
 }
 
 impl<TGene> PartialEq for Phenotype<TGene>
-    where TGene: Gene<TGene>
+where
+    TGene: Gene<TGene>,
 {
     fn eq(&self, other: &Self) -> bool {
         self.genotype == other.genotype && self.score == other.score
@@ -52,17 +56,20 @@ impl<TGene> PartialEq for Phenotype<TGene>
 }
 
 impl<TGene> PartialOrd for Phenotype<TGene>
-    where TGene: Gene<TGene>
+where
+    TGene: Gene<TGene>,
 {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
         self.score.partial_cmp(&other.score)
     }
 }
 
-impl <TGene> std::fmt::Debug for Phenotype<TGene>
-    where TGene: Gene<TGene> + std::fmt::Debug
+impl<TGene> std::fmt::Debug for Phenotype<TGene>
+where
+    TGene: Gene<TGene> + std::fmt::Debug,
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{:?}, score: {:?}", self.genotype, self.score)
     }
 }
+

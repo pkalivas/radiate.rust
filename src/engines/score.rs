@@ -1,6 +1,5 @@
-
 pub struct Score {
-    pub value: f32
+    pub value: f32,
 }
 
 impl Score {
@@ -9,15 +8,21 @@ impl Score {
     }
 
     pub fn from_int(value: i32) -> Self {
-        Score { value: value as f32 }
+        Score {
+            value: value as f32,
+        }
     }
 
     pub fn from_usize(value: usize) -> Self {
-        Score { value: value as f32 }
+        Score {
+            value: value as f32,
+        }
     }
 
     pub fn from_string(value: &str) -> Self {
-        Score { value: value.parse::<f32>().unwrap() }
+        Score {
+            value: value.parse::<f32>().unwrap(),
+        }
     }
 
     pub fn to_float(&self) -> f32 {
@@ -60,3 +65,4 @@ impl std::fmt::Debug for Score {
         write!(f, "{}", self.value)
     }
 }
+

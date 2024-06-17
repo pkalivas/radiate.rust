@@ -1,21 +1,22 @@
-use crate::engines::genome::genes::gene::Gene;
-use crate::engines::genetic_engine_params::GeneticEngineParams;
-use crate::engines::engine::Engine;
-use crate::engines::genome::population::Population;
-use crate::engines::codex::Codex;
-use crate::engines::score::Score;
 use crate::engines::alterers::alter::Alter;
+use crate::engines::codex::Codex;
+use crate::engines::engine::Engine;
 use crate::engines::engine::EngineOutput;
+use crate::engines::genetic_engine_params::GeneticEngineParams;
+use crate::engines::genome::genes::gene::Gene;
+use crate::engines::genome::population::Population;
+use crate::engines::score::Score;
 
-
-pub struct GeneticEngine<TGene, T> 
-    where TGene : Gene<TGene>
+pub struct GeneticEngine<TGene, T>
+where
+    TGene: Gene<TGene>,
 {
     pub params: GeneticEngineParams<TGene, T>,
 }
 
 impl<TGene, T> GeneticEngine<TGene, T>
-    where TGene : Gene<TGene>
+where
+    TGene: Gene<TGene>,
 {
     pub fn new(params: GeneticEngineParams<TGene, T>) -> Self {
         GeneticEngine { params }
@@ -68,7 +69,8 @@ impl<TGene, T> GeneticEngine<TGene, T>
 }
 
 impl<TGene, T> Engine<TGene, T> for GeneticEngine<TGene, T>
-    where TGene : Gene<TGene>
+where
+    TGene: Gene<TGene>,
 {
     fn fit(&self) -> EngineOutput<TGene, T> {
         let mut population = self.population().clone();
@@ -76,31 +78,31 @@ impl<TGene, T> Engine<TGene, T> for GeneticEngine<TGene, T>
         for _ in 0..200 {
             self.evaluate(&mut population);
 
-            let suvivors = population.iter()
+            let suvivors = population
+                .iter()
                 .take(self.surivor_count())
                 .map(|individual| individual.clone())
                 .collect::<Population<TGene>>();
-    
-            let mut offspring = population.iter()
+
+            let mut offspring = population
+                .iter()
                 .take(self.offspring_count())
                 .map(|individual| individual.clone())
                 .collect::<Population<TGene>>();
-    
+
             for alterer in self.alters() {
                 alterer.alter(&mut offspring);
             }
 
-            population.replace(suvivors.into_iter()
-                .chain(offspring.into_iter())
-                .collect());
+            population.replace(suvivors.into_iter().chain(offspring.into_iter()).collect());
 
             self.evaluate(&mut population);
         }
-        
+
         EngineOutput {
             population: population.clone(),
             best: self.codex().decode(&population.get(0).genotype()),
-            index: 0
+            index: 0,
         }
     }
 }

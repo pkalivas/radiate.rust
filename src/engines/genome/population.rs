@@ -2,14 +2,16 @@ use crate::engines::genome::genes::gene::Gene;
 use crate::engines::genome::phenotype::Phenotype;
 
 pub struct Population<TGene>
-    where TGene: Gene<TGene>
+where
+    TGene: Gene<TGene>,
 {
     pub individuals: Vec<Phenotype<TGene>>,
-    pub is_sorted: bool
+    pub is_sorted: bool,
 }
 
 impl<TGene> Population<TGene>
-    where TGene: Gene<TGene>
+where
+    TGene: Gene<TGene>,
 {
     pub fn sort(&mut self) {
         self.individuals.sort_by(|a, b| a.partial_cmp(b).unwrap());
@@ -17,13 +19,13 @@ impl<TGene> Population<TGene>
     }
 
     pub fn get(&self, index: usize) -> &Phenotype<TGene> {
-        self.individuals.get(index) 
-            .expect("Index out of bounds")
+        self.individuals.get(index).expect("Index out of bounds")
     }
 
     pub fn get_mut(&mut self, index: usize) -> &mut Phenotype<TGene> {
         self.is_sorted = false;
-        self.individuals.get_mut(index) 
+        self.individuals
+            .get_mut(index)
             .expect("Index out of bounds")
     }
 
@@ -51,7 +53,8 @@ impl<TGene> Population<TGene>
     }
 
     pub fn from_func<F>(size: usize, f: F) -> Self
-        where F: Fn() -> Phenotype<TGene>
+    where
+        F: Fn() -> Phenotype<TGene>,
     {
         let mut individuals = Vec::with_capacity(size);
         for _ in 0..size {
@@ -66,7 +69,8 @@ impl<TGene> Population<TGene>
 }
 
 impl<TGene> std::iter::IntoIterator for Population<TGene>
-    where TGene: Gene<TGene>
+where
+    TGene: Gene<TGene>,
 {
     type Item = Phenotype<TGene>;
     type IntoIter = std::vec::IntoIter<Phenotype<TGene>>;
@@ -77,30 +81,33 @@ impl<TGene> std::iter::IntoIterator for Population<TGene>
 }
 
 impl<TGene> std::iter::FromIterator<Phenotype<TGene>> for Population<TGene>
-    where TGene: Gene<TGene>
+where
+    TGene: Gene<TGene>,
 {
-    fn from_iter<I: IntoIterator<Item=Phenotype<TGene>>>(iter: I) -> Self {
+    fn from_iter<I: IntoIterator<Item = Phenotype<TGene>>>(iter: I) -> Self {
         let individuals = iter.into_iter().collect();
         Population {
             individuals,
-            is_sorted: false
+            is_sorted: false,
         }
     }
 }
 
 impl<TGene> Clone for Population<TGene>
-    where TGene: Gene<TGene>
+where
+    TGene: Gene<TGene>,
 {
     fn clone(&self) -> Self {
         Population {
             individuals: self.individuals.clone(),
-            is_sorted: self.is_sorted
+            is_sorted: self.is_sorted,
         }
     }
 }
 
 impl<TGene> std::fmt::Debug for Population<TGene>
-    where TGene: Gene<TGene> + std::fmt::Debug
+where
+    TGene: Gene<TGene> + std::fmt::Debug,
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "[")?;
@@ -110,3 +117,4 @@ impl<TGene> std::fmt::Debug for Population<TGene>
         write!(f, "]")
     }
 }
+
