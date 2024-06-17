@@ -23,7 +23,7 @@ impl MultiPointCrossover {
     ) where
         TGene: Gene<TGene>,
     {
-        if other_start < 0 || other_start + (end - start) > chrom_one.len() {
+        if other_start + (end - start) > chrom_one.len() {
             panic!("Invalid index range: [{}, {})", other_start, other_start + (end - start));
         }
 
@@ -52,7 +52,7 @@ where
             &self,
             chrom_one: &mut Chromosome<TGene>,
             chrom_two: &mut Chromosome<TGene>,
-            probability: f32,
+            _: f32,
         ) {
             let min_index = std::cmp::min(chrom_one.len(), chrom_two.len());
             let min_points = std::cmp::min(self.num_points, DEFAULT_NUM_POINTS);

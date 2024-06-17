@@ -61,7 +61,7 @@ fn build_subset(n: i32, sub: &mut Vec<i32>, random: &mut ThreadRng) {
 
     let mut l;
     let mut ix;
-    for i in 0..k {
+    for _ in 0..k {
         loop {
             ix = random.gen_range(1..n);
             l = (ix * k - 1) / n;

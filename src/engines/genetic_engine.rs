@@ -8,8 +8,6 @@ use crate::engines::genome::population::Population;
 use crate::engines::score::Score;
 use crate::engines::optimize::Optimize;
 
-use super::optimize;
-
 
 pub struct GeneticEngine<TGene, T>
 where
@@ -37,7 +35,7 @@ where
     pub fn evaluate(&self, population: &mut Population<TGene>) {
         let codex = self.codex();
         let fitness_fn = self.fitness_fn();
-        let optimize = self.Optimize();
+        let optimize = self.optimize();
 
         for idx in 0..population.len() {
             let individual = population.get_mut(idx);
@@ -70,7 +68,7 @@ where
 
     pub fn alter(&self, population: &mut Population<TGene>) {
         let alterer = self.params.alterer.as_ref().unwrap();
-        let optimize = self.Optimize();
+        let optimize = self.optimize();
 
         alterer.alter(population, optimize);
     }
@@ -81,17 +79,17 @@ where
         offspring: Population<TGene>
     ) 
     {
-        let optimize = self.Optimize();
+        let optimize = self.optimize();
         let codex = self.codex();
         
-        let mut newPopulation = survivors
+        let mut new_population = survivors
             .into_iter()
             .chain(offspring.into_iter())
             .collect::<Population<TGene>>();
 
-        optimize.sort(&mut newPopulation);
+        optimize.sort(&mut new_population);
 
-        output.population = newPopulation;
+        output.population = new_population;
         output.best = codex.decode(&output.population.get(0).genotype());
         output.index += 1;
     }
@@ -116,7 +114,7 @@ where
         self.params.population.as_ref().unwrap()
     }
 
-    pub fn Optimize(&self) -> &Optimize {
+    pub fn optimize(&self) -> &Optimize {
         &self.params.optimize
     }
 }
@@ -143,7 +141,6 @@ where
 
             self.alter(&mut offspring);
             self.evaluate(&mut offspring);
-
             self.recombine(&mut output, survivors, offspring);
 
             if limit(&output) {
