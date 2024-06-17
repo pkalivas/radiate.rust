@@ -25,7 +25,7 @@ fn run_string_evolve(target: &'static str) {
     let codex = get_char_codex(1, target.len());
 
     let engine = GeneticEngine::builder()
-        .population_size(1000)
+        .population_size(100)
         .offspring_fraction(0.8)
         .codex(codex)
         .alterers(vec![
@@ -46,9 +46,12 @@ fn run_string_evolve(target: &'static str) {
         })
         .build();
 
-    let result = engine.fit();
+    let result = engine.fit(|output| {
+        println!("[ {:?} ]: {:?}", output.index, output.best);
+        output.score() == 0_f32
+    });
 
-    println!("{:?}", result.best);
+    println!("{:?}", result);
 }
 
 fn run_min_sum() {
