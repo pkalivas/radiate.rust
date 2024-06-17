@@ -23,24 +23,24 @@ fn run_string_evolve(target: &'static str) {
     let codex = get_char_codex(1, target.len());
 
     let engine = GeneticEngine::from_codex(codex)
-            .population_size(100)
-            .alterers(vec![
-                Alterer::Mutator(0.001),
-                Alterer::UniformCrossover(0.5),
-            ])
-            .fitness_fn(|genotype: &String| {
-                Score::from_usize(genotype.chars().zip(target.chars()).fold(
-                    0,
-                    |acc, (geno, targ)| {
-                        if geno == targ {
-                            acc + 1
-                        } else {
-                            acc
-                        }
-                    },
-                ))
-            })
-            .build();
+        .population_size(100)
+        .alterers(vec![
+            Alterer::Mutator(0.001),
+            Alterer::UniformCrossover(0.5),
+        ])
+        .fitness_fn(|genotype: &String| {
+            Score::from_usize(genotype.chars().zip(target.chars()).fold(
+                0,
+                |acc, (geno, targ)| {
+                    if geno == targ {
+                        acc + 1
+                    } else {
+                        acc
+                    }
+                },
+            ))
+        })
+        .build();
 
     let result = engine.fit(|output| {
         println!("[ {:?} ]: {:?}", output.index, output.best);
