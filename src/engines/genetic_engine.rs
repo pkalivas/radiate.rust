@@ -7,8 +7,6 @@ use crate::engines::genome::genes::gene::Gene;
 use crate::engines::genome::population::Population;
 use crate::engines::score::Score;
 
-use super::alterers::alter::AlterWrap;
-
 pub struct GeneticEngine<TGene, T>
 where
     TGene: Gene<TGene>,

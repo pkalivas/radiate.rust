@@ -1,8 +1,6 @@
 mod engines;
 
 use engines::alterers::alter::Alterer;
-use engines::alterers::mutator::Mutator;
-use engines::alterers::uniform_crossover::UniformCrossover;
 use engines::codex::Codex;
 use engines::engine::Engine;
 use engines::genetic_engine::GeneticEngine;
@@ -94,7 +92,7 @@ fn get_char_codex(num_chromosomes: usize, num_genes: usize) -> Codex<CharGene, S
                 .map(|chromosome| {
                     chromosome
                         .iter()
-                        .map(|gene| *gene.allele() as u8 as char)
+                        .map(|gene| *gene.allele())
                         .collect::<String>()
                 })
                 .collect::<String>()
