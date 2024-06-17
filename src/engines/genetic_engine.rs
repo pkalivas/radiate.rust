@@ -94,10 +94,9 @@ where
                 .collect::<Population<TGene>>();
 
             self.alter(&mut offspring);
+            self.evaluate(&mut offspring);
 
             population.replace(suvivors.into_iter().chain(offspring.into_iter()).collect());
-
-            self.evaluate(&mut population);
         }
 
         EngineOutput {
