@@ -18,6 +18,14 @@ where
         self.is_sorted = true;
     }
 
+    pub fn sort_by<F>(&mut self, f: F)
+    where
+        F: FnMut(&Phenotype<TGene>, &Phenotype<TGene>) -> std::cmp::Ordering,
+    {
+        self.individuals.sort_by(f);
+        self.is_sorted = true;
+    }
+
     pub fn get(&self, index: usize) -> &Phenotype<TGene> {
         self.individuals.get(index).expect("Index out of bounds")
     }

@@ -8,3 +8,4 @@ pub mod engine;
 pub mod alterers;
 pub mod schema;
 pub mod limits;
+pub mod optimize;

@@ -14,28 +14,6 @@ impl MultiPointCrossover {
         Self { num_points }
     }
 
-    // private static void Swap(IChromosome<TGene> one, int start, int end, IChromosome<TGene> two, int otherStart)
-    // {
-    //     if (otherStart < 0 || otherStart + (end - start) > one.Length)
-    //     {
-    //         throw new IndexOutOfRangeException($"Invalid index range: [{otherStart}, {otherStart + (end - start)})");
-    //     }
-
-    //     if (start >= end)
-    //     {
-    //         return;
-    //     }
-
-    //     for (var i = end - start; --i >= 0;)
-    //     {
-    //         var temp = one.GetGene(start + i);
-    //         var otherGene = two.GetGene(otherStart + i);
-
-    //         one.SetGene(start + i, temp.NewInstance(otherGene));
-    //         two.SetGene(otherStart + i, otherGene.NewInstance(temp));
-    //     }
-    // }
-
     pub fn swap<TGene>(
         chrom_one: &mut Chromosome<TGene>,
         start: usize,
@@ -72,8 +50,8 @@ where
 {
     fn cross_chromosomes(
             &self,
-            chrom_one: &mut crate::engines::genome::chromosome::Chromosome<TGene>,
-            chrom_two: &mut crate::engines::genome::chromosome::Chromosome<TGene>,
+            chrom_one: &mut Chromosome<TGene>,
+            chrom_two: &mut Chromosome<TGene>,
             probability: f32,
         ) {
             let min_index = std::cmp::min(chrom_one.len(), chrom_two.len());
@@ -98,20 +76,5 @@ where
 
                 MultiPointCrossover::swap(chrom_one, index, std::cmp::min(chrom_one.len(), chrom_two.len()), chrom_two, index);
             }
-
-            // for (var i = 0; i < indexes.Length - 1; i += 2)
-            // {
-            //     var start = indexes[i];
-            //     var end = indexes[i + 1];
-    
-            //     Swap(one, start, end, two, start);
-            // }
-    
-            // if (indexes.Length % 2 == 1)
-            // {
-            //     var index = indexes[^1];
-    
-            //     Swap(one, index, Math.Min(one.Length, two.Length), two, index);
-            // }
         }
 } 

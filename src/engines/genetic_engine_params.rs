@@ -6,6 +6,7 @@ use crate::engines::genome::population::Population;
 use crate::engines::score::Score;
 use crate::engines::alterers::alter::Alterer;
 use super::alterers::composite_alterer::CompositeAlterer;
+use super::optimize::Optimize;
 
 
 pub struct GeneticEngineParams<TGene, T>
@@ -15,6 +16,7 @@ where
     pub population_size: usize,
     pub max_phenotype_age: i32,
     pub offspring_fraction: f32,
+    pub optimize: Optimize,
     pub alterer: Option<CompositeAlterer<TGene>>,
     pub codex: Option<Codex<TGene, T>>,
     pub population: Option<Population<TGene>>,
@@ -30,6 +32,7 @@ where
             population_size: 100,
             max_phenotype_age: 25,
             offspring_fraction: 0.8,
+            optimize: Optimize::Maximize,
             alterer: None,
             codex: None,
             population: None,
@@ -69,6 +72,16 @@ where
 
     pub fn alterers(mut self, alters: Vec<Alterer>) -> Self {
         self.alterer = Some(CompositeAlterer::new(alters));
+        self
+    }
+
+    pub fn minimizing(mut self) -> Self {
+        self.optimize = Optimize::Minimize;
+        self
+    }
+
+    pub fn maximizing(mut self) -> Self {
+        self.optimize = Optimize::Maximize;
         self
     }
 

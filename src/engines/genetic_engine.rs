@@ -7,6 +7,8 @@ use crate::engines::genome::genes::gene::Gene;
 use crate::engines::genome::population::Population;
 use crate::engines::score::Score;
 
+use super::optimize::Optimize;
+
 pub struct GeneticEngine<TGene, T>
 where
     TGene: Gene<TGene>,
@@ -26,9 +28,14 @@ where
         GeneticEngineParams::new()
     }
 
+    pub fn from_codex(codex: Codex<TGene, T>) -> GeneticEngineParams<TGene, T> {
+        GeneticEngineParams::new().codex(codex)
+    }
+
     pub fn evaluate(&self, population: &mut Population<TGene>) {
         let codex = self.codex();
         let fitness_fn = self.fitness_fn();
+        let optimize = self.Optimize();
 
         for idx in 0..population.len() {
             let individual = population.get_mut(idx);
@@ -40,7 +47,7 @@ where
             }
         }
 
-        population.sort();
+        optimize.sort(population);
     }
 
     pub fn select_survivors(&self, population: &Population<TGene>) -> Population<TGene> {
@@ -64,10 +71,25 @@ where
         alterer.alter(population);
     }
 
-    pub fn audit(&self, output: &mut EngineOutput<TGene, T>) {
-        output.population.sort();
+    pub fn recombine(&self,
+        output: &mut EngineOutput<TGene, T>, 
+        survivors: Population<TGene>,
+        offspring: Population<TGene>
+    ) 
+    {
+        let optimize = self.Optimize();
+        let codex = self.codex();
+        
+        let mut newPopulation = survivors
+            .into_iter()
+            .chain(offspring.into_iter())
+            .collect::<Population<TGene>>();
+
+        optimize.sort(&mut newPopulation);
+
+        output.population = newPopulation;
+        output.best = codex.decode(&output.population.get(0).genotype());
         output.index += 1;
-        output.best = self.codex().decode(&output.population.get(0).genotype());
     }
 
     pub fn offspring_count(&self) -> usize {
@@ -89,6 +111,10 @@ where
     pub fn population(&self) -> &Population<TGene> {
         self.params.population.as_ref().unwrap()
     }
+
+    pub fn Optimize(&self) -> &Optimize {
+        &self.params.optimize
+    }
 }
 
 impl<TGene, T> Engine<TGene, T> for GeneticEngine<TGene, T>
@@ -108,16 +134,13 @@ where
         loop {
             self.evaluate(&mut output.population);
 
-            let suvivors = self.select_survivors(&output.population);
-
+            let survivors = self.select_survivors(&output.population);
             let mut offspring = self.select_offspring(&output.population);
 
             self.alter(&mut offspring);
             self.evaluate(&mut offspring);
 
-            output.population.replace(suvivors.into_iter().chain(offspring.into_iter()).collect());
-            
-            self.audit(&mut output);
+            self.recombine(&mut output, survivors, offspring);
 
             if limit(&output) {
                 break;

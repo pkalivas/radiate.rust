@@ -15,8 +15,8 @@ use engines::score::Score;
 fn main() {
     let now = std::time::Instant::now();
 
-    // run_min_sum();
-    run_string_evolve("Chicago, IL");
+    run_min_sum();
+    // run_string_evolve("Chicago, IL");
 
     println!("Elapsed: {:?}", now.elapsed());
 }
@@ -24,20 +24,17 @@ fn main() {
 fn run_string_evolve(target: &'static str) {
     let codex = get_char_codex(1, target.len());
 
-    let engine = GeneticEngine::builder()
+    let engine = GeneticEngine::from_codex(codex)
         .population_size(100)
-        .offspring_fraction(0.8)
-        .codex(codex)
         .alterers(vec![
             Alterer::Mutator(0.001),
             Alterer::MultiPointCrossover(0.5, 2),
         ])
         .fitness_fn(|genotype: &String| {
             Score::from_usize(genotype.chars().zip(target.chars()).fold(
-                target.len(),
-                |acc, (geno, targ)| {
+                0, |acc, (geno, targ)| {
                     if geno == targ {
-                        acc - 1
+                        acc + 1
                     } else {
                         acc
                     }
@@ -48,32 +45,35 @@ fn run_string_evolve(target: &'static str) {
 
     let result = engine.fit(|output| {
         println!("[ {:?} ]: {:?}", output.index, output.best);
-        output.score() == 0_f32
+        output.score() == target.len() as f32
     });
 
     println!("{:?}", result);
 }
 
 fn run_min_sum() {
-    // let engine = GeneticEngine::builder()
-    //     .population_size(1000)
-    //     .offspring_fraction(0.8)
-    //     .codex(get_int_codex(1, 10, 0, 100))
-    //     .alterers(vec![
-    //         Box::new(UniformCrossover::new(0.5)),
-    //         Box::new(Mutator::new(0.001)),
-    //     ])
-    //     .fitness_fn(|genotype: &Vec<Vec<i32>>| {
-    //         let mut sum = 0;
-    //         for chromosome in genotype {
-    //             for gene in chromosome {
-    //                 sum += gene;
-    //             }
-    //         }
+    let codex = get_int_codex(1, 10, 0, 100);
 
-    //         Score::from_int(sum)
-    //     })
-    //     .build();
+    let engine = GeneticEngine::from_codex(codex)
+        .population_size(1000)
+        .minimizing()
+        .alterers(vec![
+            Alterer::Mutator(0.001),
+            Alterer::MultiPointCrossover(0.5, 2),
+        ])
+        .fitness_fn(|genotype: &Vec<Vec<i32>>| {
+            Score::from_int(genotype.iter().fold(0, |acc, chromosome| {
+                acc + chromosome.iter().fold(0, |acc, gene| acc + gene)
+            }))
+        })
+        .build();
+
+    let result = engine.fit(|output| {
+        println!("[ {:?} ]: {:?}", output.index, output.best);
+        output.score() == 0.0
+    });
+
+    println!("{:?}", result);
 }
 
 fn get_char_codex(num_chromosomes: usize, num_genes: usize) -> Codex<CharGene, String> {
