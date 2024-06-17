@@ -17,7 +17,7 @@ fn main() {
     let now = std::time::Instant::now();
 
     // run_min_sum();
-    run_string_evolve("Chicago, IL");
+    run_string_evolve("Chicago, IL - 60657");
 
     println!("Elapsed: {:?}", now.elapsed());
 }

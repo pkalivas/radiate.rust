@@ -6,6 +6,7 @@ use crate::engines::genetic_engine_params::GeneticEngineParams;
 use crate::engines::genome::genes::gene::Gene;
 use crate::engines::genome::population::Population;
 use crate::engines::optimize::Optimize;
+use crate::engines::schema::timer::Timer;
 use crate::engines::score::Score;
 
 pub struct GeneticEngine<TGene, T>
@@ -97,40 +98,38 @@ where
         (self.params.population_size as f32 * self.params.offspring_fraction) as usize
     }
 
-    pub fn surivor_count(&self) -> usize {
-        self.params.population_size as usize - self.offspring_count()
-    }
+    pub fn surivor_count(&self) -> usize { self.params.population_size - self.offspring_count() }
 
-    pub fn codex(&self) -> &Codex<TGene, T> {
-        self.params.codex.as_ref().unwrap()
-    }
+    pub fn codex(&self) -> &Codex<TGene, T> { self.params.codex.as_ref().unwrap() }
 
-    pub fn fitness_fn(&self) -> &dyn Fn(&T) -> Score {
-        self.params.fitness_fn.as_ref().unwrap()
-    }
+    pub fn fitness_fn(&self) -> &dyn Fn(&T) -> Score { self.params.fitness_fn.as_ref().unwrap() }
 
-    pub fn population(&self) -> &Population<TGene> {
-        self.params.population.as_ref().unwrap()
-    }
+    pub fn population(&self) -> &Population<TGene> { self.params.population.as_ref().unwrap() }
 
-    pub fn optimize(&self) -> &Optimize {
-        &self.params.optimize
-    }
+    pub fn optimize(&self) -> &Optimize { &self.params.optimize }
 }
 
 impl<TGene, T> Engine<TGene, T> for GeneticEngine<TGene, T>
 where
     TGene: Gene<TGene>,
+    T: Clone,
 {
+    fn start(&self) -> EngineOutput<TGene, T> {
+        let population = self.population();
+
+        EngineOutput {
+            population: population.clone(),
+            best: self.codex().decode(&population.get(0).genotype()),
+            index: 0,
+            timer: Timer::new(),
+        }
+    }
+
     fn fit<F>(&self, limit: F) -> EngineOutput<TGene, T>
     where
         F: Fn(&EngineOutput<TGene, T>) -> bool,
     {
-        let mut output = EngineOutput {
-            population: self.population().clone(),
-            best: self.codex().decode(&self.population().get(0).genotype()),
-            index: 0,
-        };
+        let mut output = self.start();
 
         loop {
             self.evaluate(&mut output.population);
@@ -147,6 +146,6 @@ where
             }
         }
 
-        output
+        self.stop(&mut output)
     }
 }

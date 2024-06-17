@@ -25,19 +25,19 @@ impl Score {
         }
     }
 
-    pub fn to_float(&self) -> f32 {
+    pub fn as_float(&self) -> f32 {
         self.value
     }
 
-    pub fn to_int(&self) -> i32 {
+    pub fn as_int(&self) -> i32 {
         self.value as i32
     }
 
-    pub fn to_string(&self) -> String {
+    pub fn as_string(&self) -> String {
         self.value.to_string()
     }
 
-    pub fn to_usize(&self) -> usize {
+    pub fn as_usize(&self) -> usize {
         self.value as usize
     }
 }

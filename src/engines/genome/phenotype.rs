@@ -42,7 +42,10 @@ where
     fn clone(&self) -> Self {
         Phenotype {
             genotype: self.genotype.clone(),
-            score: self.score.clone(),
+            score: match &self.score {
+                Some(score) => Some(score.clone()),
+                None => None,
+            },
         }
     }
 }
