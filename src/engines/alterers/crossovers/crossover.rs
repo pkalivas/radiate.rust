@@ -8,8 +8,6 @@ pub trait Crossover<TGene>
 where
     TGene: Gene<TGene>,
 {
-    fn crossover_rate(&self) -> f32;
-
     fn cross(
         &self,
         population: &mut Population<TGene>,

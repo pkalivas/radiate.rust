@@ -4,10 +4,7 @@ use crate::engines::genome::genes::gene::Gene;
 use crate::engines::genome::phenotype::Phenotype;
 use crate::engines::genome::population::Population;
 use crate::engines::score::Score;
-use crate::engines::alterers::alter::{AlterWrap, Alterer};
-use crate::engines::alterers::uniform_crossover::UniformCrossover;
-use crate::engines::alterers::mutator::Mutator;
-
+use crate::engines::alterers::alter::Alterer;
 use super::alterers::composite_alterer::CompositeAlterer;
 
 
@@ -18,7 +15,6 @@ where
     pub population_size: usize,
     pub max_phenotype_age: i32,
     pub offspring_fraction: f32,
-    // pub alterers: Option<Vec<Box<dyn Alter<TGene>>>>,
     pub alterer: Option<CompositeAlterer<TGene>>,
     pub codex: Option<Codex<TGene, T>>,
     pub population: Option<Population<TGene>>,
