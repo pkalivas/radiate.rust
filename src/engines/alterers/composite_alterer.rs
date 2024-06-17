@@ -1,3 +1,5 @@
+use rand::Rng;
+
 use crate::engines::genome::genes::gene::Gene;
 use crate::engines::genome::phenotype::Phenotype;
 use crate::engines::genome::population::Population;
@@ -6,6 +8,7 @@ use crate::engines::alterers::mutators::mutator::Mutator;
 use crate::engines::alterers::crossovers::uniform_crossover::UniformCrossover;
 use crate::engines::alterers::crossovers::multipoint_crossover::MultiPointCrossover;
 use crate::engines::optimize::Optimize;
+use crate::engines::schema::subset;
 
 pub struct CompositeAlterer<TGene>
 where
@@ -85,18 +88,26 @@ where
             };
             match alterer.crossover {
                 Some(ref crossover) => {
-                    let mut parent_indexes = Vec::new();
-                    for _ in 0..2 {
-                        parent_indexes.push(rand::random::<usize>() % population.len());
-                    }
-                    
-                    if parent_indexes[0] == parent_indexes[1] {
-                        parent_indexes[1] = (parent_indexes[1] + 1) % population.len();
-                    }
+                    let mut random = rand::thread_rng();
 
-                    parent_indexes.sort();
+                    for i in 0..population.len() {
+                        if rand::random::<f32>() < alterer.rate {
+                            // let mut parent_indexes = Vec::new();
+                            // for _ in 0..2 {
+                            //     parent_indexes.push(rand::thread_rng().gen_range(0..population.len() as i32));
+                            // }
+                            
+                            // if parent_indexes[0] == parent_indexes[1] {
+                            //     parent_indexes[1] = (parent_indexes[1] + 1) % population.len() as i32;
+                            // }
+        
+                            // parent_indexes.sort();
 
-                    crossover.cross(population, &parent_indexes, alterer.rate);
+                            // crossover.cross(population, &parent_indexes, alterer.rate);
+                            let parent_indexes = subset::individual_indexes(&mut random, i, population.len(), 2);
+                            crossover.cross(population, &parent_indexes, alterer.rate);
+                        }
+                    }
                 },
                 None => (),
             };

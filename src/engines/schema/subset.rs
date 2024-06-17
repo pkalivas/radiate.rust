@@ -1,5 +1,15 @@
 use rand::{rngs::ThreadRng, Rng};
 
+pub fn individual_indexes(random: &mut ThreadRng, index: usize, size: usize, order: usize) -> Vec<i32> {
+    let mut sub_set = subset(size as usize, order as usize, random);
+    let mut i = 0;
+    while sub_set[i] < index as i32 && i < sub_set.len() - 1 {
+        i += 1;
+    }
+    
+    sub_set[i] = index as i32;
+    sub_set 
+}
 
 pub fn subset(n: usize, k: usize, random: &mut ThreadRng) -> Vec<i32> {
     if k <= 0 {

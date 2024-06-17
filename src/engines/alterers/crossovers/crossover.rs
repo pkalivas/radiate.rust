@@ -11,16 +11,19 @@ where
     fn cross(
         &self,
         population: &mut Population<TGene>,
-        parent_indexes: &[usize],
+        parent_indexes: &[i32],
         probability: f32,
     ) {
-        let mut geno_one = population.get(parent_indexes[0]).genotype().clone();
-        let mut geno_two = population.get(parent_indexes[1]).genotype().clone();
+        let index_one = parent_indexes[0] as usize;
+        let index_two = parent_indexes[1] as usize;
+
+        let mut geno_one = population.get(index_one).genotype().clone();
+        let mut geno_two = population.get(index_two).genotype().clone();
 
         self.cross_genotypes(&mut geno_one, &mut geno_two, probability);
 
-        population.set(parent_indexes[0], Phenotype::from_genotype(geno_one));
-        population.set(parent_indexes[1], Phenotype::from_genotype(geno_two));
+        population.set(index_one, Phenotype::from_genotype(geno_one));
+        population.set(index_two, Phenotype::from_genotype(geno_two));
     }
 
     fn cross_genotypes(
