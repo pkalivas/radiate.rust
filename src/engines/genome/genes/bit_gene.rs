@@ -1,5 +1,4 @@
-use super::gene::Gene;
-
+use super::gene::{Allele, Gene};
 
 pub struct BitGene {
     allele: bool,
@@ -24,6 +23,12 @@ impl Gene<BitGene> for BitGene {
         BitGene {
             allele: gene.allele,
         }
+    }
+}
+
+impl Allele<bool> for BitGene {
+    fn allele(&self) -> &bool {
+        &self.allele
     }
 }
 

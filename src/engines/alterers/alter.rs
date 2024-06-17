@@ -24,4 +24,5 @@ pub enum Alterer {
     Mutator(f32),
     UniformCrossover(f32),
     MultiPointCrossover(f32, usize),
+    SinglePointCrossover(f32)
 }

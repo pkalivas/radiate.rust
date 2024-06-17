@@ -5,8 +5,8 @@ use crate::engines::genome::phenotype::Phenotype;
 use crate::engines::genome::population::Population;
 use crate::engines::score::Score;
 use crate::engines::alterers::alter::Alterer;
-use super::alterers::composite_alterer::CompositeAlterer;
-use super::optimize::Optimize;
+use crate::engines::alterers::composite_alterer::CompositeAlterer;
+use crate::engines::optimize::Optimize;
 
 
 pub struct GeneticEngineParams<TGene, T>
@@ -92,7 +92,7 @@ where
     }
 
     fn build_population(&mut self) {
-        let population = match &self.population {
+        self.population = match &self.population {
             None => Some(match self.codex.as_ref() {
                 Some(codex) => Population::from_func(self.population_size, || {
                     Phenotype::from_genotype(codex.encode())
@@ -101,8 +101,6 @@ where
             }),
             Some(pop) => Some(pop.clone()),
         };
-
-        self.population = population;
     }
 }
 

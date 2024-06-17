@@ -35,6 +35,13 @@ where
                         crossover: Some(Box::new(UniformCrossover)),
                     });
                 },
+                Alterer::SinglePointCrossover(rate) => {
+                    alterer_wraps.push(AlterWrap {
+                        rate,
+                        mutator: None,
+                        crossover: Some(Box::new(MultiPointCrossover::new(1))),
+                    });
+                },
                 Alterer::MultiPointCrossover(rate, num_points) => {
                     alterer_wraps.push(AlterWrap {
                         rate,

@@ -13,19 +13,6 @@ impl<TGene> Population<TGene>
 where
     TGene: Gene<TGene>,
 {
-    pub fn sort(&mut self) {
-        self.individuals.sort_by(|a, b| a.partial_cmp(b).unwrap());
-        self.is_sorted = true;
-    }
-
-    pub fn sort_by<F>(&mut self, f: F)
-    where
-        F: FnMut(&Phenotype<TGene>, &Phenotype<TGene>) -> std::cmp::Ordering,
-    {
-        self.individuals.sort_by(f);
-        self.is_sorted = true;
-    }
-
     pub fn get(&self, index: usize) -> &Phenotype<TGene> {
         self.individuals.get(index).expect("Index out of bounds")
     }
@@ -55,9 +42,16 @@ where
         self.individuals.len()
     }
 
-    pub fn replace(&mut self, individuals: Vec<Phenotype<TGene>>) {
-        self.individuals = individuals;
-        self.is_sorted = false;
+    pub fn sort_by<F>(&mut self, f: F)
+    where
+        F: FnMut(&Phenotype<TGene>, &Phenotype<TGene>) -> std::cmp::Ordering,
+    {
+        if self.is_sorted {
+            return;
+        }
+        
+        self.individuals.sort_by(f);
+        self.is_sorted = true;
     }
 
     pub fn from_func<F>(size: usize, f: F) -> Self

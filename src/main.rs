@@ -29,7 +29,7 @@ fn run_string_evolve(target: &'static str) {
         .population_size(100)
         .alterers(vec![
             Alterer::Mutator(0.001),
-            Alterer::MultiPointCrossover(0.5, 2),
+            Alterer::MultiPointCrossover(0.7, 2),
         ])
         .fitness_fn(|genotype: &String| {
             Score::from_usize(genotype.chars().zip(target.chars()).fold(

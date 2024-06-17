@@ -6,8 +6,8 @@ use crate::engines::genetic_engine_params::GeneticEngineParams;
 use crate::engines::genome::genes::gene::Gene;
 use crate::engines::genome::population::Population;
 use crate::engines::score::Score;
+use crate::engines::optimize::Optimize;
 
-use super::optimize::Optimize;
 
 pub struct GeneticEngine<TGene, T>
 where

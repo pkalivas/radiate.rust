@@ -131,11 +131,7 @@ fn invert(n: i32, a: &mut Vec<i32>) {
             v -= 1;
             j = vi;
         }
-        // while (vi = index_of(&ac, j, v)) != -1 {
-        //     v -= 1;
-        //     j = vi;
-        // }
-
+        
         a[i as usize] = v;
         v -= 1;
     }
