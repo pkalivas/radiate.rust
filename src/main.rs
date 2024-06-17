@@ -42,7 +42,7 @@ fn run_string_evolve(target: &'static str) {
             })))
         .build();
 
-    let result = engine.run();
+    let result = engine.fit();
 
     println!("{:?}", result.best);
 

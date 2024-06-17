@@ -69,7 +69,7 @@ impl<TGene, T> GeneticEngine<TGene, T>
 impl<TGene, T> Engine<TGene, T> for GeneticEngine<TGene, T>
     where TGene : Gene<TGene>
 {
-    fn run(&self) -> EngineOutput<TGene, T> {
+    fn fit(&self) -> EngineOutput<TGene, T> {
         let mut population = self.population().clone();
 
         for _ in 0..200 {

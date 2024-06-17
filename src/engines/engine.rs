@@ -5,7 +5,7 @@ use super::genome::genes::gene::Gene;
 pub trait Engine<TGene, T> 
     where TGene : Gene<TGene>
 {
-    fn run(&self) -> EngineOutput<TGene, T>;
+    fn fit(&self) -> EngineOutput<TGene, T>;
 }
 
 pub struct EngineOutput<TGene, T>
