@@ -5,9 +5,8 @@ use crate::engines::engine::EngineOutput;
 use crate::engines::genetic_engine_params::GeneticEngineParams;
 use crate::engines::genome::genes::gene::Gene;
 use crate::engines::genome::population::Population;
-use crate::engines::score::Score;
 use crate::engines::optimize::Optimize;
-
+use crate::engines::score::Score;
 
 pub struct GeneticEngine<TGene, T>
 where
@@ -73,15 +72,15 @@ where
         alterer.alter(population, optimize);
     }
 
-    pub fn recombine(&self,
-        output: &mut EngineOutput<TGene, T>, 
+    pub fn recombine(
+        &self,
+        output: &mut EngineOutput<TGene, T>,
         survivors: Population<TGene>,
-        offspring: Population<TGene>
-    ) 
-    {
+        offspring: Population<TGene>,
+    ) {
         let optimize = self.optimize();
         let codex = self.codex();
-        
+
         let mut new_population = survivors
             .into_iter()
             .chain(offspring.into_iter())
@@ -124,8 +123,8 @@ where
     TGene: Gene<TGene>,
 {
     fn fit<F>(&self, limit: F) -> EngineOutput<TGene, T>
-    where 
-        F: Fn(&EngineOutput<TGene, T>) -> bool 
+    where
+        F: Fn(&EngineOutput<TGene, T>) -> bool,
     {
         let mut output = EngineOutput {
             population: self.population().clone(),

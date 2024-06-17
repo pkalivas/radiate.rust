@@ -1,13 +1,12 @@
+use crate::engines::alterers::alter::Alterer;
+use crate::engines::alterers::composite_alterer::CompositeAlterer;
 use crate::engines::codex::Codex;
 use crate::engines::genetic_engine::GeneticEngine;
 use crate::engines::genome::genes::gene::Gene;
 use crate::engines::genome::phenotype::Phenotype;
 use crate::engines::genome::population::Population;
-use crate::engines::score::Score;
-use crate::engines::alterers::alter::Alterer;
-use crate::engines::alterers::composite_alterer::CompositeAlterer;
 use crate::engines::optimize::Optimize;
-
+use crate::engines::score::Score;
 
 pub struct GeneticEngineParams<TGene, T>
 where
@@ -103,4 +102,3 @@ where
         };
     }
 }
-
