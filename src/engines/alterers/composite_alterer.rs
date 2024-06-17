@@ -1,5 +1,3 @@
-use rand::Rng;
-
 use crate::engines::genome::genes::gene::Gene;
 use crate::engines::genome::phenotype::Phenotype;
 use crate::engines::genome::population::Population;
@@ -92,18 +90,6 @@ where
 
                     for i in 0..population.len() {
                         if rand::random::<f32>() < alterer.rate {
-                            // let mut parent_indexes = Vec::new();
-                            // for _ in 0..2 {
-                            //     parent_indexes.push(rand::thread_rng().gen_range(0..population.len() as i32));
-                            // }
-                            
-                            // if parent_indexes[0] == parent_indexes[1] {
-                            //     parent_indexes[1] = (parent_indexes[1] + 1) % population.len() as i32;
-                            // }
-        
-                            // parent_indexes.sort();
-
-                            // crossover.cross(population, &parent_indexes, alterer.rate);
                             let parent_indexes = subset::individual_indexes(&mut random, i, population.len(), 2);
                             crossover.cross(population, &parent_indexes, alterer.rate);
                         }
