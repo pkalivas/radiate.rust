@@ -16,7 +16,7 @@ use engines::alterers::uniform_crossover::UniformCrossover;
 
 fn main() {
     // run_min_sum();
-    run_string_evolve("Chicago, Illinois");
+    run_string_evolve("Chicago, IL");
 }
 
 fn run_string_evolve(target: &'static str) {

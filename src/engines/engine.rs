@@ -7,3 +7,12 @@ pub trait Engine<TGene>
 {
     fn run<T>(&self, limit: T) where T: Fn(&Population<TGene>) -> bool;
 }
+
+pub struct EngineOutput<TGene, T>
+    where TGene : Gene<TGene>
+{
+    pub population: Population<TGene>,
+    pub best: T,
+    pub best_score: f32,
+    pub index: usize
+}

@@ -50,9 +50,7 @@ impl<TGene, T> GeneticEngine<TGene, T>
 }
 
 impl<TGene, T> Engine<TGene> for GeneticEngine<TGene, T>
-    where 
-        TGene : Gene<TGene>,
-        T : std::fmt::Debug
+    where TGene : Gene<TGene>,
 {
     fn run<TLimit>(&self, limit: TLimit)
         where TLimit: Fn(&Population<TGene>) -> bool
@@ -60,7 +58,6 @@ impl<TGene, T> Engine<TGene> for GeneticEngine<TGene, T>
         let mut population = self.population().clone();
         
         loop {
-
             for idx in 0..population.len() {
                 let individual = population.get_mut(idx);
                 if !individual.score.is_some() {
@@ -76,11 +73,6 @@ impl<TGene, T> Engine<TGene> for GeneticEngine<TGene, T>
             if limit(&population) {
                 break;
             }
-
-            // let best_phenotype = population.get(0);
-            // let decoded = self.codex().decode(&best_phenotype.genotype);
-
-            // println!("{:?}: {:?}", i, decoded);
 
             let survivors = population.iter()
                 .take(self.surivor_count())
