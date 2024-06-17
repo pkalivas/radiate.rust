@@ -1,7 +1,7 @@
 mod engines;
 
 use engines::codex::Codex;
-use engines::engine::Engine;
+use engines::engine::{Engine, EngineOutput};
 use engines::genetic_engine::GeneticEngine;
 use engines::genome::genes::char_gene::CharGene;
 use engines::genome::genes::gene::Allele;
@@ -42,12 +42,23 @@ fn run_string_evolve(target: &'static str) {
             })))
         .build();
 
-    engine.run(|pop: &Population<CharGene>| {
-        let best = pop.get(0).genotype();
-        let best_str = codex_2.decode(best);
-        println!("{}", best_str);
-        best_str == target
-    });
+    let result = engine.run();
+
+    println!("{:?}", result.best);
+
+    // let result: EngineOutput<CharGene, String> = engine.into_iter()
+    //     .take(1000)
+    //     .min_by(|a, b| b.score().partial_cmp(&a.score()).unwrap())
+    //     .unwrap();
+
+    // println!("{:?}", result.best);
+
+    // engine.run(|pop: &Population<CharGene>| {
+    //     let best = pop.get(0).genotype();
+    //     let best_str = codex_2.decode(best);
+    //     println!("{}", best_str);
+    //     best_str == target
+    // });
 }
 
 fn run_min_sum() {
@@ -71,14 +82,15 @@ fn run_min_sum() {
         })
         .build();
 
-    engine.run(|pop: &Population<IntGene>| {
-        let best = pop.get(0).genotype();
-        let best_sum = best.iter().fold(0, |acc, chromosome| {
-            acc + chromosome.iter().fold(0, |acc, gene| acc + gene.allele())
-        });
-        println!("Best: {}", best_sum);
-        best_sum != 0
-    });
+    // engine.run(|pop: &Population<IntGene>| {
+    //     let best = pop.get(0).genotype();
+    //     let best_sum = best.iter().fold(0, |acc, chromosome| {
+    //         acc + chromosome.iter().fold(0, |acc, gene| acc + gene.allele())
+    //     });
+    //     println!("Best: {}", best_sum);
+    //     best_sum != 0
+    // });
+
 }
 
 fn get_char_codex(num_chromosomes: usize, num_genes: usize) -> Codex<CharGene, String> {

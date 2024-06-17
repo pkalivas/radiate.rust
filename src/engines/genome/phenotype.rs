@@ -22,6 +22,10 @@ impl<TGene> Phenotype<TGene>
             score: None,
         }
     }
+
+    pub fn score(&self) -> &Option<Score> {
+        &self.score
+    }
 }
 
 impl<TGene> Clone for Phenotype<TGene>

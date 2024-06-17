@@ -1,3 +1,5 @@
+use std::array::IntoIter;
+
 use crate::engines::genome::genes::gene::Gene;
 use crate::engines::genetic_engine_params::GeneticEngineParams;
 use crate::engines::engine::Engine;
@@ -5,6 +7,7 @@ use crate::engines::genome::population::Population;
 use crate::engines::codex::Codex;
 use crate::engines::score::Score;
 use crate::engines::alterers::alter::Alter;
+use crate::engines::engine::EngineOutput;
 
 
 pub struct GeneticEngine<TGene, T> 
@@ -22,6 +25,20 @@ impl<TGene, T> GeneticEngine<TGene, T>
 
     pub fn builder() -> GeneticEngineParams<TGene, T> {
         GeneticEngineParams::new()
+    }
+
+    pub fn evaluate(&self, population: &mut Population<TGene>) {
+        for idx in 0..population.len() {
+            let individual = population.get_mut(idx);
+            if !individual.score.is_some() {
+                let decoded = self.codex().decode(individual.genotype());
+                let score = self.fitness_fn()(&decoded);
+
+                individual.score = Some(score);
+            }
+        }
+
+        population.sort();
     }
 
     pub fn offspring_count(&self) -> usize {
@@ -49,48 +66,97 @@ impl<TGene, T> GeneticEngine<TGene, T>
     }
 }
 
-impl<TGene, T> Engine<TGene> for GeneticEngine<TGene, T>
-    where TGene : Gene<TGene>,
+impl<TGene, T> Engine<TGene, T> for GeneticEngine<TGene, T>
+    where TGene : Gene<TGene>
 {
-    fn run<TLimit>(&self, limit: TLimit)
-        where TLimit: Fn(&Population<TGene>) -> bool
-    {
+    fn run(&self) -> EngineOutput<TGene, T> {
         let mut population = self.population().clone();
-        
-        loop {
-            for idx in 0..population.len() {
-                let individual = population.get_mut(idx);
-                if !individual.score.is_some() {
-                    let decoded = self.codex().decode(individual.genotype());
-                    let score = self.fitness_fn()(&decoded);
 
-                    individual.score = Some(score);
-                }
-            }
+        for _ in 0..200 {
+            self.evaluate(&mut population);
 
-            population.sort();
-
-            if limit(&population) {
-                break;
-            }
-
-            let survivors = population.iter()
+            let suvivors = population.iter()
                 .take(self.surivor_count())
                 .map(|individual| individual.clone())
                 .collect::<Population<TGene>>();
-
+    
             let mut offspring = population.iter()
                 .take(self.offspring_count())
                 .map(|individual| individual.clone())
                 .collect::<Population<TGene>>();
-
+    
             for alterer in self.alters() {
                 alterer.alter(&mut offspring);
             }
-
-            population = Population::from_vec(survivors.into_iter()
+    
+            population = Population::from_vec(suvivors.into_iter()
                 .chain(offspring.into_iter())
                 .collect());
         }
+        
+        let best = self.codex().decode(&population.get(0).genotype()); 
+
+        EngineOutput {
+            population: population.clone(),
+            best,
+            index: 0
+        }
     }
 }
+
+
+
+
+// impl<TGene, T> std::iter::Iterator for GeneticEngine<TGene, T>
+//     where TGene : Gene<TGene>
+// {
+//     type Item = EngineOutput<TGene, T>;
+
+//     fn next(&mut self) -> Option<Self::Item> {
+//         let output = EngineOutput {
+//             population: self.population().clone(),
+//             best: self.codex().decode(&self.population().get(0).genotype()),
+//             index: 0
+//         };
+
+//         Some(self.run(output))
+//     }
+// }
+
+// let mut population = self.population().clone();
+        
+// loop {
+//     for idx in 0..population.len() {
+//         let individual = population.get_mut(idx);
+//         if !individual.score.is_some() {
+//             let decoded = self.codex().decode(individual.genotype());
+//             let score = self.fitness_fn()(&decoded);
+
+//             individual.score = Some(score);
+//         }
+//     }
+
+//     population.sort();
+
+//     if limit(&population) {
+//         break;
+//     }
+
+//     let survivors = population.iter()
+//         .take(self.surivor_count())
+//         .map(|individual| individual.clone())
+//         .collect::<Population<TGene>>();
+
+//     let mut offspring = population.iter()
+//         .take(self.offspring_count())
+//         .map(|individual| individual.clone())
+//         .collect::<Population<TGene>>();
+
+//     for alterer in self.alters() {
+//         alterer.alter(&mut offspring);
+//     }
+
+//     population = Population::from_vec(survivors.into_iter()
+//         .chain(offspring.into_iter())
+//         .collect());
+// }

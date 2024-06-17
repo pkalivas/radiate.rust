@@ -2,10 +2,10 @@ use super::genome::population::Population;
 use super::genome::genes::gene::Gene;
 
 
-pub trait Engine<TGene> 
+pub trait Engine<TGene, T> 
     where TGene : Gene<TGene>
 {
-    fn run<T>(&self, limit: T) where T: Fn(&Population<TGene>) -> bool;
+    fn run(&self) -> EngineOutput<TGene, T>;
 }
 
 pub struct EngineOutput<TGene, T>
@@ -13,6 +13,16 @@ pub struct EngineOutput<TGene, T>
 {
     pub population: Population<TGene>,
     pub best: T,
-    pub best_score: f32,
     pub index: usize
+}
+
+impl<TGene, T> EngineOutput<TGene, T>
+    where TGene : Gene<TGene>
+{
+    pub fn score(&self) -> f32 {
+        match self.population.get(0).score() {
+            Some(score) => score.to_float(),
+            None => 0.0
+        }
+    }
 }
