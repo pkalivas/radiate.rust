@@ -12,22 +12,18 @@ use engines::genome::genes::gene::Allele;
 use engines::genome::genes::int_gene::IntGene;
 use engines::genome::genotype::Genotype;
 use engines::score::Score;
+use crate::engines::problem::Problem;
 
 fn main() {
-    let now = std::time::Instant::now();
-
     // run_min_sum();
-    run_string_evolve("Chicago, IL - 60657");
-
-    println!("Elapsed: {:?}", now.elapsed());
+    run_string_evolve("Chicago, IL");
 }
 
 fn run_string_evolve(target: &'static str) {
     let codex = get_char_codex(1, target.len());
 
-    let engine =
-        GeneticEngine::from_codex(codex)
-            .population_size(1000)
+    let engine = GeneticEngine::from_codex(codex)
+            .population_size(100)
             .alterers(vec![
                 Alterer::Mutator(0.001),
                 Alterer::UniformCrossover(0.5),
