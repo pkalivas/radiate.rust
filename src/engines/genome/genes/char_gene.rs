@@ -1,4 +1,5 @@
-use crate::engines::genome::genes::gene::{Allele, Gene};
+use super::gene::{Allele, Gene};
+
 
 const ALPHABET: &str = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!\"$%&/()=?`{[]}\\+~*#';.:,-_<>|@^' ";
 

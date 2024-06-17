@@ -1,4 +1,4 @@
-use crate::engines::genome::genes::gene::Gene;
+use super::genes::gene::Gene;
 
 pub struct Chromosome<TGene>
 where

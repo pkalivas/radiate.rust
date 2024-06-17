@@ -1,5 +1,5 @@
-use crate::engines::genome::genes::gene::Gene;
-use crate::engines::genome::phenotype::Phenotype;
+use super::{genes::gene::Gene, phenotype::Phenotype};
+
 
 pub struct Population<TGene>
 where

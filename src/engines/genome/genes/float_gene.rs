@@ -1,6 +1,6 @@
 use rand::random;
 
-use crate::engines::genome::genes::gene::{Allele, BoundGene, Gene, NumericGene};
+use super::gene::{Allele, BoundGene, Gene, NumericGene};
 
 pub struct FloatGene {
     pub allele: f32,

@@ -5,6 +5,7 @@ use engines::codex::Codex;
 use engines::engine::Engine;
 use engines::genetic_engine::GeneticEngine;
 use engines::genome::chromosome::Chromosome;
+use engines::genome::genes::bit_gene::BitGene;
 use engines::genome::genes::char_gene::CharGene;
 use engines::genome::genes::float_gene::FloatGene;
 use engines::genome::genes::gene::Allele;
@@ -15,8 +16,8 @@ use engines::score::Score;
 fn main() {
     let now = std::time::Instant::now();
 
-    run_min_sum();
-    // run_string_evolve("Chicago, IL");
+    // run_min_sum();
+    run_string_evolve("Chicago, IL");
 
     println!("Elapsed: {:?}", now.elapsed());
 }
@@ -49,6 +50,7 @@ fn run_string_evolve(target: &'static str) {
     });
 
     println!("{:?}", result);
+    println!("{:?}", BitGene::new());
 }
 
 fn run_min_sum() {

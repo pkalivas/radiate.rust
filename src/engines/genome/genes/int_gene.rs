@@ -1,6 +1,6 @@
 use rand::Rng;
 
-use crate::engines::genome::genes::gene::{Allele, BoundGene, Gene, NumericGene};
+use super::gene::{Allele, BoundGene, Gene, NumericGene};
 
 pub struct IntGene {
     value: i32,

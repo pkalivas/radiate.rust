@@ -1,6 +1,7 @@
-use crate::engines::genome::genes::gene::Gene;
-use crate::engines::genome::genotype::Genotype;
 use crate::engines::score::Score;
+
+use super::{genes::gene::Gene, genotype::Genotype};
+
 
 pub struct Phenotype<TGene>
 where
