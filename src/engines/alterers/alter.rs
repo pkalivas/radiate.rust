@@ -1,14 +1,14 @@
 use crate::engines::genome::genes::gene::Gene;
 use crate::engines::genome::population::Population;
-
-use super::crossovers::crossover::Crossover;
-use super::mutators::mutate::Mutate;
+use crate::engines::alterers::crossovers::crossover::Crossover;
+use crate::engines::alterers::mutators::mutate::Mutate;
+use crate::engines::optimize::Optimize;
 
 pub trait Alter<TGene>
 where
     TGene: Gene<TGene>,
 {
-    fn alter(&self, population: &mut Population<TGene>);
+    fn alter(&self, population: &mut Population<TGene>, optimize: &Optimize);
 }
 
 pub struct AlterWrap<TGene>
@@ -20,6 +20,7 @@ where
     pub crossover: Option<Box<dyn Crossover<TGene>>>
 }
 
+#[allow(dead_code)]
 pub enum Alterer {
     Mutator(f32),
     UniformCrossover(f32),

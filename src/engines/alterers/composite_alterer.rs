@@ -5,6 +5,7 @@ use crate::engines::alterers::alter::{Alter, Alterer, AlterWrap};
 use crate::engines::alterers::mutators::mutator::Mutator;
 use crate::engines::alterers::crossovers::uniform_crossover::UniformCrossover;
 use crate::engines::alterers::crossovers::multipoint_crossover::MultiPointCrossover;
+use crate::engines::optimize::Optimize;
 
 pub struct CompositeAlterer<TGene>
 where
@@ -60,7 +61,9 @@ impl<TGene> Alter<TGene> for CompositeAlterer<TGene>
 where
     TGene: Gene<TGene>,
 {
-    fn alter(&self, population: &mut Population<TGene>) {
+    fn alter(&self, population: &mut Population<TGene>, optimize: &Optimize) {
+        optimize.sort(population);
+
         for alterer in self.alterers.iter() {
             match alterer.mutator {
                 Some(ref mutator) => {
@@ -86,9 +89,13 @@ where
                     for _ in 0..2 {
                         parent_indexes.push(rand::random::<usize>() % population.len());
                     }
-            
+                    
+                    if parent_indexes[0] == parent_indexes[1] {
+                        parent_indexes[1] = (parent_indexes[1] + 1) % population.len();
+                    }
+
                     parent_indexes.sort();
-            
+
                     crossover.cross(population, &parent_indexes, alterer.rate);
                 },
                 None => (),

@@ -49,7 +49,7 @@ where
         if self.is_sorted {
             return;
         }
-        
+
         self.individuals.sort_by(f);
         self.is_sorted = true;
     }
@@ -119,4 +119,3 @@ where
         write!(f, "]")
     }
 }
-

@@ -8,6 +8,8 @@ use crate::engines::genome::population::Population;
 use crate::engines::score::Score;
 use crate::engines::optimize::Optimize;
 
+use super::optimize;
+
 
 pub struct GeneticEngine<TGene, T>
 where
@@ -68,7 +70,9 @@ where
 
     pub fn alter(&self, population: &mut Population<TGene>) {
         let alterer = self.params.alterer.as_ref().unwrap();
-        alterer.alter(population);
+        let optimize = self.Optimize();
+
+        alterer.alter(population, optimize);
     }
 
     pub fn recombine(&self,
