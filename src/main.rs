@@ -64,6 +64,7 @@ fn run_min_sum() {
         .survivor_selector(Selector::Tournament(4))
         .alterers(vec![
             Alterer::SwapMutator(0.001),
+            Alterer::Mutator(1e-5),
             Alterer::UniformCrossover(0.5),
         ])
         .fitness_fn(|genotype: &Vec<Vec<i32>>| {

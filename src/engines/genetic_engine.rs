@@ -10,6 +10,7 @@ use crate::engines::schema::timer::Timer;
 use crate::engines::score::Score;
 
 use super::genome::phenotype::Phenotype;
+use super::optimize;
 use super::selectors::selector::Select;
 
 pub struct GeneticEngine<TGene, T>
@@ -85,24 +86,20 @@ where
         }
     }
 
-    pub fn recombine(
-        &self,
-        output: &mut EngineOutput<TGene, T>,
-        survivors: Population<TGene>,
-        offspring: Population<TGene>,
-    ) {
-        let optimize = self.optimize();
-        let codex = self.codex();
-
-        let mut new_population = survivors
+    pub fn recombine(&self, survivors: Population<TGene>, offspring: Population<TGene>) -> Population<TGene>{
+        survivors
             .into_iter()
             .chain(offspring.into_iter())
-            .collect::<Population<TGene>>();
+            .collect::<Population<TGene>>()
+    }
 
-        optimize.sort(&mut new_population);
+    pub fn audit(&self, output: &mut EngineOutput<TGene, T>, population: Population<TGene>) {
+        let codex = self.codex();
 
-        output.population = new_population;
-        output.best = codex.decode(&output.population.get(0).genotype());
+        let best = codex.decode(&population.get(0).genotype());
+
+        output.population = population;
+        output.best = best;
         output.index += 1;
     }
 
@@ -167,12 +164,15 @@ where
             let mut survivors = self.select_survivors(&output.population);
             let mut offspring = self.select_offspring(&output.population);
 
-            // self.filter(&mut survivors, output.index);
-            // self.filter(&mut offspring, output.index);
-
             self.alter(&mut offspring, output.index);
-            self.evaluate(&mut offspring);
-            self.recombine(&mut output, survivors, offspring);
+
+            self.filter(&mut survivors, output.index);
+            self.filter(&mut offspring, output.index);
+
+            let mut new_population = self.recombine(survivors, offspring);
+
+            self.evaluate(&mut new_population);
+            self.audit(&mut output, new_population);
 
             if limit(&output) {
                 break;
