@@ -1,7 +1,6 @@
 use crate::engines::alterers::alter::Alter;
 use crate::engines::codex::Codex;
 use crate::engines::engine::Engine;
-use crate::engines::engine::EngineOutput;
 use crate::engines::genetic_engine_params::GeneticEngineParams;
 use crate::engines::genome::genes::gene::Gene;
 use crate::engines::genome::population::Population;
@@ -9,20 +8,16 @@ use crate::engines::optimize::Optimize;
 use crate::engines::schema::timer::Timer;
 use crate::engines::score::Score;
 
+use super::engine_handle::EngineHandle;
 use super::genome::phenotype::Phenotype;
 use super::selectors::selector::Select;
 
-pub struct GeneticEngine<TGene, T>
-where
-    TGene: Gene<TGene>,
-{
+pub struct GeneticEngine<TGene: Gene<TGene>, T> {
     pub params: GeneticEngineParams<TGene, T>,
 }
 
-impl<TGene, T> GeneticEngine<TGene, T>
-where
-    TGene: Gene<TGene>,
-{
+impl<TGene: Gene<TGene>, T> GeneticEngine<TGene, T> {
+    
     pub fn new(params: GeneticEngineParams<TGene, T>) -> Self {
         GeneticEngine { params }
     }
@@ -35,13 +30,13 @@ where
         GeneticEngineParams::new().codex(codex)
     }
 
-    pub fn evaluate(&self, population: &mut Population<TGene>) {
+    pub fn evaluate(&self, handle: &mut EngineHandle<TGene, T>) {
         let codex = self.codex();
         let fitness_fn = self.fitness_fn();
         let optimize = self.optimize();
 
-        for idx in 0..population.len() {
-            let individual = population.get_mut(idx);
+        for idx in 0..handle.population.len() {
+            let individual = handle.population.get_mut(idx);
             if !individual.score().is_some() {
                 let decoded = codex.decode(individual.genotype());
                 let score = fitness_fn(&decoded);
@@ -50,7 +45,7 @@ where
             }
         }
 
-        optimize.sort(population);
+        optimize.sort(&mut handle.population);
     }
 
     pub fn select_survivors(&self, population: &Population<TGene>) -> Population<TGene> {
@@ -85,19 +80,18 @@ where
         }
     }
 
-    pub fn recombine(&self, survivors: Population<TGene>, offspring: Population<TGene>) -> Population<TGene>{
-        survivors
+    pub fn recombine(&self, handle: &mut EngineHandle<TGene, T>, survivors: Population<TGene>, offspring: Population<TGene>) {
+        handle.population = survivors
             .into_iter()
             .chain(offspring.into_iter())
-            .collect::<Population<TGene>>()
+            .collect::<Population<TGene>>();
     }
 
-    pub fn audit(&self, output: &mut EngineOutput<TGene, T>, population: Population<TGene>) {
+    pub fn audit(&self, output: &mut EngineHandle<TGene, T>) {
         let codex = self.codex();
 
-        let best = codex.decode(&population.get(0).genotype());
+        let best = codex.decode(&output.population.get(0).genotype());
 
-        output.population = population;
         output.best = best;
         output.index += 1;
     }
@@ -135,49 +129,42 @@ where
     }
 }
 
-impl<TGene, T> Engine<TGene, T> for GeneticEngine<TGene, T>
-where
-    TGene: Gene<TGene>,
-    T: Clone,
-{
-    fn start(&self) -> EngineOutput<TGene, T> {
+impl<TGene: Gene<TGene>, T: Clone> Engine<TGene, T> for GeneticEngine<TGene, T> {
+    fn fit<F: Fn(&EngineHandle<TGene, T>) -> bool>(&self, limit: F) -> EngineHandle<TGene, T> {
+        let mut handle = self.start();
+
+        loop {
+            self.evaluate(&mut handle);
+
+            let mut survivors = self.select_survivors(&handle.population);
+            let mut offspring = self.select_offspring(&handle.population);
+
+            self.alter(&mut offspring, handle.index);
+
+            self.filter(&mut survivors, handle.index);
+            self.filter(&mut offspring, handle.index);
+
+            self.recombine(&mut handle, survivors, offspring);
+
+            self.evaluate(&mut handle);
+            self.audit(&mut handle);
+
+            if limit(&handle) {
+                break;
+            }
+        }
+
+        self.stop(&mut handle)
+    }
+
+    fn start(&self) -> EngineHandle<TGene, T> {
         let population = self.population();
 
-        EngineOutput {
+        EngineHandle {
             population: population.clone(),
             best: self.codex().decode(&population.get(0).genotype()),
             index: 0,
             timer: Timer::new(),
         }
-    }
-
-    fn fit<F>(&self, limit: F) -> EngineOutput<TGene, T>
-    where
-        F: Fn(&EngineOutput<TGene, T>) -> bool,
-    {
-        let mut output = self.start();
-
-        loop {
-            self.evaluate(&mut output.population);
-
-            let mut survivors = self.select_survivors(&output.population);
-            let mut offspring = self.select_offspring(&output.population);
-
-            self.alter(&mut offspring, output.index);
-
-            self.filter(&mut survivors, output.index);
-            self.filter(&mut offspring, output.index);
-
-            let mut new_population = self.recombine(survivors, offspring);
-
-            self.evaluate(&mut new_population);
-            self.audit(&mut output, new_population);
-
-            if limit(&output) {
-                break;
-            }
-        }
-
-        self.stop(&mut output)
     }
 }

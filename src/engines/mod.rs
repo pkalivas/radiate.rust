@@ -5,7 +5,7 @@ pub mod genetic_engine;
 pub mod genetic_engine_params;
 pub mod genome;
 pub mod optimize;
-pub mod problem;
 pub mod schema;
 pub mod score;
 pub mod selectors;
+pub mod engine_handle;

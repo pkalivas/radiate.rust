@@ -14,16 +14,14 @@ use engines::genome::genotype::Genotype;
 use engines::score::Score;
 
 fn main() {
-    run_min_sum();
-    // run_string_evolve("Chicago, IL");
+    // run_min_sum();
+    run_string_evolve("Chicago, IL");
 }
 
 fn run_string_evolve(target: &'static str) {
     let codex = get_char_codex(1, target.len());
 
-    let engine =
-        GeneticEngine::from_codex(codex)
-            .population_size(100)
+    let engine = GeneticEngine::from_codex(codex)
             .offspring_selector(Selector::Tournament(3))
             .survivor_selector(Selector::Elitism)
             .alterers(vec![
