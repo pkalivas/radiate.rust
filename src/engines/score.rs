@@ -65,4 +65,3 @@ impl std::fmt::Debug for Score {
         write!(f, "{}", self.value)
     }
 }
-

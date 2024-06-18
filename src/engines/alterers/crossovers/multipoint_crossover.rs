@@ -1,7 +1,7 @@
 use crate::engines::alterers::crossovers::crossover::Crossover;
+use crate::engines::genome::chromosome::Chromosome;
 use crate::engines::genome::genes::gene::Gene;
 use crate::engines::schema::subset;
-use crate::engines::genome::chromosome::Chromosome;
 
 const DEFAULT_NUM_POINTS: usize = 2;
 
@@ -24,7 +24,11 @@ impl MultiPointCrossover {
         TGene: Gene<TGene>,
     {
         if other_start + (end - start) > chrom_one.len() {
-            panic!("Invalid index range: [{}, {})", other_start, other_start + (end - start));
+            panic!(
+                "Invalid index range: [{}, {})",
+                other_start,
+                other_start + (end - start)
+            );
         }
 
         if start >= end {
@@ -44,37 +48,43 @@ impl MultiPointCrossover {
     }
 }
 
-impl<TGene> Crossover<TGene> for MultiPointCrossover 
-where 
-    TGene: Gene<TGene> 
+impl<TGene> Crossover<TGene> for MultiPointCrossover
+where
+    TGene: Gene<TGene>,
 {
     fn cross_chromosomes(
-            &self,
-            chrom_one: &mut Chromosome<TGene>,
-            chrom_two: &mut Chromosome<TGene>,
-            _: f32,
-        ) {
-            let min_index = std::cmp::min(chrom_one.len(), chrom_two.len());
-            let min_points = std::cmp::min(self.num_points, DEFAULT_NUM_POINTS);
+        &self,
+        chrom_one: &mut Chromosome<TGene>,
+        chrom_two: &mut Chromosome<TGene>,
+        _: f32,
+    ) {
+        let min_index = std::cmp::min(chrom_one.len(), chrom_two.len());
+        let min_points = std::cmp::min(self.num_points, DEFAULT_NUM_POINTS);
 
-            let mut random = rand::thread_rng();
-            let indexes = if min_points > 0 {
-                subset::subset(min_index, min_points, &mut random)
-            } else {
-                Vec::new()
-            };
+        let mut random = rand::thread_rng();
+        let indexes = if min_points > 0 {
+            subset::subset(min_index, min_points, &mut random)
+        } else {
+            Vec::new()
+        };
 
-            for i in 0..indexes.len() - 1 {
-                let start = indexes[i] as usize;
-                let end = indexes[i + 1] as usize;
+        for i in 0..indexes.len() - 1 {
+            let start = indexes[i] as usize;
+            let end = indexes[i + 1] as usize;
 
-                MultiPointCrossover::swap(chrom_one, start, end, chrom_two, start);
-            }
-
-            if indexes.len() % 2 == 1 {
-                let index = indexes[indexes.len() - 1] as usize;
-
-                MultiPointCrossover::swap(chrom_one, index, std::cmp::min(chrom_one.len(), chrom_two.len()), chrom_two, index);
-            }
+            MultiPointCrossover::swap(chrom_one, start, end, chrom_two, start);
         }
-} 
+
+        if indexes.len() % 2 == 1 {
+            let index = indexes[indexes.len() - 1] as usize;
+
+            MultiPointCrossover::swap(
+                chrom_one,
+                index,
+                std::cmp::min(chrom_one.len(), chrom_two.len()),
+                chrom_two,
+                index,
+            );
+        }
+    }
+}

@@ -1,6 +1,5 @@
 use super::genome::{genes::gene::Gene, genotype::Genotype};
 
-
 pub struct Codex<TGene, T>
 where
     TGene: Gene<TGene>,
@@ -58,4 +57,3 @@ where
         self
     }
 }
-

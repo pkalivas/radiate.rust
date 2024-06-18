@@ -1,25 +1,30 @@
 use rand::{rngs::ThreadRng, Rng};
 
-pub fn individual_indexes(random: &mut ThreadRng, index: usize, size: usize, order: usize) -> Vec<i32> {
+pub fn individual_indexes(
+    random: &mut ThreadRng,
+    index: usize,
+    size: usize,
+    order: usize,
+) -> Vec<i32> {
     let mut sub_set = subset(size as usize, order as usize, random);
     let mut i = 0;
     while sub_set[i] < index as i32 && i < sub_set.len() - 1 {
         i += 1;
     }
-    
+
     sub_set[i] = index as i32;
-    sub_set 
+    sub_set
 }
 
 pub fn subset(n: usize, k: usize, random: &mut ThreadRng) -> Vec<i32> {
     if k <= 0 {
         panic!("Subset size smaller or equal zero: {}", k);
     }
-    
+
     if n < k {
         panic!("n smaller than k: {} < {}.", n, k);
     }
-    
+
     let mut sub = vec![0; k as usize];
     next(n as i32, &mut sub, random);
     sub
@@ -32,7 +37,7 @@ fn next(num: i32, a: &mut Vec<i32>, random: &mut ThreadRng) {
         for i in 0..k {
             a[i as usize] = i;
         }
-        
+
         return;
     }
 
@@ -121,7 +126,6 @@ fn build_subset(n: i32, sub: &mut Vec<i32>, random: &mut ThreadRng) {
     }
 }
 
-
 fn invert(n: i32, a: &mut Vec<i32>) {
     let k = a.len() as i32;
 
@@ -141,7 +145,7 @@ fn invert(n: i32, a: &mut Vec<i32>) {
             v -= 1;
             j = vi;
         }
-        
+
         a[i as usize] = v;
         v -= 1;
     }

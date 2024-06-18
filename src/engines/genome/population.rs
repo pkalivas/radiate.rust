@@ -1,6 +1,5 @@
 use super::{genes::gene::Gene, phenotype::Phenotype};
 
-
 pub struct Population<TGene>
 where
     TGene: Gene<TGene>,
@@ -133,4 +132,3 @@ where
         write!(f, "]")
     }
 }
-

@@ -132,4 +132,3 @@ impl std::fmt::Debug for IntGene {
         write!(f, "{}", self.allele)
     }
 }
-

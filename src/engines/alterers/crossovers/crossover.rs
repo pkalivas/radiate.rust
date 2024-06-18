@@ -8,12 +8,7 @@ pub trait Crossover<TGene>
 where
     TGene: Gene<TGene>,
 {
-    fn cross(
-        &self,
-        population: &mut Population<TGene>,
-        parent_indexes: &[i32],
-        probability: f32,
-    ) {
+    fn cross(&self, population: &mut Population<TGene>, parent_indexes: &[i32], probability: f32) {
         let index_one = parent_indexes[0] as usize;
         let index_two = parent_indexes[1] as usize;
 

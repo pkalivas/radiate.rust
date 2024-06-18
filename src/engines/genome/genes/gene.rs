@@ -29,4 +29,3 @@ where
     fn mul(&self, other: &impl NumericGene<TGene, T>) -> TGene;
     fn div(&self, other: &impl NumericGene<TGene, T>) -> TGene;
 }
-

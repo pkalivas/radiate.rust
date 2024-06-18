@@ -1,11 +1,11 @@
-use super::schema::timer::Timer;
 use super::genome::genes::gene::Gene;
 use super::genome::population::Population;
+use super::schema::timer::Timer;
 
 pub trait Engine<TGene, T>
 where
     TGene: Gene<TGene>,
-    T: Clone
+    T: Clone,
 {
     fn start(&self) -> EngineOutput<TGene, T>;
     fn fit<F>(&self, limit: F) -> EngineOutput<TGene, T>
@@ -25,12 +25,12 @@ where
     pub population: Population<TGene>,
     pub best: T,
     pub index: usize,
-    pub timer: Timer
+    pub timer: Timer,
 }
 
 impl<TGene, T> EngineOutput<TGene, T>
 where
-    TGene: Gene<TGene>
+    TGene: Gene<TGene>,
 {
     pub fn score(&self) -> f32 {
         match self.population.get(0).score() {
@@ -53,9 +53,7 @@ where
             timer: self.timer.clone(),
         }
     }
-
 }
-
 
 impl<TGene, T> std::fmt::Debug for EngineOutput<TGene, T>
 where
@@ -71,5 +69,4 @@ where
         write!(f, "  duration: {:?},\n", self.timer.elapsed())?;
         write!(f, "}}")
     }
-    
 }

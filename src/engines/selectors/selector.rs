@@ -1,6 +1,6 @@
-use rand::Rng;
 use crate::engines::genome::genes::gene::Gene;
 use crate::engines::genome::population::Population;
+use rand::Rng;
 
 pub trait Select<TGene>
 where
@@ -15,18 +15,21 @@ pub enum Selector {
     Roulette,
     Rank,
     Elitism,
-    Boltzmann(f32)
+    Boltzmann(f32),
 }
 
 impl Selector {
     pub fn total_fitness<TGene>(&self, population: &Population<TGene>) -> f32
     where
-        TGene: Gene<TGene>
+        TGene: Gene<TGene>,
     {
-        population.iter().map(|i| match i.score() {
-            Some(score) => score.as_float(),
-            None => 0.0
-        }).sum::<f32>()
+        population
+            .iter()
+            .map(|i| match i.score() {
+                Some(score) => score.as_float(),
+                None => 0.0,
+            })
+            .sum::<f32>()
     }
 }
 
@@ -34,7 +37,7 @@ impl<TGene> Select<TGene> for Selector
 where
     TGene: Gene<TGene>,
 {
-    fn select(&self, population: &Population<TGene>,  count: usize) -> Population<TGene> {
+    fn select(&self, population: &Population<TGene>, count: usize) -> Population<TGene> {
         match self {
             Selector::Tournament(size) => {
                 let mut rng = rand::thread_rng();
@@ -65,7 +68,7 @@ where
                     for individual in population.iter() {
                         idx -= match individual.score() {
                             Some(score) => score.as_float(),
-                            None => 0.0
+                            None => 0.0,
                         };
 
                         if idx <= 0.0 {
@@ -97,14 +100,12 @@ where
                 }
 
                 Population::from_vec(selected)
-            },
-            Selector::Elitism => {
-                population
-                    .iter()
-                    .take(count)
-                    .map(|individual| individual.clone())
-                    .collect::<Population<TGene>>()
-            },
+            }
+            Selector::Elitism => population
+                .iter()
+                .take(count)
+                .map(|individual| individual.clone())
+                .collect::<Population<TGene>>(),
             Selector::Boltzmann(temperature) => {
                 let mut selected = Vec::with_capacity(count);
                 let mut rng = rand::thread_rng();
@@ -116,7 +117,7 @@ where
                     for individual in population.iter() {
                         let fitness = match individual.score() {
                             Some(score) => score.as_float(),
-                            None => 0.0
+                            None => 0.0,
                         };
                         let probability = (fitness / temperature).exp();
                         idx -= probability;

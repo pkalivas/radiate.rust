@@ -1,6 +1,5 @@
 use super::{chromosome::Chromosome, genes::gene::Gene};
 
-
 pub struct Genotype<TGene>
 where
     TGene: Gene<TGene>,
@@ -61,4 +60,3 @@ where
         write!(f, "]")
     }
 }
-

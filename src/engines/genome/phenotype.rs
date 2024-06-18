@@ -2,7 +2,6 @@ use crate::engines::score::Score;
 
 use super::{genes::gene::Gene, genotype::Genotype};
 
-
 pub struct Phenotype<TGene>
 where
     TGene: Gene<TGene>,
@@ -76,4 +75,3 @@ where
         write!(f, "{:?}, score: {:?}", self.genotype, self.score)
     }
 }
-

@@ -24,7 +24,7 @@ impl FloatGene {
 
 impl Gene<FloatGene> for FloatGene {
     fn new_instance(&self) -> FloatGene {
-        FloatGene { 
+        FloatGene {
             allele: random::<f32>() * (self.max - self.min) + self.min,
             min: self.min,
             max: self.max,
@@ -103,7 +103,7 @@ impl BoundGene<FloatGene, f32> for FloatGene {
             lower_bound,
             ..self
         }
-    } 
+    }
 }
 
 impl Clone for FloatGene {
@@ -129,4 +129,3 @@ impl std::fmt::Debug for FloatGene {
         write!(f, "{}", self.allele)
     }
 }
-

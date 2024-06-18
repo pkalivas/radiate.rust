@@ -94,19 +94,33 @@ where
         output.index += 1;
     }
 
-    pub fn survivor_selector(&self) -> &impl Select<TGene> { &self.params.survivor_selector }
+    pub fn survivor_selector(&self) -> &impl Select<TGene> {
+        &self.params.survivor_selector
+    }
 
-    pub fn offspring_selector(&self) -> &impl Select<TGene> { &self.params.offspring_selector }
+    pub fn offspring_selector(&self) -> &impl Select<TGene> {
+        &self.params.offspring_selector
+    }
 
-    pub fn codex(&self) -> &Codex<TGene, T> { self.params.codex.as_ref().unwrap() }
+    pub fn codex(&self) -> &Codex<TGene, T> {
+        self.params.codex.as_ref().unwrap()
+    }
 
-    pub fn fitness_fn(&self) -> &dyn Fn(&T) -> Score { self.params.fitness_fn.as_ref().unwrap() }
+    pub fn fitness_fn(&self) -> &dyn Fn(&T) -> Score {
+        self.params.fitness_fn.as_ref().unwrap()
+    }
 
-    pub fn population(&self) -> &Population<TGene> { self.params.population.as_ref().unwrap() }
+    pub fn population(&self) -> &Population<TGene> {
+        self.params.population.as_ref().unwrap()
+    }
 
-    pub fn optimize(&self) -> &Optimize { &self.params.optimize }
+    pub fn optimize(&self) -> &Optimize {
+        &self.params.optimize
+    }
 
-    pub fn survivor_count(&self) -> usize { self.params.population_size - self.offspring_count() }
+    pub fn survivor_count(&self) -> usize {
+        self.params.population_size - self.offspring_count()
+    }
 
     pub fn offspring_count(&self) -> usize {
         (self.params.population_size as f32 * self.params.offspring_fraction) as usize

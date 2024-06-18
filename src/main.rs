@@ -1,5 +1,6 @@
 mod engines;
 
+use crate::engines::selectors::selector::Selector;
 use engines::alterers::alter::{Alter, Alterer};
 use engines::codex::Codex;
 use engines::engine::Engine;
@@ -12,7 +13,6 @@ use engines::genome::genes::gene::Allele;
 use engines::genome::genes::int_gene::IntGene;
 use engines::genome::genotype::Genotype;
 use engines::score::Score;
-use crate::engines::selectors::selector::Selector;
 
 fn main() {
     run_min_sum();
@@ -22,27 +22,28 @@ fn main() {
 fn run_string_evolve(target: &'static str) {
     let codex = get_char_codex(1, target.len());
 
-    let engine = GeneticEngine::from_codex(codex)
-        .population_size(100)
-        .offspring_selector(Selector::Elitism)
-        .survivor_selector(Selector::Elitism)
-        .alterers(vec![
-            Alterer::Mutator(0.001),
-            Alterer::UniformCrossover(0.5),
-        ])
-        .fitness_fn(|genotype: &String| {
-            Score::from_usize(genotype.chars().zip(target.chars()).fold(
-                0,
-                |acc, (geno, targ)| {
-                    if geno == targ {
-                        acc + 1
-                    } else {
-                        acc
-                    }
-                },
-            ))
-        })
-        .build();
+    let engine =
+        GeneticEngine::from_codex(codex)
+            .population_size(100)
+            .offspring_selector(Selector::Elitism)
+            .survivor_selector(Selector::Elitism)
+            .alterers(vec![
+                Alterer::Mutator(0.001),
+                Alterer::UniformCrossover(0.5),
+            ])
+            .fitness_fn(|genotype: &String| {
+                Score::from_usize(genotype.chars().zip(target.chars()).fold(
+                    0,
+                    |acc, (geno, targ)| {
+                        if geno == targ {
+                            acc + 1
+                        } else {
+                            acc
+                        }
+                    },
+                ))
+            })
+            .build();
 
     let result = engine.fit(|output| {
         println!("[ {:?} ]: {:?}", output.index, output.best);

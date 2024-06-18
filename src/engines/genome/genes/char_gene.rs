@@ -1,6 +1,5 @@
 use super::gene::{Allele, Gene};
 
-
 const ALPHABET: &str = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!\"$%&/()=?`{[]}\\+~*#';.:,-_<>|@^' ";
 
 pub struct CharGene {
@@ -57,4 +56,3 @@ impl std::fmt::Debug for CharGene {
         write!(f, "{}", self.allele)
     }
 }
-
