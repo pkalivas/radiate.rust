@@ -2,24 +2,23 @@ mod engines;
 
 use crate::engines::selectors::selector::Selector;
 use engines::alterers::alter::{Alter, Alterer};
-use engines::codex::Codex;
 use engines::engine::Engine;
 use engines::genetic_engine::GeneticEngine;
-use engines::genome::chromosome::Chromosome;
-use engines::genome::genes::char_gene::CharGene;
-use engines::genome::genes::float_gene::FloatGene;
 use engines::genome::genes::gene::Allele;
-use engines::genome::genes::int_gene::IntGene;
-use engines::genome::genotype::Genotype;
 use engines::score::Score;
+use crate::engines::codex;
 
 fn main() {
+    let mut input = String::from("");
+
+    std::io::stdin().read_line(&mut input).unwrap();
+    println!("{}", input);
     // run_min_sum();
-    run_string_evolve("Chicago, IL");
+    // run_string_evolve("Chicago, IL");
 }
 
 fn run_string_evolve(target: &'static str) {
-    let codex = get_char_codex(1, target.len());
+    let codex = codex::char(1, target.len());
 
     let engine =
         GeneticEngine::from_codex(codex)
@@ -52,7 +51,7 @@ fn run_string_evolve(target: &'static str) {
 }
 
 fn run_min_sum() {
-    let codex = get_int_codex(1, 10, 0, 100);
+    let codex = codex::int(1, 10, 0, 100);
 
     let engine = GeneticEngine::from_codex(codex)
         .population_size(100)
@@ -77,92 +76,4 @@ fn run_min_sum() {
     });
 
     println!("{:?}", result);
-}
-
-fn get_char_codex(num_chromosomes: usize, num_genes: usize) -> Codex<CharGene, String> {
-    Codex::new()
-        .encoder(move || Genotype {
-            chromosomes: (0..num_chromosomes)
-                .into_iter()
-                .map(|_| Chromosome {
-                    genes: (0..num_genes)
-                        .into_iter()
-                        .map(|_| CharGene::new())
-                        .collect::<Vec<CharGene>>(),
-                })
-                .collect::<Vec<Chromosome<CharGene>>>(),
-        })
-        .decoder(|genotype| {
-            genotype
-                .iter()
-                .map(|chromosome| {
-                    chromosome
-                        .iter()
-                        .map(|gene| *gene.allele())
-                        .collect::<String>()
-                })
-                .collect::<String>()
-        })
-}
-
-fn get_float_codex(
-    num_chromosomes: i32,
-    num_genes: i32,
-    min: f32,
-    max: f32,
-) -> Codex<FloatGene, Vec<Vec<f32>>> {
-    Codex::new()
-        .encoder(move || Genotype {
-            chromosomes: (0..num_chromosomes)
-                .into_iter()
-                .map(|_| Chromosome {
-                    genes: (0..num_genes)
-                        .into_iter()
-                        .map(|_| FloatGene::new(min, max))
-                        .collect::<Vec<FloatGene>>(),
-                })
-                .collect::<Vec<Chromosome<FloatGene>>>(),
-        })
-        .decoder(|genotype| {
-            genotype
-                .iter()
-                .map(|chromosome| {
-                    chromosome
-                        .iter()
-                        .map(|gene| *gene.allele())
-                        .collect::<Vec<f32>>()
-                })
-                .collect::<Vec<Vec<f32>>>()
-        })
-}
-
-fn get_int_codex(
-    num_chromosomes: i32,
-    num_genes: i32,
-    max: i32,
-    min: i32,
-) -> Codex<IntGene, Vec<Vec<i32>>> {
-    Codex::new()
-        .encoder(move || Genotype {
-            chromosomes: (0..num_chromosomes)
-                .into_iter()
-                .map(|_| Chromosome {
-                    genes: (0..num_genes)
-                        .into_iter()
-                        .map(|_| IntGene::new(min, max))
-                        .collect::<Vec<IntGene>>(),
-                })
-                .collect::<Vec<Chromosome<IntGene>>>(),
-        })
-        .decoder(|genotype| {
-            genotype
-                .iter()
-                .map(|chromosome| {
-                    chromosome
-                        .iter()
-                        .map(|gene| *gene.allele())
-                        .collect::<Vec<i32>>()
-                })
-                .collect::<Vec<Vec<i32>>>()
-        })
 }
