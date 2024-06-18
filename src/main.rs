@@ -6,7 +6,6 @@ use engines::codex::Codex;
 use engines::engine::Engine;
 use engines::genetic_engine::GeneticEngine;
 use engines::genome::chromosome::Chromosome;
-use engines::genome::genes::bit_gene::BitGene;
 use engines::genome::genes::char_gene::CharGene;
 use engines::genome::genes::float_gene::FloatGene;
 use engines::genome::genes::gene::Allele;
