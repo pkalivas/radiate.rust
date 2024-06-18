@@ -1,4 +1,4 @@
-use crate::engines::alterers::alter::Alterer;
+use crate::engines::alterers::alter::{Alter, Alterer};
 use crate::engines::alterers::composite_alterer::CompositeAlterer;
 use crate::engines::codex::Codex;
 use crate::engines::genetic_engine::GeneticEngine;
@@ -78,6 +78,11 @@ impl<TGene: Gene<TGene>, T> GeneticEngineParams<TGene, T> {
 
     pub fn offspring_selector(mut self, selector: Selector) -> Self {
         self.offspring_selector = selector;
+        self
+    }
+
+    pub fn temp(mut self, alters: Vec<impl Alter<TGene>>) -> Self {
+        // self.alterer = Some(CompositeAlterer::new(alters));
         self
     }
 
