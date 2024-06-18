@@ -59,7 +59,6 @@ fn run_min_sum() {
     let engine = GeneticEngine::from_codex(codex)
         .population_size(100)
         .minimizing()
-        .max_age(2)
         .offspring_selector(Selector::Elitism)
         .survivor_selector(Selector::Tournament(4))
         .alterers(vec![

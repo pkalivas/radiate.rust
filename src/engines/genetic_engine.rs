@@ -10,7 +10,6 @@ use crate::engines::schema::timer::Timer;
 use crate::engines::score::Score;
 
 use super::genome::phenotype::Phenotype;
-use super::optimize;
 use super::selectors::selector::Select;
 
 pub struct GeneticEngine<TGene, T>
