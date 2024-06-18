@@ -10,17 +10,11 @@ use crate::engines::schema::subset;
 
 use super::mutators::swap_mutator::SwapMutator;
 
-pub struct CompositeAlterer<TGene>
-where
-    TGene: Gene<TGene>,
-{
+pub struct CompositeAlterer<TGene: Gene<TGene>> {
     alterers: Vec<AlterWrap<TGene>>,
 }
 
-impl<TGene> CompositeAlterer<TGene>
-where
-    TGene: Gene<TGene>,
-{
+impl<TGene: Gene<TGene>> CompositeAlterer<TGene> {
     pub fn new(alterers: Vec<Alterer>) -> Self {
         let mut alterer_wraps = Vec::new();
         for alterer in alterers {

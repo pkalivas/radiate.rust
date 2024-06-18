@@ -4,17 +4,11 @@ use crate::engines::genome::genes::gene::Gene;
 use crate::engines::genome::population::Population;
 use crate::engines::optimize::Optimize;
 
-pub trait Alter<TGene>
-where
-    TGene: Gene<TGene>,
-{
+pub trait Alter<TGene: Gene<TGene>> {
     fn alter(&self, population: &mut Population<TGene>, optimize: &Optimize, generation: i32);
 }
 
-pub struct AlterWrap<TGene>
-where
-    TGene: Gene<TGene>,
-{
+pub struct AlterWrap<TGene: Gene<TGene>> {
     pub rate: f32,
     pub mutator: Option<Box<dyn Mutate<TGene>>>,
     pub crossover: Option<Box<dyn Crossover<TGene>>>,

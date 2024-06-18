@@ -14,15 +14,13 @@ impl MultiPointCrossover {
         Self { num_points }
     }
 
-    pub fn swap<TGene>(
+    pub fn swap<TGene: Gene<TGene>>(
         chrom_one: &mut Chromosome<TGene>,
         start: usize,
         end: usize,
         chrom_two: &mut Chromosome<TGene>,
         other_start: usize,
-    ) where
-        TGene: Gene<TGene>,
-    {
+    ) {
         if other_start + (end - start) > chrom_one.len() {
             panic!(
                 "Invalid index range: [{}, {})",
@@ -48,10 +46,7 @@ impl MultiPointCrossover {
     }
 }
 
-impl<TGene> Crossover<TGene> for MultiPointCrossover
-where
-    TGene: Gene<TGene>,
-{
+impl<TGene: Gene<TGene>> Crossover<TGene> for MultiPointCrossover {
     fn cross_chromosomes(
         &self,
         chrom_one: &mut Chromosome<TGene>,

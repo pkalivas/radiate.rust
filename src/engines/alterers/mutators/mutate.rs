@@ -2,10 +2,7 @@ use crate::engines::genome::chromosome::Chromosome;
 use crate::engines::genome::genes::gene::Gene;
 use crate::engines::genome::genotype::Genotype;
 
-pub trait Mutate<TGene>
-where
-    TGene: Gene<TGene>,
-{
+pub trait Mutate<TGene: Gene<TGene>> {
     fn mutate_genotype(&self, genotype: &mut Genotype<TGene>, range: i32, probability: f32) {
         for chromosome in genotype.iter_mut() {
             if rand::random::<i32>() > range {
