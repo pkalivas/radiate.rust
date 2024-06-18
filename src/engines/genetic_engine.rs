@@ -76,6 +76,8 @@ impl<TGene: Gene<TGene>, T> GeneticEngine<TGene, T> {
         for individual in population.iter_mut() {
             if individual.age(generation) > max_age {
                 *individual = Phenotype::from_genotype(codex.encode(), generation);
+            } else if !individual.genotype().is_valid() {
+                *individual = Phenotype::from_genotype(codex.encode(), generation);
             }
         }
     }

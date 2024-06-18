@@ -21,7 +21,8 @@ fn main() {
 fn run_string_evolve(target: &'static str) {
     let codex = get_char_codex(1, target.len());
 
-    let engine = GeneticEngine::from_codex(codex)
+    let engine =
+        GeneticEngine::from_codex(codex)
             .offspring_selector(Selector::Tournament(3))
             .survivor_selector(Selector::Elitism)
             .alterers(vec![

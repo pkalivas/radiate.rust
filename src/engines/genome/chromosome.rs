@@ -18,6 +18,16 @@ impl<TGene: Gene<TGene>> Chromosome<TGene> {
         self.genes.len()
     }
 
+    pub fn is_valid(&self) -> bool {
+        for gene in &self.genes {
+            if !gene.is_valid() {
+                return false;
+            }
+        }
+
+        true
+    }
+
     pub fn iter(&self) -> std::slice::Iter<TGene> {
         self.genes.iter()
     }
