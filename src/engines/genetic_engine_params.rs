@@ -1,5 +1,6 @@
 use crate::engines::alterers::alter::{Alter, Alterer};
 use crate::engines::alterers::composite_alterer::CompositeAlterer;
+use crate::engines::alterers::crossovers::crossover::Crossover;
 use crate::engines::codex::Codex;
 use crate::engines::genetic_engine::GeneticEngine;
 use crate::engines::genome::genes::gene::Gene;
@@ -81,7 +82,7 @@ impl<TGene: Gene<TGene>, T> GeneticEngineParams<TGene, T> {
         self
     }
 
-    pub fn temp(mut self, alters: Vec<impl Alter<TGene>>) -> Self {
+    pub fn temp(mut self, alters: Vec<impl Crossover<TGene>>) -> Self {
         // self.alterer = Some(CompositeAlterer::new(alters));
         self
     }

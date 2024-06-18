@@ -7,7 +7,6 @@ use engines::genetic_engine::GeneticEngine;
 use engines::score::Score;
 use engines::selectors::selector::Selector;
 
-
 fn main() {
     let options = String::from(
         "0. Exit\n\
