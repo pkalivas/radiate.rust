@@ -6,13 +6,6 @@ pub struct Population<TGene: Gene<TGene>> {
 }
 
 impl<TGene: Gene<TGene>> Population<TGene> {
-    pub fn new() -> Self {
-        Population {
-            individuals: Vec::new(),
-            is_sorted: false,
-        }
-    }
-
     pub fn get(&self, index: usize) -> &Phenotype<TGene> {
         self.individuals.get(index).expect("Index out of bounds")
     }

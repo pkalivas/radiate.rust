@@ -2,13 +2,12 @@ use crate::engines::alterers::alter::{Alter, AlterWrap, Alterer};
 use crate::engines::alterers::crossovers::multipoint_crossover::MultiPointCrossover;
 use crate::engines::alterers::crossovers::uniform_crossover::UniformCrossover;
 use crate::engines::alterers::mutators::mutator::Mutator;
-use crate::engines::genome::genes::gene::{self, Gene};
+use crate::engines::genome::genes::gene::Gene;
 use crate::engines::genome::phenotype::Phenotype;
 use crate::engines::genome::population::Population;
 use crate::engines::optimize::Optimize;
 use crate::engines::schema::subset;
-
-use super::mutators::swap_mutator::SwapMutator;
+use crate::engines::alterers::mutators::swap_mutator::SwapMutator;
 
 pub struct CompositeAlterer<TGene: Gene<TGene>> {
     alterers: Vec<AlterWrap<TGene>>,
@@ -96,8 +95,7 @@ where
 
                     for i in 0..population.len() {
                         if rand::random::<f32>() < alterer.rate {
-                            let parent_indexes =
-                                subset::individual_indexes(&mut random, i, population.len(), 2);
+                            let parent_indexes = subset::individual_indexes(&mut random, i, population.len(), 2);
                             crossover.cross(population, &parent_indexes, alterer.rate, generation);
                         }
                     }
