@@ -25,7 +25,7 @@ fn run_string_evolve(target: &'static str) {
     let engine =
         GeneticEngine::from_codex(codex)
             .population_size(100)
-            .offspring_selector(Selector::Elitism)
+            .offspring_selector(Selector::Tournament(3))
             .survivor_selector(Selector::Elitism)
             .alterers(vec![
                 Alterer::Mutator(0.001),
