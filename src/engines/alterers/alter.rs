@@ -8,7 +8,7 @@ pub trait Alter<TGene>
 where
     TGene: Gene<TGene>,
 {
-    fn alter(&self, population: &mut Population<TGene>, optimize: &Optimize);
+    fn alter(&self, population: &mut Population<TGene>, optimize: &Optimize, generation: i32);
 }
 
 pub struct AlterWrap<TGene>

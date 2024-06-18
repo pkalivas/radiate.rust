@@ -14,7 +14,7 @@ where
     TGene: Gene<TGene>,
 {
     pub population_size: usize,
-    pub max_phenotype_age: i32,
+    pub max_age: i32,
     pub offspring_fraction: f32,
     pub optimize: Optimize,
     pub survivor_selector: Selector,
@@ -32,7 +32,7 @@ where
     pub fn new() -> Self {
         GeneticEngineParams {
             population_size: 100,
-            max_phenotype_age: 25,
+            max_age: 25,
             offspring_fraction: 0.8,
             optimize: Optimize::Maximize,
             survivor_selector: Selector::Tournament(3),
@@ -49,8 +49,8 @@ where
         self
     }
 
-    pub fn max_phenotpe_age(mut self, max_phenotype_age: i32) -> Self {
-        self.max_phenotype_age = max_phenotype_age;
+    pub fn max_age(mut self, max_age: i32) -> Self {
+        self.max_age = max_age;
         self
     }
 
@@ -109,7 +109,7 @@ where
         self.population = match &self.population {
             None => Some(match self.codex.as_ref() {
                 Some(codex) => Population::from_func(self.population_size, || {
-                    Phenotype::from_genotype(codex.encode())
+                    Phenotype::from_genotype(codex.encode(), 0)
                 }),
                 None => panic!("Codex not set"),
             }),

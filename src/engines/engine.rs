@@ -24,7 +24,7 @@ where
 {
     pub population: Population<TGene>,
     pub best: T,
-    pub index: usize,
+    pub index: i32,
     pub timer: Timer,
 }
 

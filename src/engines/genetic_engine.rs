@@ -9,6 +9,7 @@ use crate::engines::optimize::Optimize;
 use crate::engines::schema::timer::Timer;
 use crate::engines::score::Score;
 
+use super::genome::phenotype::Phenotype;
 use super::selectors::selector::Select;
 
 pub struct GeneticEngine<TGene, T>
@@ -45,7 +46,7 @@ where
                 let decoded = codex.decode(individual.genotype());
                 let score = fitness_fn(&decoded);
 
-                individual.set_score(score);
+                individual.set_score(Some(score));
             }
         }
 
@@ -66,11 +67,22 @@ where
         selector.select(population, count)
     }
 
-    pub fn alter(&self, population: &mut Population<TGene>) {
+    pub fn alter(&self, population: &mut Population<TGene>, generation: i32) {
         let alterer = self.params.alterer.as_ref().unwrap();
         let optimize = self.optimize();
 
-        alterer.alter(population, optimize);
+        alterer.alter(population, optimize, generation);
+    }
+
+    pub fn filter(&self, population: &mut Population<TGene>, generation: i32) {
+        let max_age = self.params.max_age;
+        let codex = self.codex();
+
+        for individual in population.iter_mut() {
+            if individual.age(generation) > max_age {
+                *individual = Phenotype::from_genotype(codex.encode(), generation);
+            }
+        }
     }
 
     pub fn recombine(
@@ -152,10 +164,13 @@ where
         loop {
             self.evaluate(&mut output.population);
 
-            let survivors = self.select_survivors(&output.population);
+            let mut survivors = self.select_survivors(&output.population);
             let mut offspring = self.select_offspring(&output.population);
 
-            self.alter(&mut offspring);
+            // self.filter(&mut survivors, output.index);
+            // self.filter(&mut offspring, output.index);
+
+            self.alter(&mut offspring, output.index);
             self.evaluate(&mut offspring);
             self.recombine(&mut output, survivors, offspring);
 

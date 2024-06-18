@@ -1,17 +1,11 @@
 use super::{genes::gene::Gene, phenotype::Phenotype};
 
-pub struct Population<TGene>
-where
-    TGene: Gene<TGene>,
-{
+pub struct Population<TGene: Gene<TGene>> {
     pub individuals: Vec<Phenotype<TGene>>,
     pub is_sorted: bool,
 }
 
-impl<TGene> Population<TGene>
-where
-    TGene: Gene<TGene>,
-{
+impl<TGene: Gene<TGene>> Population<TGene> {
     pub fn new() -> Self {
         Population {
             individuals: Vec::new(),
@@ -83,10 +77,8 @@ where
     }
 }
 
-impl<TGene> std::iter::IntoIterator for Population<TGene>
-where
-    TGene: Gene<TGene>,
-{
+impl<TGene: Gene<TGene>> std::iter::IntoIterator for Population<TGene> {
+
     type Item = Phenotype<TGene>;
     type IntoIter = std::vec::IntoIter<Phenotype<TGene>>;
 
@@ -95,10 +87,7 @@ where
     }
 }
 
-impl<TGene> std::iter::FromIterator<Phenotype<TGene>> for Population<TGene>
-where
-    TGene: Gene<TGene>,
-{
+impl<TGene: Gene<TGene>> std::iter::FromIterator<Phenotype<TGene>> for Population<TGene> {
     fn from_iter<I: IntoIterator<Item = Phenotype<TGene>>>(iter: I) -> Self {
         let individuals = iter.into_iter().collect();
         Population {
@@ -108,10 +97,7 @@ where
     }
 }
 
-impl<TGene> Clone for Population<TGene>
-where
-    TGene: Gene<TGene>,
-{
+impl<TGene: Gene<TGene>> Clone for Population<TGene> {
     fn clone(&self) -> Self {
         Population {
             individuals: self.individuals.clone(),
@@ -120,10 +106,7 @@ where
     }
 }
 
-impl<TGene> std::fmt::Debug for Population<TGene>
-where
-    TGene: Gene<TGene> + std::fmt::Debug,
-{
+impl<TGene: Gene<TGene> + std::fmt::Debug> std::fmt::Debug for Population<TGene> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "[")?;
         for individual in &self.individuals {

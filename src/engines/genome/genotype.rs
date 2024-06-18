@@ -1,16 +1,10 @@
 use super::{chromosome::Chromosome, genes::gene::Gene};
 
-pub struct Genotype<TGene>
-where
-    TGene: Gene<TGene>,
-{
+pub struct Genotype<TGene: Gene<TGene>> {
     pub chromosomes: Vec<Chromosome<TGene>>,
 }
 
-impl<TGene> Genotype<TGene>
-where
-    TGene: Gene<TGene>,
-{
+impl<TGene: Gene<TGene>> Genotype<TGene> {
     pub fn get_chromosome_mut(&mut self, index: usize) -> &mut Chromosome<TGene> {
         &mut self.chromosomes[index]
     }
@@ -28,10 +22,7 @@ where
     }
 }
 
-impl<TGene> Clone for Genotype<TGene>
-where
-    TGene: Gene<TGene>,
-{
+impl<TGene: Gene<TGene>> Clone for Genotype<TGene> {
     fn clone(&self) -> Self {
         Genotype {
             chromosomes: self.chromosomes.clone(),
@@ -39,19 +30,13 @@ where
     }
 }
 
-impl<TGene> PartialEq for Genotype<TGene>
-where
-    TGene: Gene<TGene>,
-{
+impl<TGene: Gene<TGene>> PartialEq for Genotype<TGene> {
     fn eq(&self, other: &Self) -> bool {
         self.chromosomes == other.chromosomes
     }
 }
 
-impl<TGene> std::fmt::Debug for Genotype<TGene>
-where
-    TGene: Gene<TGene> + std::fmt::Debug,
-{
+impl<TGene: Gene<TGene> + std::fmt::Debug> std::fmt::Debug for Genotype<TGene> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "[")?;
         for chromosome in &self.chromosomes {

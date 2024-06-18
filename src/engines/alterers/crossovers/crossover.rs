@@ -4,11 +4,8 @@ use crate::engines::genome::genotype::Genotype;
 use crate::engines::genome::phenotype::Phenotype;
 use crate::engines::genome::population::Population;
 
-pub trait Crossover<TGene>
-where
-    TGene: Gene<TGene>,
-{
-    fn cross(&self, population: &mut Population<TGene>, parent_indexes: &[i32], probability: f32) {
+pub trait Crossover<TGene: Gene<TGene>> {
+    fn cross(&self, population: &mut Population<TGene>, parent_indexes: &[i32], probability: f32, generation: i32) {
         let index_one = parent_indexes[0] as usize;
         let index_two = parent_indexes[1] as usize;
 
@@ -17,8 +14,8 @@ where
 
         self.cross_genotypes(&mut geno_one, &mut geno_two, probability);
 
-        population.set(index_one, Phenotype::from_genotype(geno_one));
-        population.set(index_two, Phenotype::from_genotype(geno_two));
+        population.set(index_one, Phenotype::from_genotype(geno_one, generation));
+        population.set(index_two, Phenotype::from_genotype(geno_two, generation));
     }
 
     fn cross_genotypes(

@@ -2,7 +2,7 @@ use crate::engines::alterers::alter::{Alter, AlterWrap, Alterer};
 use crate::engines::alterers::crossovers::multipoint_crossover::MultiPointCrossover;
 use crate::engines::alterers::crossovers::uniform_crossover::UniformCrossover;
 use crate::engines::alterers::mutators::mutator::Mutator;
-use crate::engines::genome::genes::gene::Gene;
+use crate::engines::genome::genes::gene::{self, Gene};
 use crate::engines::genome::phenotype::Phenotype;
 use crate::engines::genome::population::Population;
 use crate::engines::optimize::Optimize;
@@ -73,7 +73,7 @@ impl<TGene> Alter<TGene> for CompositeAlterer<TGene>
 where
     TGene: Gene<TGene>,
 {
-    fn alter(&self, population: &mut Population<TGene>, optimize: &Optimize) {
+    fn alter(&self, population: &mut Population<TGene>, optimize: &Optimize, generation: i32) {
         optimize.sort(population);
 
         for alterer in self.alterers.iter() {
@@ -90,7 +90,7 @@ where
 
                             mutator.mutate_genotype(&mut genotype, range, probability);
 
-                            *phenotype = Phenotype::from_genotype(genotype);
+                            *phenotype = Phenotype::from_genotype(genotype, generation);
                         }
                     }
                 }
@@ -104,7 +104,7 @@ where
                         if rand::random::<f32>() < alterer.rate {
                             let parent_indexes =
                                 subset::individual_indexes(&mut random, i, population.len(), 2);
-                            crossover.cross(population, &parent_indexes, alterer.rate);
+                            crossover.cross(population, &parent_indexes, alterer.rate, generation);
                         }
                     }
                 }
