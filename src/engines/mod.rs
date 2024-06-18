@@ -9,3 +9,4 @@ pub mod alterers;
 pub mod schema;
 pub mod optimize;
 pub mod problem;
+pub mod selectors;

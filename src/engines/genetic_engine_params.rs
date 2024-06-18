@@ -7,6 +7,7 @@ use crate::engines::genome::phenotype::Phenotype;
 use crate::engines::genome::population::Population;
 use crate::engines::optimize::Optimize;
 use crate::engines::score::Score;
+use crate::engines::selectors::selector::{Select, Selector};
 
 pub struct GeneticEngineParams<TGene, T>
 where
@@ -16,6 +17,8 @@ where
     pub max_phenotype_age: i32,
     pub offspring_fraction: f32,
     pub optimize: Optimize,
+    pub survivor_selector: Selector,
+    pub offspring_selector: Selector,
     pub alterer: Option<CompositeAlterer<TGene>>,
     pub codex: Option<Codex<TGene, T>>,
     pub population: Option<Population<TGene>>,
@@ -32,6 +35,8 @@ where
             max_phenotype_age: 25,
             offspring_fraction: 0.8,
             optimize: Optimize::Maximize,
+            survivor_selector: Selector::Tournament(3),
+            offspring_selector: Selector::Roulette,
             alterer: None,
             codex: None,
             population: None,
@@ -66,6 +71,16 @@ where
 
     pub fn fitness_fn(mut self, fitness_func: impl Fn(&T) -> Score + 'static) -> Self {
         self.fitness_fn = Some(Box::new(fitness_func));
+        self
+    }
+
+    pub fn survivor_selector(mut self, selector: Selector) -> Self {
+        self.survivor_selector = selector;
+        self
+    }
+
+    pub fn offspring_selector(mut self, selector: Selector) -> Self {
+        self.offspring_selector = selector;
         self
     }
 

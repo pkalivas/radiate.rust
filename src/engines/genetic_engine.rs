@@ -9,6 +9,8 @@ use crate::engines::optimize::Optimize;
 use crate::engines::schema::timer::Timer;
 use crate::engines::score::Score;
 
+use super::selectors::selector::Select;
+
 pub struct GeneticEngine<TGene, T>
 where
     TGene: Gene<TGene>,
@@ -51,19 +53,17 @@ where
     }
 
     pub fn select_survivors(&self, population: &Population<TGene>) -> Population<TGene> {
-        population
-            .iter()
-            .take(self.surivor_count())
-            .map(|individual| individual.clone())
-            .collect::<Population<TGene>>()
+        let selector = self.survivor_selector();
+        let count = self.survivor_count();
+
+        selector.select(population, count)
     }
 
     pub fn select_offspring(&self, population: &Population<TGene>) -> Population<TGene> {
-        population
-            .iter()
-            .take(self.offspring_count())
-            .map(|individual| individual.clone())
-            .collect::<Population<TGene>>()
+        let selector = self.offspring_selector();
+        let count = self.offspring_count();
+
+        selector.select(population, count)
     }
 
     pub fn alter(&self, population: &mut Population<TGene>) {
@@ -94,11 +94,9 @@ where
         output.index += 1;
     }
 
-    pub fn offspring_count(&self) -> usize {
-        (self.params.population_size as f32 * self.params.offspring_fraction) as usize
-    }
+    pub fn survivor_selector(&self) -> &impl Select<TGene> { &self.params.survivor_selector }
 
-    pub fn surivor_count(&self) -> usize { self.params.population_size - self.offspring_count() }
+    pub fn offspring_selector(&self) -> &impl Select<TGene> { &self.params.offspring_selector }
 
     pub fn codex(&self) -> &Codex<TGene, T> { self.params.codex.as_ref().unwrap() }
 
@@ -107,6 +105,12 @@ where
     pub fn population(&self) -> &Population<TGene> { self.params.population.as_ref().unwrap() }
 
     pub fn optimize(&self) -> &Optimize { &self.params.optimize }
+
+    pub fn survivor_count(&self) -> usize { self.params.population_size - self.offspring_count() }
+
+    pub fn offspring_count(&self) -> usize {
+        (self.params.population_size as f32 * self.params.offspring_fraction) as usize
+    }
 }
 
 impl<TGene, T> Engine<TGene, T> for GeneticEngine<TGene, T>

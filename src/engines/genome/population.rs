@@ -13,6 +13,13 @@ impl<TGene> Population<TGene>
 where
     TGene: Gene<TGene>,
 {
+    pub fn new() -> Self {
+        Population {
+            individuals: Vec::new(),
+            is_sorted: false,
+        }
+    }
+
     pub fn get(&self, index: usize) -> &Phenotype<TGene> {
         self.individuals.get(index).expect("Index out of bounds")
     }
@@ -52,6 +59,13 @@ where
 
         self.individuals.sort_by(f);
         self.is_sorted = true;
+    }
+
+    pub fn from_vec(individuals: Vec<Phenotype<TGene>>) -> Self {
+        Population {
+            individuals,
+            is_sorted: false,
+        }
     }
 
     pub fn from_func<F>(size: usize, f: F) -> Self

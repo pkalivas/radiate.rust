@@ -12,7 +12,7 @@ use engines::genome::genes::gene::Allele;
 use engines::genome::genes::int_gene::IntGene;
 use engines::genome::genotype::Genotype;
 use engines::score::Score;
-use crate::engines::problem::Problem;
+use crate::engines::selectors::selector::Selector;
 
 fn main() {
     // run_min_sum();
@@ -24,6 +24,8 @@ fn run_string_evolve(target: &'static str) {
 
     let engine = GeneticEngine::from_codex(codex)
         .population_size(100)
+        .offspring_selector(Selector::Elitism)
+        .survivor_selector(Selector::Elitism)
         .alterers(vec![
             Alterer::Mutator(0.001),
             Alterer::UniformCrossover(0.5),
