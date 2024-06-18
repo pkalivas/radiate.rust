@@ -15,8 +15,9 @@ pub trait BoundGene<TGene, T>: Gene<TGene> + Allele<T>
 where
     TGene: BoundGene<TGene, T>,
 {
-    fn min(&self) -> &T;
-    fn max(&self) -> &T;
+    fn upper_bound(&self) -> &T;
+    fn lower_bound(&self) -> &T;
+    fn with_bounds(self, upper_bound: T, lower_bound: T) -> TGene;
 }
 
 pub trait NumericGene<TGene, T>: BoundGene<TGene, T>

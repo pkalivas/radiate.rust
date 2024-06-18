@@ -12,7 +12,7 @@ impl<TGene> Genotype<TGene>
 where
     TGene: Gene<TGene>,
 {
-    pub fn get_mut(&mut self, index: usize) -> &mut Chromosome<TGene> {
+    pub fn get_chromosome_mut(&mut self, index: usize) -> &mut Chromosome<TGene> {
         &mut self.chromosomes[index]
     }
 

@@ -35,8 +35,8 @@ where
         let min_index = std::cmp::min(geno_one.len(), geno_two.len());
         let chromosome_index = rand::random::<usize>() % min_index;
 
-        let mut chrom_one = geno_one.get_mut(chromosome_index);
-        let mut chrom_two = geno_two.get_mut(chromosome_index);
+        let mut chrom_one = geno_one.get_chromosome_mut(chromosome_index);
+        let mut chrom_two = geno_two.get_chromosome_mut(chromosome_index);
 
         self.cross_chromosomes(&mut chrom_one, &mut chrom_two, probability);
     }
@@ -49,14 +49,14 @@ where
     ) {
         for i in 0..std::cmp::min(chrom_one.len(), chrom_two.len()) {
             if rand::random::<f32>() < probability {
-                let gene_one = chrom_one.get(i);
-                let gene_two = chrom_two.get(i);
+                let gene_one = chrom_one.get_gene(i);
+                let gene_two = chrom_two.get_gene(i);
 
                 let new_gene_one = gene_one.from_gene(&gene_two);
                 let new_gene_two = gene_two.from_gene(&gene_one);
 
-                chrom_one.set(i, new_gene_one);
-                chrom_two.set(i, new_gene_two);
+                chrom_one.set_gene(i, new_gene_one);
+                chrom_two.set_gene(i, new_gene_two);
             }
         }
     }

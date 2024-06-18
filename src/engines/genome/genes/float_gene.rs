@@ -6,6 +6,8 @@ pub struct FloatGene {
     pub allele: f32,
     pub min: f32,
     pub max: f32,
+    pub upper_bound: f32,
+    pub lower_bound: f32,
 }
 
 impl FloatGene {
@@ -14,17 +16,25 @@ impl FloatGene {
             allele: random::<f32>() * (max - min) + min,
             min,
             max,
+            upper_bound: f32::MAX,
+            lower_bound: f32::MIN,
         }
     }
 }
 
 impl Gene<FloatGene> for FloatGene {
     fn new_instance(&self) -> FloatGene {
-        FloatGene::new(self.min, self.max)
+        FloatGene { 
+            allele: random::<f32>() * (self.max - self.min) + self.min,
+            min: self.min,
+            max: self.max,
+            upper_bound: self.upper_bound,
+            lower_bound: self.lower_bound,
+        }
     }
 
     fn is_valid(&self) -> bool {
-        if self.allele < self.min || self.allele > self.max {
+        if self.allele > self.upper_bound || self.allele < self.lower_bound {
             return false;
         }
 
@@ -36,6 +46,8 @@ impl Gene<FloatGene> for FloatGene {
             allele: gene.allele,
             min: gene.min,
             max: gene.max,
+            upper_bound: gene.upper_bound,
+            lower_bound: gene.lower_bound,
         }
     }
 }
@@ -77,13 +89,21 @@ impl NumericGene<FloatGene, f32> for FloatGene {
 }
 
 impl BoundGene<FloatGene, f32> for FloatGene {
-    fn min(&self) -> &f32 {
-        &self.min
+    fn upper_bound(&self) -> &f32 {
+        &self.upper_bound
     }
 
-    fn max(&self) -> &f32 {
-        &self.max
+    fn lower_bound(&self) -> &f32 {
+        &self.lower_bound
     }
+
+    fn with_bounds(self, upper_bound: f32, lower_bound: f32) -> FloatGene {
+        FloatGene {
+            upper_bound,
+            lower_bound,
+            ..self
+        }
+    } 
 }
 
 impl Clone for FloatGene {
@@ -92,6 +112,8 @@ impl Clone for FloatGene {
             allele: self.allele,
             min: self.min,
             max: self.max,
+            upper_bound: self.upper_bound,
+            lower_bound: self.lower_bound,
         }
     }
 }

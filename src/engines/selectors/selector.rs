@@ -9,6 +9,7 @@ where
     fn select(&self, population: &Population<TGene>, count: usize) -> Population<TGene>;
 }
 
+#[allow(dead_code)]
 pub enum Selector {
     Tournament(u8),
     Roulette,

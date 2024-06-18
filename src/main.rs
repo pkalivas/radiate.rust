@@ -15,8 +15,8 @@ use engines::score::Score;
 use crate::engines::selectors::selector::Selector;
 
 fn main() {
-    // run_min_sum();
-    run_string_evolve("Chicago, IL");
+    run_min_sum();
+    // run_string_evolve("Chicago, IL");
 }
 
 fn run_string_evolve(target: &'static str) {
@@ -50,18 +50,19 @@ fn run_string_evolve(target: &'static str) {
     });
 
     println!("{:?}", result);
-    println!("{:?}", BitGene::new());
 }
 
 fn run_min_sum() {
     let codex = get_int_codex(1, 10, 0, 100);
 
     let engine = GeneticEngine::from_codex(codex)
-        .population_size(1000)
+        .population_size(100)
         .minimizing()
+        .offspring_selector(Selector::Elitism)
+        .survivor_selector(Selector::Tournament(4))
         .alterers(vec![
-            Alterer::Mutator(0.001),
-            Alterer::MultiPointCrossover(0.5, 2),
+            Alterer::SwapMutator(0.001),
+            Alterer::UniformCrossover(0.5),
         ])
         .fitness_fn(|genotype: &Vec<Vec<i32>>| {
             Score::from_int(genotype.iter().fold(0, |acc, chromosome| {

@@ -11,11 +11,11 @@ impl<TGene> Chromosome<TGene>
 where
     TGene: Gene<TGene>,
 {
-    pub fn get(&self, index: usize) -> &TGene {
+    pub fn get_gene(&self, index: usize) -> &TGene {
         &self.genes[index]
     }
 
-    pub fn set(&mut self, index: usize, gene: TGene) {
+    pub fn set_gene(&mut self, index: usize, gene: TGene) {
         self.genes[index] = gene;
     }
 

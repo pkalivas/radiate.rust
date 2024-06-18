@@ -32,14 +32,14 @@ impl MultiPointCrossover {
         }
 
         for i in (end - start..0).rev() {
-            let temp = chrom_one.get(start + i);
-            let other_gene = chrom_two.get(other_start + i);
+            let temp = chrom_one.get_gene(start + i);
+            let other_gene = chrom_two.get_gene(other_start + i);
 
             let new_gene_one = temp.from_gene(&other_gene);
             let new_gene_two = other_gene.from_gene(&temp);
 
-            chrom_one.set(start + i, new_gene_one);
-            chrom_two.set(other_start + i, new_gene_two);
+            chrom_one.set_gene(start + i, new_gene_one);
+            chrom_two.set_gene(other_start + i, new_gene_two);
         }
     }
 }

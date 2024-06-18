@@ -8,6 +8,8 @@ use crate::engines::alterers::crossovers::multipoint_crossover::MultiPointCrosso
 use crate::engines::optimize::Optimize;
 use crate::engines::schema::subset;
 
+use super::mutators::swap_mutator::SwapMutator;
+
 pub struct CompositeAlterer<TGene>
 where
     TGene: Gene<TGene>,
@@ -49,6 +51,13 @@ where
                         rate,
                         mutator: None,
                         crossover: Some(Box::new(MultiPointCrossover::new(num_points))),
+                    });
+                },
+                Alterer::SwapMutator(rate) => {
+                    alterer_wraps.push(AlterWrap {
+                        rate,
+                        mutator: Some(Box::new(SwapMutator)),
+                        crossover: None,
                     });
                 },
             }
