@@ -53,6 +53,7 @@ impl<TGene: Gene<TGene>> CompositeAlterer<TGene> {
                         crossover: None,
                     });
                 }
+                Alterer::NumericMutator(rate) => panic!("NumericMutator not implemented")
             }
         }
 

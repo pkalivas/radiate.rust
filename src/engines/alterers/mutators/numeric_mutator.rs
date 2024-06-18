@@ -1,3 +1,5 @@
+use rand::Rng;
+
 use crate::engines::alterers::mutators::mutate::Mutate;
 use crate::engines::genome::chromosome::Chromosome;
 use crate::engines::genome::genes::gene::{Gene, NumericGene};
@@ -13,7 +15,7 @@ impl<TGene: Gene<TGene> + NumericGene<TGene, T>, T> Mutate<TGene> for NumericMut
         for gene in chromosome.iter_mut() {
             if random.gen::<f32>() < probability {
                 let new_instance = gene.new_instance();
-                let operator = randmo::gen_range(0..4);
+                let operator = random.gen_range(0..4);
 
                 *gene = match operator {
                     0 => gene.add(&new_instance),
