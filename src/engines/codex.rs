@@ -1,9 +1,9 @@
+use super::genome::{genes::gene::Gene, genotype::Genotype};
 use crate::engines::genome::chromosome::Chromosome;
 use crate::engines::genome::genes::char_gene::CharGene;
 use crate::engines::genome::genes::float_gene::FloatGene;
 use crate::engines::genome::genes::gene::Allele;
 use crate::engines::genome::genes::int_gene::IntGene;
-use super::genome::{genes::gene::Gene, genotype::Genotype};
 
 pub struct Codex<TGene: Gene<TGene>, T> {
     pub encoder: Option<Box<dyn Fn() -> Genotype<TGene>>>,

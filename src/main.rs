@@ -1,20 +1,32 @@
 mod engines;
 
-use crate::engines::selectors::selector::Selector;
-use engines::alterers::alter::{Alter, Alterer};
+use engines::alterers::alter::Alterer;
+use engines::codex;
 use engines::engine::Engine;
 use engines::genetic_engine::GeneticEngine;
-use engines::genome::genes::gene::Allele;
 use engines::score::Score;
-use crate::engines::codex;
+use engines::selectors::selector::Selector;
 
 fn main() {
-    let mut input = String::from("");
+    let options = String::from(
+        "0. Exit\n\
+        1. Minimize sum\n\
+        2. Evolve string\n",
+    );
 
-    std::io::stdin().read_line(&mut input).unwrap();
-    println!("{}", input);
-    // run_min_sum();
-    // run_string_evolve("Chicago, IL");
+    loop {
+        print!("{}", options);
+
+        let mut input = String::new();
+        std::io::stdin().read_line(&mut input).unwrap();
+
+        match input.trim() {
+            "1" => run_min_sum(),
+            "2" => run_string_evolve("Chicago, IL"),
+            "0" => return,
+            _ => println!("Invalid option"),
+        }
+    }
 }
 
 fn run_string_evolve(target: &'static str) {

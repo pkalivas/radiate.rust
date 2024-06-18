@@ -6,20 +6,14 @@ pub enum Optimize {
 }
 
 impl Optimize {
-    pub fn sort<TGene>(&self, population: &mut Population<TGene>)
-    where
-        TGene: Gene<TGene>,
-    {
+    pub fn sort<TGene: Gene<TGene>>(&self, population: &mut Population<TGene>) {
         match self {
             Optimize::Minimize => population.sort_by(|a, b| a.partial_cmp(&b).unwrap()),
             Optimize::Maximize => population.sort_by(|a, b| b.partial_cmp(&a).unwrap()),
         }
     }
 
-    pub fn sort_index<TGene>(&self, population: &mut Population<TGene>) -> Vec<usize>
-    where
-        TGene: Gene<TGene>,
-    {
+    pub fn sort_index<TGene: Gene<TGene>>(&self, population: &mut Population<TGene>) -> Vec<usize> {
         match self {
             Optimize::Minimize => {
                 let mut indices: Vec<usize> = (0..population.len()).collect();

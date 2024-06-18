@@ -17,7 +17,6 @@ pub struct GeneticEngine<TGene: Gene<TGene>, T> {
 }
 
 impl<TGene: Gene<TGene>, T> GeneticEngine<TGene, T> {
-    
     pub fn new(params: GeneticEngineParams<TGene, T>) -> Self {
         GeneticEngine { params }
     }
@@ -82,7 +81,12 @@ impl<TGene: Gene<TGene>, T> GeneticEngine<TGene, T> {
         }
     }
 
-    pub fn recombine(&self, handle: &mut EngineHandle<TGene, T>, survivors: Population<TGene>, offspring: Population<TGene>) {
+    pub fn recombine(
+        &self,
+        handle: &mut EngineHandle<TGene, T>,
+        survivors: Population<TGene>,
+        offspring: Population<TGene>,
+    ) {
         handle.population = survivors
             .into_iter()
             .chain(offspring.into_iter())

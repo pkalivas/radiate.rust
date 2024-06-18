@@ -7,7 +7,7 @@ use crate::engines::genome::phenotype::Phenotype;
 use crate::engines::genome::population::Population;
 use crate::engines::optimize::Optimize;
 use crate::engines::score::Score;
-use crate::engines::selectors::selector::{Select, Selector};
+use crate::engines::selectors::selector::Selector;
 
 pub struct GeneticEngineParams<TGene, T>
 where
@@ -25,10 +25,7 @@ where
     pub fitness_fn: Option<Box<dyn Fn(&T) -> Score>>,
 }
 
-impl<TGene, T> GeneticEngineParams<TGene, T>
-where
-    TGene: Gene<TGene>,
-{
+impl<TGene: Gene<TGene>, T> GeneticEngineParams<TGene, T> {
     pub fn new() -> Self {
         GeneticEngineParams {
             population_size: 100,
