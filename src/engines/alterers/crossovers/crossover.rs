@@ -4,8 +4,8 @@ use crate::engines::genome::genotype::Genotype;
 use crate::engines::genome::phenotype::Phenotype;
 use crate::engines::genome::population::Population;
 
-pub trait Crossover<TGene: Gene<TGene>> {
-    fn cross(&self, population: &mut Population<TGene>, parent_indexes: &[i32], probability: f32, generation: i32) {
+pub trait Crossover<G: Gene<G, A>, A> {
+    fn cross(&self, population: &mut Population<G, A>, parent_indexes: &[i32], probability: f32, generation: i32) {
         let index_one = parent_indexes[0] as usize;
         let index_two = parent_indexes[1] as usize;
 
@@ -20,8 +20,8 @@ pub trait Crossover<TGene: Gene<TGene>> {
 
     fn cross_genotypes(
         &self,
-        geno_one: &mut Genotype<TGene>,
-        geno_two: &mut Genotype<TGene>,
+        geno_one: &mut Genotype<G, A>,
+        geno_two: &mut Genotype<G, A>,
         probability: f32,
     ) {
         let min_index = std::cmp::min(geno_one.len(), geno_two.len());
@@ -35,8 +35,8 @@ pub trait Crossover<TGene: Gene<TGene>> {
 
     fn cross_chromosomes(
         &self,
-        chrom_one: &mut Chromosome<TGene>,
-        chrom_two: &mut Chromosome<TGene>,
+        chrom_one: &mut Chromosome<G, A>,
+        chrom_two: &mut Chromosome<G, A>,
         probability: f32,
     ) {
         for i in 0..std::cmp::min(chrom_one.len(), chrom_two.len()) {

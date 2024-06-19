@@ -9,11 +9,11 @@ use crate::engines::optimize::Optimize;
 use crate::engines::schema::subset;
 use crate::engines::alterers::mutators::swap_mutator::SwapMutator;
 
-pub struct CompositeAlterer<TGene: Gene<TGene>> {
-    alterers: Vec<AlterWrap<TGene>>,
+pub struct CompositeAlterer<TGene: Gene<TGene, A>, A> {
+    alterers: Vec<AlterWrap<TGene, A>>,
 }
 
-impl<TGene: Gene<TGene>> CompositeAlterer<TGene> {
+impl<TGene: Gene<TGene, A>, A> CompositeAlterer<TGene, A> {
     pub fn new(alterers: Vec<Alterer>) -> Self {
         let mut alterer_wraps = Vec::new();
         for alterer in alterers {
@@ -63,8 +63,8 @@ impl<TGene: Gene<TGene>> CompositeAlterer<TGene> {
     }
 }
 
-impl<TGene: Gene<TGene>> Alter<TGene> for CompositeAlterer<TGene> {
-    fn alter(&self, population: &mut Population<TGene>, optimize: &Optimize, generation: i32) {
+impl<TGene: Gene<TGene, A>, A> Alter<TGene, A> for CompositeAlterer<TGene, A> {
+    fn alter(&self, population: &mut Population<TGene, A>, optimize: &Optimize, generation: i32) {
         optimize.sort(population);
 
         for alterer in self.alterers.iter() {

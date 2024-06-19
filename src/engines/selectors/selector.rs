@@ -2,8 +2,8 @@ use crate::engines::genome::genes::gene::Gene;
 use crate::engines::genome::population::Population;
 use rand::Rng;
 
-pub trait Select<TGene: Gene<TGene>> {
-    fn select(&self, population: &Population<TGene>, count: usize) -> Population<TGene>;
+pub trait Select<G: Gene<G, A>, A> {
+    fn select(&self, population: &Population<G, A>, count: usize) -> Population<G, A>;
 }
 
 #[allow(dead_code)]
@@ -16,7 +16,7 @@ pub enum Selector {
 }
 
 impl Selector {
-    pub fn total_fitness<TGene: Gene<TGene>>(&self, population: &Population<TGene>) -> f32 {
+    pub fn total_fitness<G: Gene<G, A>, A>(&self, population: &Population<G, A>) -> f32 {
         population
             .iter()
             .map(|i| match i.score() {
@@ -27,8 +27,8 @@ impl Selector {
     }
 }
 
-impl<TGene: Gene<TGene>> Select<TGene> for Selector {
-    fn select(&self, population: &Population<TGene>, count: usize) -> Population<TGene> {
+impl<G: Gene<G, A>, A> Select<G, A> for Selector {
+    fn select(&self, population: &Population<G, A>, count: usize) -> Population<G, A> {
         match self {
             Selector::Tournament(size) => {
                 let mut rng = rand::thread_rng();
@@ -96,7 +96,7 @@ impl<TGene: Gene<TGene>> Select<TGene> for Selector {
                 .iter()
                 .take(count)
                 .map(|individual| individual.clone())
-                .collect::<Population<TGene>>(),
+                .collect::<Population<G, A>>(),
             Selector::Boltzmann(temperature) => {
                 let mut selected = Vec::with_capacity(count);
                 let mut rng = rand::thread_rng();

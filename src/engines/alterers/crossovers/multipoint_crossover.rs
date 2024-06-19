@@ -14,11 +14,11 @@ impl MultiPointCrossover {
         Self { num_points }
     }
 
-    pub fn swap<TGene: Gene<TGene>>(
-        chrom_one: &mut Chromosome<TGene>,
+    pub fn swap<TGene: Gene<TGene, A>, A>(
+        chrom_one: &mut Chromosome<TGene, A>,
         start: usize,
         end: usize,
-        chrom_two: &mut Chromosome<TGene>,
+        chrom_two: &mut Chromosome<TGene, A>,
         other_start: usize,
     ) {
         if other_start + (end - start) > chrom_one.len() {
@@ -46,11 +46,11 @@ impl MultiPointCrossover {
     }
 }
 
-impl<TGene: Gene<TGene>> Crossover<TGene> for MultiPointCrossover {
+impl<TGene: Gene<TGene, A>, A> Crossover<TGene, A> for MultiPointCrossover {
     fn cross_chromosomes(
         &self,
-        chrom_one: &mut Chromosome<TGene>,
-        chrom_two: &mut Chromosome<TGene>,
+        chrom_one: &mut Chromosome<TGene, A>,
+        chrom_two: &mut Chromosome<TGene, A>,
         _: f32,
     ) {
         let min_index = std::cmp::min(chrom_one.len(), chrom_two.len());

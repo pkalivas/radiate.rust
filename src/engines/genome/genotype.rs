@@ -1,11 +1,11 @@
 use super::{chromosome::Chromosome, genes::gene::Gene};
 
-pub struct Genotype<TGene: Gene<TGene>> {
-    pub chromosomes: Vec<Chromosome<TGene>>,
+pub struct Genotype<G: Gene<G, A>, A> {
+    pub chromosomes: Vec<Chromosome<G, A>>,
 }
 
-impl<TGene: Gene<TGene>> Genotype<TGene> {
-    pub fn get_chromosome_mut(&mut self, index: usize) -> &mut Chromosome<TGene> {
+impl<G: Gene<G, A>, A> Genotype<G, A> {
+    pub fn get_chromosome_mut(&mut self, index: usize) -> &mut Chromosome<G, A> {
         &mut self.chromosomes[index]
     }
 
@@ -23,16 +23,16 @@ impl<TGene: Gene<TGene>> Genotype<TGene> {
         true
     }
 
-    pub fn iter(&self) -> std::slice::Iter<Chromosome<TGene>> {
+    pub fn iter(&self) -> std::slice::Iter<Chromosome<G, A>> {
         self.chromosomes.iter()
     }
 
-    pub fn iter_mut(&mut self) -> std::slice::IterMut<Chromosome<TGene>> {
+    pub fn iter_mut(&mut self) -> std::slice::IterMut<Chromosome<G, A>> {
         self.chromosomes.iter_mut()
     }
 }
 
-impl<TGene: Gene<TGene>> Clone for Genotype<TGene> {
+impl<G: Gene<G, A>, A> Clone for Genotype<G, A> {
     fn clone(&self) -> Self {
         Genotype {
             chromosomes: self.chromosomes.clone(),
@@ -40,13 +40,13 @@ impl<TGene: Gene<TGene>> Clone for Genotype<TGene> {
     }
 }
 
-impl<TGene: Gene<TGene>> PartialEq for Genotype<TGene> {
+impl<G: Gene<G, A>, A> PartialEq for Genotype<G, A> {
     fn eq(&self, other: &Self) -> bool {
         self.chromosomes == other.chromosomes
     }
 }
 
-impl<TGene: Gene<TGene> + std::fmt::Debug> std::fmt::Debug for Genotype<TGene> {
+impl<G: Gene<G, A> + std::fmt::Debug, A> std::fmt::Debug for Genotype<G, A> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "[")?;
         for chromosome in &self.chromosomes {

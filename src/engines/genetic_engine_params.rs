@@ -10,9 +10,9 @@ use crate::engines::optimize::Optimize;
 use crate::engines::score::Score;
 use crate::engines::selectors::selector::Selector;
 
-pub struct GeneticEngineParams<TGene, T>
+pub struct GeneticEngineParams<G, A, T>
 where
-    TGene: Gene<TGene>,
+    G: Gene<G, A>,
 {
     pub population_size: usize,
     pub max_age: i32,
@@ -20,13 +20,13 @@ where
     pub optimize: Optimize,
     pub survivor_selector: Selector,
     pub offspring_selector: Selector,
-    pub alterer: Option<CompositeAlterer<TGene>>,
-    pub codex: Option<Codex<TGene, T>>,
-    pub population: Option<Population<TGene>>,
+    pub alterer: Option<CompositeAlterer<G, A>>,
+    pub codex: Option<Codex<G, A, T>>,
+    pub population: Option<Population<G, A>>,
     pub fitness_fn: Option<Box<dyn Fn(&T) -> Score>>,
 }
 
-impl<TGene: Gene<TGene>, T> GeneticEngineParams<TGene, T> {
+impl<G: Gene<G, A>, A, T> GeneticEngineParams<G, A, T> {
     pub fn new() -> Self {
         GeneticEngineParams {
             population_size: 100,
@@ -57,12 +57,12 @@ impl<TGene: Gene<TGene>, T> GeneticEngineParams<TGene, T> {
         self
     }
 
-    pub fn codex(mut self, codex: Codex<TGene, T>) -> Self {
+    pub fn codex(mut self, codex: Codex<G, A, T>) -> Self {
         self.codex = Some(codex);
         self
     }
 
-    pub fn population(mut self, population: Population<TGene>) -> Self {
+    pub fn population(mut self, population: Population<G, A>) -> Self {
         self.population = Some(population);
         self
     }
@@ -82,7 +82,7 @@ impl<TGene: Gene<TGene>, T> GeneticEngineParams<TGene, T> {
         self
     }
 
-    pub fn temp(mut self, alters: Vec<impl Crossover<TGene>>) -> Self {
+    pub fn temp(mut self, alters: Vec<impl Crossover<G, A>>) -> Self {
         // self.alterer = Some(CompositeAlterer::new(alters));
         self
     }
@@ -102,7 +102,7 @@ impl<TGene: Gene<TGene>, T> GeneticEngineParams<TGene, T> {
         self
     }
 
-    pub fn build(mut self) -> GeneticEngine<TGene, T> {
+    pub fn build(mut self) -> GeneticEngine<G, A, T> {
         self.build_population();
 
         GeneticEngine::new(self)

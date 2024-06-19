@@ -1,16 +1,24 @@
 use super::genes::gene::Gene;
 
-pub struct Chromosome<TGene: Gene<TGene>>
+pub struct Chromosome<G: Gene<G, A>, A>
 {
-    pub genes: Vec<TGene>,
+    pub genes: Vec<G>,
+    _allele: std::marker::PhantomData<A>,
 }
 
-impl<TGene: Gene<TGene>> Chromosome<TGene> {
-    pub fn get_gene(&self, index: usize) -> &TGene {
+impl<G: Gene<G, A>, A> Chromosome<G, A> {
+    pub fn from_genes(genes: Vec<G>) -> Self {
+        Chromosome {
+            genes,
+            _allele: std::marker::PhantomData,
+        }
+    }
+    
+    pub fn get_gene(&self, index: usize) -> &G {
         &self.genes[index]
     }
 
-    pub fn set_gene(&mut self, index: usize, gene: TGene) {
+    pub fn set_gene(&mut self, index: usize, gene: G) {
         self.genes[index] = gene;
     }
 
@@ -28,24 +36,25 @@ impl<TGene: Gene<TGene>> Chromosome<TGene> {
         true
     }
 
-    pub fn iter(&self) -> std::slice::Iter<TGene> {
+    pub fn iter(&self) -> std::slice::Iter<G> {
         self.genes.iter()
     }
 
-    pub fn iter_mut(&mut self) -> std::slice::IterMut<TGene> {
+    pub fn iter_mut(&mut self) -> std::slice::IterMut<G> {
         self.genes.iter_mut()
     }
 }
 
-impl<TGene: Gene<TGene>> Clone for Chromosome<TGene> {
+impl<G: Gene<G, A>, A> Clone for Chromosome<G, A> {
     fn clone(&self) -> Self {
         Chromosome {
             genes: self.genes.clone(),
+            _allele: std::marker::PhantomData,
         }
     }
 }
 
-impl<TGene: Gene<TGene>> PartialEq for Chromosome<TGene> {
+impl<G: Gene<G, A>, A> PartialEq for Chromosome<G, A> {
     fn eq(&self, other: &Self) -> bool {
         for (a, b) in self.genes.iter().zip(other.genes.iter()) {
             if a != b {
@@ -57,7 +66,7 @@ impl<TGene: Gene<TGene>> PartialEq for Chromosome<TGene> {
     }
 }
 
-impl<TGene: Gene<TGene> + std::fmt::Debug> std::fmt::Debug for Chromosome<TGene> {
+impl<G: Gene<G, A> + std::fmt::Debug, A> std::fmt::Debug for Chromosome<G, A> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "[")?;
         for gene in &self.genes {

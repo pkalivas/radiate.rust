@@ -4,14 +4,14 @@ use crate::engines::genome::genes::gene::Gene;
 use crate::engines::genome::population::Population;
 use crate::engines::optimize::Optimize;
 
-pub trait Alter<TGene: Gene<TGene>> {
-    fn alter(&self, population: &mut Population<TGene>, optimize: &Optimize, generation: i32);
+pub trait Alter<G: Gene<G, A>, A> {
+    fn alter(&self, population: &mut Population<G, A>, optimize: &Optimize, generation: i32);
 }
 
-pub struct AlterWrap<TGene: Gene<TGene>> {
+pub struct AlterWrap<G: Gene<G, A>, A> {
     pub rate: f32,
-    pub mutator: Option<Box<dyn Mutate<TGene>>>,
-    pub crossover: Option<Box<dyn Crossover<TGene>>>,
+    pub mutator: Option<Box<dyn Mutate<G, A>>>,
+    pub crossover: Option<Box<dyn Crossover<G, A>>>,
 }
 
 #[allow(dead_code)]
