@@ -1,6 +1,6 @@
 use rand::Rng;
 
-use super::gene::{Allele, BoundGene, Gene, NumericGene};
+use super::gene::{BoundGene, Gene, NumericGene, Valid};
 
 pub struct IntGene {
     allele: i32,
@@ -24,7 +24,11 @@ impl IntGene {
     }
 }
 
-impl Gene<IntGene> for IntGene {
+impl Gene<IntGene, i32> for IntGene {
+    fn allele(&self) -> i32 {
+        self.allele
+    }
+
     fn new_instance(&self) -> IntGene {
         let mut rand = rand::thread_rng();
         IntGene {
@@ -34,14 +38,6 @@ impl Gene<IntGene> for IntGene {
             upper_bound: self.upper_bound,
             lower_bound: self.lower_bound,
         }
-    }
-
-    fn is_valid(&self) -> bool {
-        if self.allele < self.min || self.allele > self.max {
-            return false;
-        }
-
-        true
     }
 
     fn from_gene(&self, gene: &IntGene) -> IntGene {
@@ -55,81 +51,9 @@ impl Gene<IntGene> for IntGene {
     }
 }
 
-impl Allele<i32> for IntGene {
-    fn allele(&self) -> &i32 {
-        &self.allele
-    }
-}
-
-impl NumericGene<IntGene> for IntGene { }
-
-
-impl std::ops::Div for IntGene {
-    type Output = Self;
-
-    fn div(self, other: Self) -> Self {
-        IntGene {
-            allele: self.allele / other.allele,
-            min: self.min,
-            max: self.max,
-            upper_bound: self.upper_bound,
-            lower_bound: self.lower_bound,
-        }
-    }
-}
-
-impl std::ops::Mul for IntGene {
-    type Output = Self;
-
-    fn mul(self, other: Self) -> Self {
-        IntGene {
-            allele: self.allele * other.allele,
-            min: self.min,
-            max: self.max,
-            upper_bound: self.upper_bound,
-            lower_bound: self.lower_bound,
-        }
-    }
-}
-
-impl std::ops::Sub for IntGene {
-    type Output = Self;
-
-    fn sub(self, other: Self) -> Self {
-        IntGene {
-            allele: self.allele - other.allele,
-            min: self.min,
-            max: self.max,
-            upper_bound: self.upper_bound,
-            lower_bound: self.lower_bound,
-        }
-    }
-}
-
-impl std::ops::Add for IntGene {
-    type Output = Self;
-
-    fn add(self, other: Self) -> Self {
-        IntGene {
-            allele: self.allele + other.allele,
-            min: self.min,
-            max: self.max,
-            upper_bound: self.upper_bound,
-            lower_bound: self.lower_bound,
-        }
-    }
-}
-
-
-impl Clone for IntGene {
-    fn clone(&self) -> Self {
-        IntGene {
-            allele: self.allele,
-            min: self.min,
-            max: self.max,
-            upper_bound: self.upper_bound,
-            lower_bound: self.lower_bound,
-        }
+impl Valid for IntGene {
+    fn is_valid(&self) -> bool {
+        self.allele >= self.min && self.allele <= self.max
     }
 }
 
@@ -147,6 +71,48 @@ impl BoundGene<IntGene, i32> for IntGene {
             upper_bound,
             lower_bound,
             ..self
+        }
+    }
+}
+
+impl NumericGene<IntGene, i32> for IntGene {
+    fn add(&self, other: &IntGene) -> IntGene {
+        IntGene {
+            allele: self.allele + other.allele,
+            ..*self
+        }
+    }
+
+    fn sub(&self, other: &IntGene) -> IntGene {
+        IntGene {
+            allele: self.allele - other.allele,
+            ..*self
+        }
+    }
+
+    fn mul(&self, other: &IntGene) -> IntGene {
+        IntGene {
+            allele: self.allele * other.allele,
+            ..*self
+        }
+    }
+
+    fn div(&self, other: &IntGene) -> IntGene {
+        IntGene {
+            allele: self.allele / other.allele,
+            ..*self
+        }
+    }
+}
+
+impl Clone for IntGene {
+    fn clone(&self) -> Self {
+        IntGene {
+            allele: self.allele,
+            min: self.min,
+            max: self.max,
+            upper_bound: self.upper_bound,
+            lower_bound: self.lower_bound,
         }
     }
 }

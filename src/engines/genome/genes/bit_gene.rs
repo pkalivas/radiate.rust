@@ -1,4 +1,4 @@
-use super::gene::{Allele, Gene};
+use super::gene::{Gene, Valid};
 
 pub struct BitGene {
     allele: bool,
@@ -12,13 +12,13 @@ impl BitGene {
     }
 }
 
-impl Gene<BitGene> for BitGene {
-    fn new_instance(&self) -> BitGene {
-        BitGene::new()
+impl Gene<BitGene, bool> for BitGene {
+    fn allele(&self) -> bool {
+        self.allele
     }
 
-    fn is_valid(&self) -> bool {
-        true
+    fn new_instance(&self) -> BitGene {
+        BitGene::new()
     }
 
     fn from_gene(&self, gene: &BitGene) -> BitGene {
@@ -28,9 +28,9 @@ impl Gene<BitGene> for BitGene {
     }
 }
 
-impl Allele<bool> for BitGene {
-    fn allele(&self) -> &bool {
-        &self.allele
+impl Valid for BitGene {
+    fn is_valid(&self) -> bool {
+        true
     }
 }
 
