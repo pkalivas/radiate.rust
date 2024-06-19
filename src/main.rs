@@ -38,9 +38,9 @@ fn run_string_evolve(target: &'static str) {
 
     let engine =
         GeneticEngine::from_codex(codex)
-            .offspring_selector(Selector::Tournament(3))
-            .survivor_selector(Selector::Elitism)
-            .mutator(Mutator::new(0.001))
+            .offspring_selector(Selector::Elitism)
+            .survivor_selector(Selector::Tournament(3))
+            .mutator(Mutator::new(0.01))
             .crossover(UniformCrossover::new(0.5))
             .fitness_fn(|genotype: &String| {
                 Score::from_usize(genotype.chars().zip(target.chars()).fold(
