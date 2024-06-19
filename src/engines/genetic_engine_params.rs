@@ -104,7 +104,7 @@ impl<G: Gene<G, A>, A, T> GeneticEngineParams<G, A, T> {
     pub fn mutator<M>(mut self, alterer: M) -> Self 
     where M: Mutate<G, A> + 'static
     {
-        let mut mutator = Box::new(alterer);
+        let mutator = Box::new(alterer);
         match &mut self.alterer {
             Some(alterer) => {
                 alterer.add_mutator(mutator);
@@ -121,7 +121,7 @@ impl<G: Gene<G, A>, A, T> GeneticEngineParams<G, A, T> {
     pub fn crossover<C>(mut self, alterer: C) -> Self 
     where C: Crossover<G, A> + 'static
     {
-        let mut crossover = Box::new(alterer);
+        let crossover = Box::new(alterer);
         match &mut self.alterer {
             Some(alterer) => {
                 alterer.add_crossover(crossover);

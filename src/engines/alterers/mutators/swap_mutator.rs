@@ -19,6 +19,10 @@ impl<G, A> Mutate<G, A> for SwapMutator
 where
     G: Gene<G, A>
 {
+    fn mutate_rate(&self) -> f32 {
+        self.rate
+    }
+    
     fn mutate_chromosome(&self, chromosome: &mut Chromosome<G, A>, probability: f32) {
         let mut random = rand::thread_rng();
 

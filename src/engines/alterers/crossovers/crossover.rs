@@ -5,9 +5,7 @@ use crate::engines::genome::phenotype::Phenotype;
 use crate::engines::genome::population::Population;
 
 pub trait Crossover<G: Gene<G, A>, A> {
-    fn cross_rate(&self) -> f32 {
-        0.5
-    }
+    fn cross_rate(&self) -> f32;
     
     fn cross(&self, population: &mut Population<G, A>, parent_indexes: &[i32], generation: i32) {
         let index_one = parent_indexes[0] as usize;

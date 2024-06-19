@@ -2,10 +2,12 @@ mod engines;
 
 use engines::alterers::crossovers::uniform_crossover::UniformCrossover;
 use engines::alterers::mutators::mutator::Mutator;
+use engines::alterers::mutators::numeric_mutator::NumericMutator;
 use engines::alterers::mutators::swap_mutator::SwapMutator;
 use engines::codex;
 use engines::engine::Engine;
 use engines::genetic_engine::GeneticEngine;
+use engines::genome::genes::int_gene::IntGene;
 use engines::score::Score;
 use engines::selectors::selector::Selector;
 
@@ -70,11 +72,11 @@ fn run_min_sum() {
         .minimizing()
         .offspring_selector(Selector::Elitism)
         .survivor_selector(Selector::Tournament(4))
+        .crossover(UniformCrossover::new(0.5))
         .mutators(vec![
             Box::new(Mutator::new(0.001)),
-            Box::new(SwapMutator::new(1e-4))
+            Box::new(SwapMutator::new(1e-4)),
         ])
-        .crossover(UniformCrossover::new(0.5))
         .fitness_fn(|genotype: &Vec<Vec<i32>>| {
             Score::from_int(genotype.iter().fold(0, |acc, chromosome| {
                 acc + chromosome.iter().fold(0, |acc, gene| acc + gene)
