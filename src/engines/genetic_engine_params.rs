@@ -1,4 +1,3 @@
-use crate::engines::alterers::alter::{Alter, Alterer};
 use crate::engines::alterers::composite_alterer::CompositeAlterer;
 use crate::engines::alterers::crossovers::crossover::Crossover;
 use crate::engines::codex::Codex;

@@ -1,6 +1,5 @@
 mod engines;
 
-use engines::alterers::alter::Alterer;
 use engines::alterers::crossovers::uniform_crossover::UniformCrossover;
 use engines::alterers::mutators::mutator::Mutator;
 use engines::alterers::mutators::swap_mutator::SwapMutator;
@@ -41,10 +40,6 @@ fn run_string_evolve(target: &'static str) {
             .survivor_selector(Selector::Elitism)
             .mutator(Mutator::new(0.001))
             .crossover(UniformCrossover::new(0.5))
-            // .alterers(vec![
-            //     Alterer::Mutator(0.001),
-            //     Alterer::UniformCrossover(0.5),
-            // ])
             .fitness_fn(|genotype: &String| {
                 Score::from_usize(genotype.chars().zip(target.chars()).fold(
                     0,
