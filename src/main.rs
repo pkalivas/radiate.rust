@@ -11,7 +11,7 @@ fn main() {
     let options = String::from(
         "0. Exit\n\
         1. Minimize sum\n\
-        2. Evolve string\n",
+        2. Evolve string\n"
     );
 
     loop {

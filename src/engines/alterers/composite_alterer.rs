@@ -63,10 +63,7 @@ impl<TGene: Gene<TGene>> CompositeAlterer<TGene> {
     }
 }
 
-impl<TGene> Alter<TGene> for CompositeAlterer<TGene>
-where
-    TGene: Gene<TGene>,
-{
+impl<TGene: Gene<TGene>> Alter<TGene> for CompositeAlterer<TGene> {
     fn alter(&self, population: &mut Population<TGene>, optimize: &Optimize, generation: i32) {
         optimize.sort(population);
 

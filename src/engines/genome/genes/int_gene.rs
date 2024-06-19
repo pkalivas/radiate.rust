@@ -61,35 +61,65 @@ impl Allele<i32> for IntGene {
     }
 }
 
-impl NumericGene<IntGene, i32> for IntGene {
-    fn add(&self, other: &impl NumericGene<IntGene, i32>) -> IntGene {
-        IntGene {
-            allele: self.allele + *other.allele(),
-            ..*self
-        }
-    }
+impl NumericGene<IntGene> for IntGene { }
 
-    fn sub(&self, other: &impl NumericGene<IntGene, i32>) -> IntGene {
-        IntGene {
-            allele: self.allele - *other.allele(),
-            ..*self
-        }
-    }
 
-    fn mul(&self, other: &impl NumericGene<IntGene, i32>) -> IntGene {
-        IntGene {
-            allele: self.allele * *other.allele(),
-            ..*self
-        }
-    }
+impl std::ops::Div for IntGene {
+    type Output = Self;
 
-    fn div(&self, other: &impl NumericGene<IntGene, i32>) -> IntGene {
+    fn div(self, other: Self) -> Self {
         IntGene {
-            allele: self.allele / *other.allele(),
-            ..*self
+            allele: self.allele / other.allele,
+            min: self.min,
+            max: self.max,
+            upper_bound: self.upper_bound,
+            lower_bound: self.lower_bound,
         }
     }
 }
+
+impl std::ops::Mul for IntGene {
+    type Output = Self;
+
+    fn mul(self, other: Self) -> Self {
+        IntGene {
+            allele: self.allele * other.allele,
+            min: self.min,
+            max: self.max,
+            upper_bound: self.upper_bound,
+            lower_bound: self.lower_bound,
+        }
+    }
+}
+
+impl std::ops::Sub for IntGene {
+    type Output = Self;
+
+    fn sub(self, other: Self) -> Self {
+        IntGene {
+            allele: self.allele - other.allele,
+            min: self.min,
+            max: self.max,
+            upper_bound: self.upper_bound,
+            lower_bound: self.lower_bound,
+        }
+    }
+}
+
+impl std::ops::Add for IntGene {
+    type Output = Self;
+
+    fn add(self, other: Self) -> Self {
+        IntGene {
+            allele: self.allele + other.allele,
+            min: self.min,
+            max: self.max,
+            upper_bound: self.upper_bound,
+            lower_bound: self.lower_bound,
+        }
+    }
+}
+
 
 impl Clone for IntGene {
     fn clone(&self) -> Self {

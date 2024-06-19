@@ -58,32 +58,64 @@ impl Allele<f32> for FloatGene {
     }
 }
 
-impl NumericGene<FloatGene, f32> for FloatGene {
-    fn add(&self, other: &impl NumericGene<FloatGene, f32>) -> FloatGene {
+impl NumericGene<FloatGene> for FloatGene {}
+
+// Implement the Div trait for FloatGene
+impl std::ops::Div<FloatGene> for FloatGene {
+    type Output = FloatGene;
+
+    fn div(self, other: FloatGene) -> FloatGene {
         FloatGene {
-            allele: self.allele + *other.allele(),
-            ..*self
+            allele: self.allele / other.allele,
+            min: self.min,
+            max: self.max,
+            upper_bound: self.upper_bound,
+            lower_bound: self.lower_bound,
         }
     }
+}
 
-    fn sub(&self, other: &impl NumericGene<FloatGene, f32>) -> FloatGene {
+// Implement the Mul trait for FloatGene
+impl std::ops::Mul<FloatGene> for FloatGene {
+    type Output = FloatGene;
+
+    fn mul(self, other: FloatGene) -> FloatGene {
         FloatGene {
-            allele: self.allele - *other.allele(),
-            ..*self
+            allele: self.allele * other.allele,
+            min: self.min,
+            max: self.max,
+            upper_bound: self.upper_bound,
+            lower_bound: self.lower_bound,
         }
     }
+}
 
-    fn mul(&self, other: &impl NumericGene<FloatGene, f32>) -> FloatGene {
+// Implement the Sub trait for FloatGene
+impl std::ops::Sub<FloatGene> for FloatGene {
+    type Output = FloatGene;
+
+    fn sub(self, other: FloatGene) -> FloatGene {
         FloatGene {
-            allele: self.allele * *other.allele(),
-            ..*self
+            allele: self.allele - other.allele,
+            min: self.min,
+            max: self.max,
+            upper_bound: self.upper_bound,
+            lower_bound: self.lower_bound,
         }
     }
+}
 
-    fn div(&self, other: &impl NumericGene<FloatGene, f32>) -> FloatGene {
+// Implement the Add trait for FloatGene
+impl std::ops::Add<FloatGene> for FloatGene {
+    type Output = FloatGene;
+
+    fn add(self, other: FloatGene) -> FloatGene {
         FloatGene {
-            allele: self.allele / *other.allele(),
-            ..*self
+            allele: self.allele + other.allele,
+            min: self.min,
+            max: self.max,
+            upper_bound: self.upper_bound,
+            lower_bound: self.lower_bound,
         }
     }
 }
