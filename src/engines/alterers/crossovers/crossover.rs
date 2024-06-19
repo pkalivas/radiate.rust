@@ -44,8 +44,8 @@ pub trait Crossover<G: Gene<G, A>, A> {
                 let gene_one = chrom_one.get_gene(i);
                 let gene_two = chrom_two.get_gene(i);
 
-                let new_gene_one = gene_one.from_gene(&gene_two);
-                let new_gene_two = gene_two.from_gene(&gene_one);
+                let new_gene_one = gene_one.from_allele(&gene_two.allele());
+                let new_gene_two = gene_two.from_allele(&gene_one.allele());
 
                 chrom_one.set_gene(i, new_gene_one);
                 chrom_two.set_gene(i, new_gene_two);

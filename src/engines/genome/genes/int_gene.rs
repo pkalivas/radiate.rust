@@ -40,13 +40,13 @@ impl Gene<IntGene, i32> for IntGene {
         }
     }
 
-    fn from_gene(&self, gene: &IntGene) -> IntGene {
+    fn from_allele(&self, allele: &i32) -> IntGene {
         IntGene {
-            allele: gene.allele,
-            min: gene.min,
-            max: gene.max,
-            upper_bound: gene.upper_bound,
-            lower_bound: gene.lower_bound,
+            allele: *allele,
+            min: self.min,
+            max: self.max,
+            upper_bound: self.upper_bound,
+            lower_bound: self.lower_bound
         }
     }
 }

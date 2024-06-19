@@ -6,7 +6,7 @@ pub trait Valid {
 pub trait Gene<G: Gene<G, A>, A>: Clone + PartialEq + Valid {
     fn allele(&self) -> A;
     fn new_instance(&self) -> G;
-    fn from_gene(&self, gene: &G) -> G;
+    fn from_allele(&self, allele: &A) -> G;
 }
 
 pub trait BoundGene<G: BoundGene<G, A>, A>: Gene<G, A> {

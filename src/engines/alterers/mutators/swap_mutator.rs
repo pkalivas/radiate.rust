@@ -7,7 +7,10 @@ use super::mutate::Mutate;
 
 pub struct SwapMutator;
 
-impl<G: Gene<G, A>, A> Mutate<G, A> for SwapMutator {
+impl<G, A> Mutate<G, A> for SwapMutator
+where
+    G: Gene<G, A>
+{
     fn mutate_chromosome(&self, chromosome: &mut Chromosome<G, A>, probability: f32) {
         let mut random = rand::thread_rng();
 
@@ -19,11 +22,10 @@ impl<G: Gene<G, A>, A> Mutate<G, A> for SwapMutator {
                     continue;
                 }
 
-                let temp = chromosome.get_gene(i);
-                let swap = chromosome.get_gene(swap_index);
+                let curr_gene = chromosome.get_gene(i);
+                let swap_gene = chromosome.get_gene(swap_index);
 
-                let new_gene = temp.from_gene(&swap);
-                chromosome.set_gene(i, new_gene);
+                chromosome.set_gene(i, curr_gene.from_allele(&swap_gene.allele()));
             }
         }
     }

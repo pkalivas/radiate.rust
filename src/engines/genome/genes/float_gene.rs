@@ -44,13 +44,13 @@ impl Gene<FloatGene, f32> for FloatGene {
         }
     }
 
-    fn from_gene(&self, gene: &FloatGene) -> FloatGene {
+    fn from_allele(&self, allele: &f32) -> FloatGene {
         FloatGene {
-            allele: gene.allele,
-            min: gene.min,
-            max: gene.max,
-            upper_bound: gene.upper_bound,
-            lower_bound: gene.lower_bound,
+            allele: *allele,
+            min: self.min,
+            max: self.max,
+            upper_bound: self.upper_bound,
+            lower_bound: self.lower_bound
         }
     }
 }

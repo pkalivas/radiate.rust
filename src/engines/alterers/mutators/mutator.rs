@@ -4,4 +4,4 @@ use super::mutate::Mutate;
 
 pub struct Mutator;
 
-impl<G: Gene<G, A>, A> Mutate<G, A> for Mutator {}
+impl<G, A> Mutate<G, A> for Mutator where G: Gene<G, A> {}

@@ -21,9 +21,9 @@ impl Gene<BitGene, bool> for BitGene {
         BitGene::new()
     }
 
-    fn from_gene(&self, gene: &BitGene) -> BitGene {
+    fn from_allele(&self, allele: &bool) -> BitGene {
         BitGene {
-            allele: gene.allele,
+            allele: allele.clone(),
         }
     }
 }

@@ -24,9 +24,9 @@ impl Gene<CharGene, char> for CharGene {
         CharGene::new()
     }
 
-    fn from_gene(&self, gene: &CharGene) -> CharGene {
+    fn from_allele(&self, allele: &char) -> CharGene {
         CharGene {
-            allele: gene.allele,
+            allele: *allele,
         }
     }
 }
