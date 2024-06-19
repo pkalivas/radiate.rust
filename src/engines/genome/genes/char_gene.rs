@@ -1,4 +1,4 @@
-use super::gene::{Allele, Gene};
+use super::gene::{Gene, Valid};
 
 const ALPHABET: &str = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!\"$%&/()=?`{[]}\\+~*#';.:,-_<>|@^' ";
 
@@ -15,27 +15,23 @@ impl CharGene {
     }
 }
 
-impl Gene<CharGene> for CharGene {
+impl Gene<CharGene, char> for CharGene {
+    fn allele(&self) -> char {
+        self.allele
+    }
+
     fn new_instance(&self) -> CharGene {
         CharGene::new()
     }
 
-    fn is_valid(&self) -> bool {
-        true
-    }
-
-    fn from_gene(&self, gene: &CharGene) -> CharGene {
+    fn from_allele(&self, allele: &char) -> CharGene {
         CharGene {
-            allele: gene.allele,
+            allele: *allele,
         }
     }
 }
 
-impl Allele<char> for CharGene {
-    fn allele(&self) -> &char {
-        &self.allele
-    }
-}
+impl Valid for CharGene { }
 
 impl Clone for CharGene {
     fn clone(&self) -> Self {

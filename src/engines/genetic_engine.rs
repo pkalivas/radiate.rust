@@ -12,24 +12,24 @@ use super::engine_handle::EngineHandle;
 use super::genome::phenotype::Phenotype;
 use super::selectors::selector::Select;
 
-pub struct GeneticEngine<TGene: Gene<TGene>, T> {
-    pub params: GeneticEngineParams<TGene, T>,
+pub struct GeneticEngine<G: Gene<G, A>, A, T> {
+    pub params: GeneticEngineParams<G, A, T>,
 }
 
-impl<TGene: Gene<TGene>, T> GeneticEngine<TGene, T> {
-    pub fn new(params: GeneticEngineParams<TGene, T>) -> Self {
+impl<G: Gene<G, A>, A, T> GeneticEngine<G, A, T> {
+    pub fn new(params: GeneticEngineParams<G, A, T>) -> Self {
         GeneticEngine { params }
     }
 
-    pub fn builder() -> GeneticEngineParams<TGene, T> {
+    pub fn builder() -> GeneticEngineParams<G, A, T> {
         GeneticEngineParams::new()
     }
 
-    pub fn from_codex(codex: Codex<TGene, T>) -> GeneticEngineParams<TGene, T> {
+    pub fn from_codex(codex: Codex<G, A, T>) -> GeneticEngineParams<G, A, T> {
         GeneticEngineParams::new().codex(codex)
     }
 
-    pub fn evaluate(&self, handle: &mut EngineHandle<TGene, T>) {
+    pub fn evaluate(&self, handle: &mut EngineHandle<G, A, T>) {
         let codex = self.codex();
         let fitness_fn = self.fitness_fn();
         let optimize = self.optimize();
@@ -47,28 +47,28 @@ impl<TGene: Gene<TGene>, T> GeneticEngine<TGene, T> {
         optimize.sort(&mut handle.population);
     }
 
-    pub fn select_survivors(&self, population: &Population<TGene>) -> Population<TGene> {
+    pub fn select_survivors(&self, population: &Population<G, A>) -> Population<G, A> {
         let selector = self.survivor_selector();
         let count = self.survivor_count();
 
         selector.select(population, count)
     }
 
-    pub fn select_offspring(&self, population: &Population<TGene>) -> Population<TGene> {
+    pub fn select_offspring(&self, population: &Population<G, A>) -> Population<G, A> {
         let selector = self.offspring_selector();
         let count = self.offspring_count();
 
         selector.select(population, count)
     }
 
-    pub fn alter(&self, population: &mut Population<TGene>, generation: i32) {
+    pub fn alter(&self, population: &mut Population<G, A>, generation: i32) {
         let alterer = self.params.alterer.as_ref().unwrap();
         let optimize = self.optimize();
 
         alterer.alter(population, optimize, generation);
     }
 
-    pub fn filter(&self, population: &mut Population<TGene>, generation: i32) {
+    pub fn filter(&self, population: &mut Population<G, A>, generation: i32) {
         let max_age = self.params.max_age;
         let codex = self.codex();
 
@@ -83,17 +83,17 @@ impl<TGene: Gene<TGene>, T> GeneticEngine<TGene, T> {
 
     pub fn recombine(
         &self,
-        handle: &mut EngineHandle<TGene, T>,
-        survivors: Population<TGene>,
-        offspring: Population<TGene>,
+        handle: &mut EngineHandle<G, A, T>,
+        survivors: Population<G, A>,
+        offspring: Population<G, A>,
     ) {
         handle.population = survivors
             .into_iter()
             .chain(offspring.into_iter())
-            .collect::<Population<TGene>>();
+            .collect::<Population<G, A>>();
     }
 
-    pub fn audit(&self, output: &mut EngineHandle<TGene, T>) {
+    pub fn audit(&self, output: &mut EngineHandle<G, A, T>) {
         let codex = self.codex();
 
         let best = codex.decode(&output.population.get(0).genotype());
@@ -102,15 +102,15 @@ impl<TGene: Gene<TGene>, T> GeneticEngine<TGene, T> {
         output.index += 1;
     }
 
-    pub fn survivor_selector(&self) -> &impl Select<TGene> {
+    pub fn survivor_selector(&self) -> &impl Select<G, A> {
         &self.params.survivor_selector
     }
 
-    pub fn offspring_selector(&self) -> &impl Select<TGene> {
+    pub fn offspring_selector(&self) -> &impl Select<G, A> {
         &self.params.offspring_selector
     }
 
-    pub fn codex(&self) -> &Codex<TGene, T> {
+    pub fn codex(&self) -> &Codex<G, A, T> {
         self.params.codex.as_ref().unwrap()
     }
 
@@ -118,7 +118,7 @@ impl<TGene: Gene<TGene>, T> GeneticEngine<TGene, T> {
         self.params.fitness_fn.as_ref().unwrap()
     }
 
-    pub fn population(&self) -> &Population<TGene> {
+    pub fn population(&self) -> &Population<G, A> {
         self.params.population.as_ref().unwrap()
     }
 
@@ -135,8 +135,8 @@ impl<TGene: Gene<TGene>, T> GeneticEngine<TGene, T> {
     }
 }
 
-impl<TGene: Gene<TGene>, T: Clone> Engine<TGene, T> for GeneticEngine<TGene, T> {
-    fn fit<F: Fn(&EngineHandle<TGene, T>) -> bool>(&self, limit: F) -> EngineHandle<TGene, T> {
+impl<G: Gene<G, A>, A, T: Clone> Engine<G, A, T> for GeneticEngine<G, A, T> {
+    fn fit<F: Fn(&EngineHandle<G, A, T>) -> bool>(&self, limit: F) -> EngineHandle<G, A, T> {
         let mut handle = self.start();
 
         loop {
@@ -163,7 +163,7 @@ impl<TGene: Gene<TGene>, T: Clone> Engine<TGene, T> for GeneticEngine<TGene, T> 
         self.stop(&mut handle)
     }
 
-    fn start(&self) -> EngineHandle<TGene, T> {
+    fn start(&self) -> EngineHandle<G, A, T> {
         let population = self.population();
 
         EngineHandle {

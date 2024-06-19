@@ -1,32 +1,32 @@
 use super::{genes::gene::Gene, phenotype::Phenotype};
 
-pub struct Population<TGene: Gene<TGene>> {
-    pub individuals: Vec<Phenotype<TGene>>,
+pub struct Population<G: Gene<G, A>, A> {
+    pub individuals: Vec<Phenotype<G, A>>,
     pub is_sorted: bool,
 }
 
-impl<TGene: Gene<TGene>> Population<TGene> {
-    pub fn get(&self, index: usize) -> &Phenotype<TGene> {
+impl<G: Gene<G, A>, A> Population<G, A> {
+    pub fn get(&self, index: usize) -> &Phenotype<G, A> {
         self.individuals.get(index).expect("Index out of bounds")
     }
 
-    pub fn get_mut(&mut self, index: usize) -> &mut Phenotype<TGene> {
+    pub fn get_mut(&mut self, index: usize) -> &mut Phenotype<G, A> {
         self.is_sorted = false;
         self.individuals
             .get_mut(index)
             .expect("Index out of bounds")
     }
 
-    pub fn set(&mut self, index: usize, individual: Phenotype<TGene>) {
+    pub fn set(&mut self, index: usize, individual: Phenotype<G, A>) {
         self.individuals[index] = individual;
         self.is_sorted = false;
     }
 
-    pub fn iter(&self) -> std::slice::Iter<Phenotype<TGene>> {
+    pub fn iter(&self) -> std::slice::Iter<Phenotype<G, A>> {
         self.individuals.iter()
     }
 
-    pub fn iter_mut(&mut self) -> std::slice::IterMut<Phenotype<TGene>> {
+    pub fn iter_mut(&mut self) -> std::slice::IterMut<Phenotype<G, A>> {
         self.is_sorted = false;
         self.individuals.iter_mut()
     }
@@ -37,7 +37,7 @@ impl<TGene: Gene<TGene>> Population<TGene> {
 
     pub fn sort_by<F>(&mut self, f: F)
     where
-        F: FnMut(&Phenotype<TGene>, &Phenotype<TGene>) -> std::cmp::Ordering,
+        F: FnMut(&Phenotype<G, A>, &Phenotype<G, A>) -> std::cmp::Ordering,
     {
         if self.is_sorted {
             return;
@@ -47,7 +47,7 @@ impl<TGene: Gene<TGene>> Population<TGene> {
         self.is_sorted = true;
     }
 
-    pub fn from_vec(individuals: Vec<Phenotype<TGene>>) -> Self {
+    pub fn from_vec(individuals: Vec<Phenotype<G, A>>) -> Self {
         Population {
             individuals,
             is_sorted: false,
@@ -56,7 +56,7 @@ impl<TGene: Gene<TGene>> Population<TGene> {
 
     pub fn from_func<F>(size: usize, f: F) -> Self
     where
-        F: Fn() -> Phenotype<TGene>,
+        F: Fn() -> Phenotype<G, A>,
     {
         let mut individuals = Vec::with_capacity(size);
         for _ in 0..size {
@@ -70,18 +70,18 @@ impl<TGene: Gene<TGene>> Population<TGene> {
     }
 }
 
-impl<TGene: Gene<TGene>> std::iter::IntoIterator for Population<TGene> {
+impl<G: Gene<G, A>, A> std::iter::IntoIterator for Population<G, A> {
 
-    type Item = Phenotype<TGene>;
-    type IntoIter = std::vec::IntoIter<Phenotype<TGene>>;
+    type Item = Phenotype<G, A>;
+    type IntoIter = std::vec::IntoIter<Phenotype<G, A>>;
 
     fn into_iter(self) -> Self::IntoIter {
         self.individuals.into_iter()
     }
 }
 
-impl<TGene: Gene<TGene>> std::iter::FromIterator<Phenotype<TGene>> for Population<TGene> {
-    fn from_iter<I: IntoIterator<Item = Phenotype<TGene>>>(iter: I) -> Self {
+impl<G: Gene<G, A>, A> std::iter::FromIterator<Phenotype<G, A>> for Population<G, A> {
+    fn from_iter<I: IntoIterator<Item = Phenotype<G, A>>>(iter: I) -> Self {
         let individuals = iter.into_iter().collect();
         Population {
             individuals,
@@ -90,7 +90,7 @@ impl<TGene: Gene<TGene>> std::iter::FromIterator<Phenotype<TGene>> for Populatio
     }
 }
 
-impl<TGene: Gene<TGene>> Clone for Population<TGene> {
+impl<G: Gene<G, A>, A> Clone for Population<G, A> {
     fn clone(&self) -> Self {
         Population {
             individuals: self.individuals.clone(),
@@ -99,7 +99,7 @@ impl<TGene: Gene<TGene>> Clone for Population<TGene> {
     }
 }
 
-impl<TGene: Gene<TGene> + std::fmt::Debug> std::fmt::Debug for Population<TGene> {
+impl<G: Gene<G, A> + std::fmt::Debug, A> std::fmt::Debug for Population<G, A> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "[")?;
         for individual in &self.individuals {

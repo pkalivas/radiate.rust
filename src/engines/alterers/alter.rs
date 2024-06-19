@@ -1,25 +1,7 @@
-use crate::engines::alterers::crossovers::crossover::Crossover;
-use crate::engines::alterers::mutators::mutate::Mutate;
 use crate::engines::genome::genes::gene::Gene;
 use crate::engines::genome::population::Population;
-use crate::engines::optimize::Optimize;
+use crate::engines::optimize::{self, Optimize};
 
-pub trait Alter<TGene: Gene<TGene>> {
-    fn alter(&self, population: &mut Population<TGene>, optimize: &Optimize, generation: i32);
-}
-
-pub struct AlterWrap<TGene: Gene<TGene>> {
-    pub rate: f32,
-    pub mutator: Option<Box<dyn Mutate<TGene>>>,
-    pub crossover: Option<Box<dyn Crossover<TGene>>>,
-}
-
-#[allow(dead_code)]
-pub enum Alterer {
-    Mutator(f32),
-    UniformCrossover(f32),
-    MultiPointCrossover(f32, usize),
-    SinglePointCrossover(f32),
-    SwapMutator(f32),
-    NumericMutator(f32),
+pub trait Alter<G: Gene<G, A>, A> {
+    fn alter(&self, population: &mut Population<G, A>, optimize: &Optimize, generation: i32);
 }
