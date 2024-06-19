@@ -6,6 +6,8 @@ pub trait Mutate<G, A>
 where
     G: Gene<G, A>
 {
+    fn mutate_rate(&self) -> f32 { 0.001_f32 }
+    
     fn mutate_genotype(&self, genotype: &mut Genotype<G, A>, range: i32, probability: f32) {
         for chromosome in genotype.iter_mut() {
             if rand::random::<i32>() > range {

@@ -7,11 +7,12 @@ const DEFAULT_NUM_POINTS: usize = 2;
 
 pub struct MultiPointCrossover {
     pub num_points: usize,
+    pub rate: f32,
 }
 
 impl MultiPointCrossover {
-    pub fn new(num_points: usize) -> Self {
-        Self { num_points }
+    pub fn new(rate: f32, num_points: usize) -> Self {
+        Self { num_points, rate }
     }
 
     pub fn swap<TGene: Gene<TGene, A>, A>(
@@ -47,11 +48,14 @@ impl MultiPointCrossover {
 }
 
 impl<TGene: Gene<TGene, A>, A> Crossover<TGene, A> for MultiPointCrossover {
+    fn cross_rate(&self) -> f32 {
+        self.rate
+    }
+    
     fn cross_chromosomes(
         &self,
         chrom_one: &mut Chromosome<TGene, A>,
-        chrom_two: &mut Chromosome<TGene, A>,
-        _: f32,
+        chrom_two: &mut Chromosome<TGene, A>
     ) {
         let min_index = std::cmp::min(chrom_one.len(), chrom_two.len());
         let min_points = std::cmp::min(self.num_points, DEFAULT_NUM_POINTS);

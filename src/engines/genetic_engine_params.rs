@@ -10,6 +10,8 @@ use crate::engines::optimize::Optimize;
 use crate::engines::score::Score;
 use crate::engines::selectors::selector::Selector;
 
+use super::alterers::mutators::mutate::Mutate;
+
 pub struct GeneticEngineParams<G, A, T>
 where
     G: Gene<G, A>,
@@ -82,13 +84,73 @@ impl<G: Gene<G, A>, A, T> GeneticEngineParams<G, A, T> {
         self
     }
 
-    pub fn temp(mut self, alters: Vec<impl Crossover<G, A>>) -> Self {
-        // self.alterer = Some(CompositeAlterer::new(alters));
+    pub fn crossovers(mut self, alters: Vec<Box<dyn Crossover<G, A>>>) -> Self {
+        match &mut self.alterer {
+            Some(alterer) => {
+                for crossover in alters {
+                    alterer.add_crossover(crossover);
+                }
+            }
+            None => {
+                let mut alterer = CompositeAlterer::new();
+                for crossover in alters {
+                    alterer.add_crossover(crossover);
+                }
+                self.alterer = Some(alterer);
+            }
+        }
         self
     }
 
-    pub fn alterers(mut self, alters: Vec<Alterer>) -> Self {
-        self.alterer = Some(CompositeAlterer::new(alters));
+    pub fn mutator<M>(mut self, alterer: M) -> Self 
+    where M: Mutate<G, A> + 'static
+    {
+        let mut mutator = Box::new(alterer);
+        match &mut self.alterer {
+            Some(alterer) => {
+                alterer.add_mutator(mutator);
+            }
+            None => {
+                let mut composite = CompositeAlterer::new();
+                composite.add_mutator(mutator);
+                self.alterer = Some(composite);
+            }
+        }
+        self
+    }
+
+    pub fn crossover<C>(mut self, alterer: C) -> Self 
+    where C: Crossover<G, A> + 'static
+    {
+        let mut crossover = Box::new(alterer);
+        match &mut self.alterer {
+            Some(alterer) => {
+                alterer.add_crossover(crossover);
+            }
+            None => {
+                let mut composite = CompositeAlterer::new();
+                composite.add_crossover(crossover);
+                self.alterer = Some(composite);
+            }
+        }
+        self
+    }
+
+    pub fn mutators(mut self, alters: Vec<Box<dyn Mutate<G, A>>>) -> Self {
+        match &mut self.alterer {
+            Some(alterer) => {
+                for mutator in alters {
+                    alterer.add_mutator(mutator);
+                }
+            }
+            None => {
+                let mut alterer = CompositeAlterer::new();
+                for mutator in alters {
+                    alterer.add_mutator(mutator);
+                }
+                self.alterer = Some(alterer);
+            }
+        }
         self
     }
 

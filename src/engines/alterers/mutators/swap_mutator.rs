@@ -5,7 +5,15 @@ use crate::engines::genome::genes::gene::Gene;
 
 use super::mutate::Mutate;
 
-pub struct SwapMutator;
+pub struct SwapMutator {
+    rate: f32,
+}
+
+impl SwapMutator {
+    pub fn new(rate: f32) -> Self {
+        Self { rate }
+    }
+}
 
 impl<G, A> Mutate<G, A> for SwapMutator
 where

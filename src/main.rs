@@ -1,6 +1,9 @@
 mod engines;
 
 use engines::alterers::alter::Alterer;
+use engines::alterers::crossovers::uniform_crossover::UniformCrossover;
+use engines::alterers::mutators::mutator::Mutator;
+use engines::alterers::mutators::swap_mutator::SwapMutator;
 use engines::codex;
 use engines::engine::Engine;
 use engines::genetic_engine::GeneticEngine;
@@ -36,10 +39,12 @@ fn run_string_evolve(target: &'static str) {
         GeneticEngine::from_codex(codex)
             .offspring_selector(Selector::Tournament(3))
             .survivor_selector(Selector::Elitism)
-            .alterers(vec![
-                Alterer::Mutator(0.001),
-                Alterer::UniformCrossover(0.5),
-            ])
+            .mutator(Mutator::new(0.001))
+            .crossover(UniformCrossover::new(0.5))
+            // .alterers(vec![
+            //     Alterer::Mutator(0.001),
+            //     Alterer::UniformCrossover(0.5),
+            // ])
             .fitness_fn(|genotype: &String| {
                 Score::from_usize(genotype.chars().zip(target.chars()).fold(
                     0,
@@ -70,11 +75,11 @@ fn run_min_sum() {
         .minimizing()
         .offspring_selector(Selector::Elitism)
         .survivor_selector(Selector::Tournament(4))
-        .alterers(vec![
-            Alterer::SwapMutator(0.001),
-            Alterer::Mutator(1e-5),
-            Alterer::UniformCrossover(0.5),
+        .mutators(vec![
+            Box::new(Mutator::new(0.001)),
+            Box::new(SwapMutator::new(1e-4))
         ])
+        .crossover(UniformCrossover::new(0.5))
         .fitness_fn(|genotype: &Vec<Vec<i32>>| {
             Score::from_int(genotype.iter().fold(0, |acc, chromosome| {
                 acc + chromosome.iter().fold(0, |acc, gene| acc + gene)

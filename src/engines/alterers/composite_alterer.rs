@@ -8,104 +8,113 @@ use crate::engines::genome::population::Population;
 use crate::engines::optimize::Optimize;
 use crate::engines::schema::subset;
 use crate::engines::alterers::mutators::swap_mutator::SwapMutator;
+use crate::engines::alterers::mutators::numeric_mutator::NumericMutator;
 
-pub struct CompositeAlterer<TGene, A>
+use super::crossovers::crossover::Crossover;
+use super::mutators::mutate::Mutate;
+
+pub struct CompositeAlterer<G, A>
 where
-    TGene: Gene<TGene, A>
+    G: Gene<G, A>
 {
-    alterers: Vec<AlterWrap<TGene, A>>,
+    crossovers: Vec<Box<dyn Crossover<G, A>>>,
+    mutators: Vec<Box<dyn Mutate<G, A>>>
 }
 
-impl<TGene, A> CompositeAlterer<TGene, A>
+impl<G, A> CompositeAlterer<G, A>
 where
-    TGene: Gene<TGene, A>
+    G: Gene<G, A>
 {
-    pub fn new(alterers: Vec<Alterer>) -> Self {
-        let mut alterer_wraps = Vec::new();
-        for alterer in alterers {
-            match alterer {
-                Alterer::Mutator(rate) => {
-                    alterer_wraps.push(AlterWrap {
-                        rate,
-                        mutator: Some(Box::new(Mutator)),
-                        crossover: None,
-                    });
+    pub fn new() -> Self {
+        CompositeAlterer {
+            crossovers: Vec::new(),
+            mutators: Vec::new(),
+        }
+    }
+
+    pub fn add_crossover(&mut self, crossover: Box<dyn Crossover<G, A>>) {
+        self.crossovers.push(crossover);
+    }
+
+    pub fn add_mutator(&mut self, mutator: Box<dyn Mutate<G, A>>) {
+        self.mutators.push(mutator);
+    }
+}
+
+impl<G: Gene<G, A>, A> Alter<G, A> for CompositeAlterer<G, A> {
+    fn alter(&self, population: &mut Population<G, A>, optimize: &Optimize, generation: i32) {
+        optimize.sort(population);
+
+        for mutation in self.mutators.iter() {
+            let rate = mutation.mutate_rate();
+            let probability = rate.powf(1.0 / 3.0);
+            let range = ((((std::i32::MAX as i64 - (std::i32::MIN as i64)) as f32)
+                * probability)
+                + (std::i32::MIN as f32)) as i32;
+
+            for phenotype in population.iter_mut() {
+                if rand::random::<f32>() < probability {
+                    let mut genotype = phenotype.genotype().clone();
+
+                    mutation.mutate_genotype(&mut genotype, range, probability);
+
+                    *phenotype = Phenotype::from_genotype(genotype, generation);
                 }
-                Alterer::UniformCrossover(rate) => {
-                    alterer_wraps.push(AlterWrap {
-                        rate,
-                        mutator: None,
-                        crossover: Some(Box::new(UniformCrossover)),
-                    });
-                }
-                Alterer::SinglePointCrossover(rate) => {
-                    alterer_wraps.push(AlterWrap {
-                        rate,
-                        mutator: None,
-                        crossover: Some(Box::new(MultiPointCrossover::new(1))),
-                    });
-                }
-                Alterer::MultiPointCrossover(rate, num_points) => {
-                    alterer_wraps.push(AlterWrap {
-                        rate,
-                        mutator: None,
-                        crossover: Some(Box::new(MultiPointCrossover::new(num_points))),
-                    });
-                }
-                Alterer::SwapMutator(rate) => {
-                    alterer_wraps.push(AlterWrap {
-                        rate,
-                        mutator: Some(Box::new(SwapMutator)),
-                        crossover: None,
-                    });
-                }
-                Alterer::NumericMutator(rate) => panic!("NumericMutator not implemented")
             }
         }
 
-        CompositeAlterer {
-            alterers: alterer_wraps,
+        for crossover in self.crossovers.iter() {
+            let mut random = rand::thread_rng();
+            let rate = crossover.cross_rate();
+
+            for i in 0..population.len() {
+                if rand::random::<f32>() < rate {
+                    let parent_indexes = subset::individual_indexes(&mut random, i, population.len(), 2);
+                    crossover.cross(population, &parent_indexes, generation);
+                }
+            }
         }
     }
 }
 
-impl<TGene: Gene<TGene, A>, A> Alter<TGene, A> for CompositeAlterer<TGene, A> {
-    fn alter(&self, population: &mut Population<TGene, A>, optimize: &Optimize, generation: i32) {
-        optimize.sort(population);
 
-        for alterer in self.alterers.iter() {
-            match alterer.mutator {
-                Some(ref mutator) => {
-                    let probability = alterer.rate.powf(1.0 / 3.0);
-                    let range = ((((std::i32::MAX as i64 - (std::i32::MIN as i64)) as f32)
-                        * probability)
-                        + (std::i32::MIN as f32)) as i32;
+// impl<G: Gene<G, A>, A> Alter<G, A> for CompositeAlterer<G, A> {
+//     fn alter(&self, population: &mut Population<G, A>, optimize: &Optimize, generation: i32) {
+//         optimize.sort(population);
 
-                    for phenotype in population.iter_mut() {
-                        if rand::random::<i32>() > range {
-                            let mut genotype = phenotype.genotype().clone();
+//         for alterer in self.alterers.iter() {
+//             match alterer.mutator {
+//                 Some(ref mutator) => {
+//                     let probability = alterer.rate.powf(1.0 / 3.0);
+//                     let range = ((((std::i32::MAX as i64 - (std::i32::MIN as i64)) as f32)
+//                         * probability)
+//                         + (std::i32::MIN as f32)) as i32;
 
-                            mutator.mutate_genotype(&mut genotype, range, probability);
+//                     for phenotype in population.iter_mut() {
+//                         if rand::random::<i32>() > range {
+//                             let mut genotype = phenotype.genotype().clone();
 
-                            *phenotype = Phenotype::from_genotype(genotype, generation);
-                        }
-                    }
-                }
-                None => (),
-            };
-            match alterer.crossover {
-                Some(ref crossover) => {
-                    let mut random = rand::thread_rng();
+//                             mutator.mutate_genotype(&mut genotype, range, probability);
 
-                    for i in 0..population.len() {
-                        if rand::random::<f32>() < alterer.rate {
-                            let parent_indexes = subset::individual_indexes(&mut random, i, population.len(), 2);
-                            crossover.cross(population, &parent_indexes, alterer.rate, generation);
-                        }
-                    }
-                }
-                None => (),
-            };
-        }
-    }
-}
+//                             *phenotype = Phenotype::from_genotype(genotype, generation);
+//                         }
+//                     }
+//                 }
+//                 None => (),
+//             };
+//             match alterer.crossover {
+//                 Some(ref crossover) => {
+//                     let mut random = rand::thread_rng();
+
+//                     for i in 0..population.len() {
+//                         if rand::random::<f32>() < alterer.rate {
+//                             let parent_indexes = subset::individual_indexes(&mut random, i, population.len(), 2);
+//                             crossover.cross(population, &parent_indexes, alterer.rate, generation);
+//                         }
+//                     }
+//                 }
+//                 None => (),
+//             };
+//         }
+//     }
+// }

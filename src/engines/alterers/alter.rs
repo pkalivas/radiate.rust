@@ -2,7 +2,7 @@ use crate::engines::alterers::crossovers::crossover::Crossover;
 use crate::engines::alterers::mutators::mutate::Mutate;
 use crate::engines::genome::genes::gene::Gene;
 use crate::engines::genome::population::Population;
-use crate::engines::optimize::Optimize;
+use crate::engines::optimize::{self, Optimize};
 
 pub trait Alter<G: Gene<G, A>, A> {
     fn alter(&self, population: &mut Population<G, A>, optimize: &Optimize, generation: i32);
