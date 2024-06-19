@@ -3,7 +3,6 @@ mod engines;
 use engines::alterers::crossovers::uniform_crossover::UniformCrossover;
 use engines::alterers::mutators::mutator::Mutator;
 use engines::alterers::mutators::numeric_mutator::NumericMutator;
-use engines::alterers::mutators::swap_mutator::SwapMutator;
 use engines::codex;
 use engines::engine::Engine;
 use engines::genetic_engine::GeneticEngine;
