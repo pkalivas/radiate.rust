@@ -5,10 +5,25 @@ use crate::engines::genome::genes::gene::Gene;
 
 use super::mutate::Mutate;
 
-pub struct SwapMutator;
+pub struct SwapMutator {
+    rate: f32,
+}
 
-impl<TGene: Gene<TGene>> Mutate<TGene> for SwapMutator {
-    fn mutate_chromosome(&self, chromosome: &mut Chromosome<TGene>, probability: f32) {
+impl SwapMutator {
+    pub fn new(rate: f32) -> Self {
+        Self { rate }
+    }
+}
+
+impl<G, A> Mutate<G, A> for SwapMutator
+where
+    G: Gene<G, A>
+{
+    fn mutate_rate(&self) -> f32 {
+        self.rate
+    }
+    
+    fn mutate_chromosome(&self, chromosome: &mut Chromosome<G, A>, probability: f32) {
         let mut random = rand::thread_rng();
 
         for i in 0..chromosome.len() {
@@ -19,11 +34,10 @@ impl<TGene: Gene<TGene>> Mutate<TGene> for SwapMutator {
                     continue;
                 }
 
-                let temp = chromosome.get_gene(i);
-                let swap = chromosome.get_gene(swap_index);
+                let curr_gene = chromosome.get_gene(i);
+                let swap_gene = chromosome.get_gene(swap_index);
 
-                let new_gene = temp.from_gene(&swap);
-                chromosome.set_gene(i, new_gene);
+                chromosome.set_gene(i, curr_gene.from_allele(&swap_gene.allele()));
             }
         }
     }

@@ -1,12 +1,12 @@
 use super::genome::genes::gene::Gene;
 use crate::engines::engine_handle::EngineHandle;
 
-pub trait Engine<TGene: Gene<TGene>, T: Clone> {
-    fn fit<F: Fn(&EngineHandle<TGene, T>) -> bool>(&self, limit: F) -> EngineHandle<TGene, T>;
+pub trait Engine<G: Gene<G, A>, A, T: Clone> {
+    fn fit<F: Fn(&EngineHandle<G, A, T>) -> bool>(&self, limit: F) -> EngineHandle<G, A, T>;
 
-    fn start(&self) -> EngineHandle<TGene, T>;
+    fn start(&self) -> EngineHandle<G, A, T>;
 
-    fn stop(&self, output: &mut EngineHandle<TGene, T>) -> EngineHandle<TGene, T> {
+    fn stop(&self, output: &mut EngineHandle<G, A, T>) -> EngineHandle<G, A, T> {
         output.timer.stop();
         output.clone()
     }

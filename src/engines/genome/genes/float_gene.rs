@@ -1,6 +1,6 @@
 use rand::random;
 
-use super::gene::{Allele, BoundGene, Gene, NumericGene};
+use super::gene::{BoundGene, Gene, NumericGene, Valid};
 
 pub struct FloatGene {
     pub allele: f32,
@@ -22,7 +22,18 @@ impl FloatGene {
     }
 }
 
-impl Gene<FloatGene> for FloatGene {
+impl Valid for FloatGene {
+    fn is_valid(&self) -> bool {
+        self.allele >= self.min && self.allele <= self.max
+    }
+}
+
+
+impl Gene<FloatGene, f32> for FloatGene {
+    fn allele(&self) -> f32 {
+        self.allele
+    }
+
     fn new_instance(&self) -> FloatGene {
         FloatGene {
             allele: random::<f32>() * (self.max - self.min) + self.min,
@@ -33,89 +44,13 @@ impl Gene<FloatGene> for FloatGene {
         }
     }
 
-    fn is_valid(&self) -> bool {
-        if self.allele > self.upper_bound || self.allele < self.lower_bound {
-            return false;
-        }
-
-        true
-    }
-
-    fn from_gene(&self, gene: &FloatGene) -> FloatGene {
+    fn from_allele(&self, allele: &f32) -> FloatGene {
         FloatGene {
-            allele: gene.allele,
-            min: gene.min,
-            max: gene.max,
-            upper_bound: gene.upper_bound,
-            lower_bound: gene.lower_bound,
-        }
-    }
-}
-
-impl Allele<f32> for FloatGene {
-    fn allele(&self) -> &f32 {
-        &self.allele
-    }
-}
-
-impl NumericGene<FloatGene> for FloatGene {}
-
-// Implement the Div trait for FloatGene
-impl std::ops::Div<FloatGene> for FloatGene {
-    type Output = FloatGene;
-
-    fn div(self, other: FloatGene) -> FloatGene {
-        FloatGene {
-            allele: self.allele / other.allele,
+            allele: *allele,
             min: self.min,
             max: self.max,
             upper_bound: self.upper_bound,
-            lower_bound: self.lower_bound,
-        }
-    }
-}
-
-// Implement the Mul trait for FloatGene
-impl std::ops::Mul<FloatGene> for FloatGene {
-    type Output = FloatGene;
-
-    fn mul(self, other: FloatGene) -> FloatGene {
-        FloatGene {
-            allele: self.allele * other.allele,
-            min: self.min,
-            max: self.max,
-            upper_bound: self.upper_bound,
-            lower_bound: self.lower_bound,
-        }
-    }
-}
-
-// Implement the Sub trait for FloatGene
-impl std::ops::Sub<FloatGene> for FloatGene {
-    type Output = FloatGene;
-
-    fn sub(self, other: FloatGene) -> FloatGene {
-        FloatGene {
-            allele: self.allele - other.allele,
-            min: self.min,
-            max: self.max,
-            upper_bound: self.upper_bound,
-            lower_bound: self.lower_bound,
-        }
-    }
-}
-
-// Implement the Add trait for FloatGene
-impl std::ops::Add<FloatGene> for FloatGene {
-    type Output = FloatGene;
-
-    fn add(self, other: FloatGene) -> FloatGene {
-        FloatGene {
-            allele: self.allele + other.allele,
-            min: self.min,
-            max: self.max,
-            upper_bound: self.upper_bound,
-            lower_bound: self.lower_bound,
+            lower_bound: self.lower_bound
         }
     }
 }
@@ -134,6 +69,36 @@ impl BoundGene<FloatGene, f32> for FloatGene {
             upper_bound,
             lower_bound,
             ..self
+        }
+    }
+}
+
+impl NumericGene<FloatGene, f32> for FloatGene {
+    fn add(&self, other: &FloatGene) -> FloatGene {
+        FloatGene {
+            allele: self.allele + other.allele,
+            ..*self
+        }
+    }
+
+    fn sub(&self, other: &FloatGene) -> FloatGene {
+        FloatGene {
+            allele: self.allele - other.allele,
+            ..*self
+        }
+    }
+
+    fn mul(&self, other: &FloatGene) -> FloatGene {
+        FloatGene {
+            allele: self.allele * other.allele,
+            ..*self
+        }
+    }
+
+    fn div(&self, other: &FloatGene) -> FloatGene {
+        FloatGene {
+            allele: self.allele / other.allele,
+            ..*self
         }
     }
 }
