@@ -15,6 +15,7 @@ impl Timer {
         }
     }
 
+    #[allow(dead_code)]
     pub fn start(&mut self) {
         self.start = Instant::now();
         self.end = Instant::now();

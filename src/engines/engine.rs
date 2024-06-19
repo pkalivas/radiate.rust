@@ -11,4 +11,3 @@ pub trait Engine<G: Gene<G, A>, A, T: Clone> {
         output.clone()
     }
 }
-

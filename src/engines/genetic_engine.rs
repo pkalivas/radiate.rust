@@ -114,7 +114,7 @@ impl<G: Gene<G, A>, A, T> GeneticEngine<G, A, T> {
         self.params.codex.as_ref().unwrap()
     }
 
-    pub fn fitness_fn(&self) -> &dyn Fn(&T) -> Score {
+    pub fn fitness_fn(&self) -> &impl Fn(&T) -> Score {
         self.params.fitness_fn.as_ref().unwrap()
     }
 

@@ -96,8 +96,13 @@ impl NumericGene<FloatGene, f32> for FloatGene {
     }
 
     fn div(&self, other: &FloatGene) -> FloatGene {
+        let other_allele = match other.allele() == 0_f32 {
+            true => 1_f32,
+            false => other.allele(),
+        };
+        
         FloatGene {
-            allele: self.allele / other.allele,
+            allele: self.allele / other_allele,
             ..*self
         }
     }

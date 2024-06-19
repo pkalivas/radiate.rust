@@ -98,8 +98,13 @@ impl NumericGene<IntGene, i32> for IntGene {
     }
 
     fn div(&self, other: &IntGene) -> IntGene {
+        let other_allele = match other.allele() == 0_i32 {
+            true => 1_i32,
+            false => other.allele()
+        };
+        
         IntGene {
-            allele: self.allele / other.allele,
+            allele: self.allele / other_allele,
             ..*self
         }
     }

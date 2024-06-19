@@ -76,6 +76,7 @@ fn run_min_sum() {
         .mutators(vec![
             Box::new(Mutator::new(0.001)),
             Box::new(SwapMutator::new(1e-4)),
+            Box::new(NumericMutator::new(0.1))
         ])
         .fitness_fn(|genotype: &Vec<Vec<i32>>| {
             Score::from_int(genotype.iter().fold(0, |acc, chromosome| {

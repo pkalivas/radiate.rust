@@ -2,25 +2,21 @@ use rand::Rng;
 
 use crate::engines::alterers::mutators::mutate::Mutate;
 use crate::engines::genome::chromosome::Chromosome;
-use crate::engines::genome::genes::gene::{Gene, NumericGene};
+use crate::engines::genome::genes::gene::NumericGene;
 
-pub struct NumericMutator<G: Gene<G, A>, A> {
+pub struct NumericMutator {
     rate: f32,
-    _gene: std::marker::PhantomData<G>,
-    _allele: std::marker::PhantomData<A>,
 }
 
-impl<G: Gene<G, A>, A> NumericMutator<G, A> {
+impl NumericMutator {
     pub fn new(rate: f32) -> Self {
         Self {
             rate,
-            _gene: std::marker::PhantomData,
-            _allele: std::marker::PhantomData,
         }
     }
 }
 
-impl<G: NumericGene<G, A>, A> Mutate<G, A> for NumericMutator<G, A> {
+impl<G: NumericGene<G, A>, A> Mutate<G, A> for NumericMutator {
     fn mutate_rate(&self) -> f32 {
         self.rate
     }
