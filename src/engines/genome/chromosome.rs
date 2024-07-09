@@ -1,12 +1,12 @@
 use super::genes::gene::Gene;
 
-pub struct Chromosome<G: Gene<G, A>, A>
-{
+pub struct Chromosome<G: Gene<G, A>, A> {
     pub genes: Vec<G>,
     _allele: std::marker::PhantomData<A>,
 }
 
-impl<G: Gene<G, A>, A> Chromosome<G, A> {
+impl<G: Gene<G, A>, A> Chromosome<G, A>
+{
     pub fn from_genes(genes: Vec<G>) -> Self {
         Chromosome {
             genes,

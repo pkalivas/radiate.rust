@@ -4,10 +4,8 @@ use crate::engines::genome::genotype::Genotype;
 use crate::engines::genome::phenotype::Phenotype;
 use crate::engines::genome::population::Population;
 
-pub trait Crossover<G, A> 
-where
-    G: Gene<G, A>
-{
+pub trait Crossover<G: Gene<G, A>, A> {
+
     fn cross_rate(&self) -> f32;
     
     fn cross(&self, population: &mut Population<G, A>, parent_indexes: &[i32], generation: i32) {

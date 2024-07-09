@@ -15,10 +15,8 @@ impl SwapMutator {
     }
 }
 
-impl<G, A> Mutate<G, A> for SwapMutator
-where
-    G: Gene<G, A>
-{
+impl<G: Gene<G, A>, A> Mutate<G, A> for SwapMutator {
+
     fn mutate_rate(&self) -> f32 {
         self.rate
     }

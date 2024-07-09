@@ -70,7 +70,7 @@ impl<G: Gene<G, A>, A> Population<G, A> {
     }
 }
 
-impl<G: Gene<G, A>, A> std::iter::IntoIterator for Population<G, A> {
+impl<G: Gene<G, A>, A> IntoIterator for Population<G, A> {
 
     type Item = Phenotype<G, A>;
     type IntoIter = std::vec::IntoIter<Phenotype<G, A>>;
@@ -80,7 +80,7 @@ impl<G: Gene<G, A>, A> std::iter::IntoIterator for Population<G, A> {
     }
 }
 
-impl<G: Gene<G, A>, A> std::iter::FromIterator<Phenotype<G, A>> for Population<G, A> {
+impl<G: Gene<G, A>, A> FromIterator<Phenotype<G, A>> for Population<G, A> {
     fn from_iter<I: IntoIterator<Item = Phenotype<G, A>>>(iter: I) -> Self {
         let individuals = iter.into_iter().collect();
         Population {

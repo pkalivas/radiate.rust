@@ -2,14 +2,14 @@ use crate::engines::genome::genes::gene::Gene;
 use crate::engines::genome::population::Population;
 use crate::engines::schema::timer::Timer;
 
-pub struct EngineHandle<G: Gene<G, A>, A, T> {
+pub struct EngineContext<G: Gene<G, A>, A, T> {
     pub population: Population<G, A>,
     pub best: T,
     pub index: i32,
     pub timer: Timer,
 }
 
-impl<G: Gene<G, A>, A, T> EngineHandle<G, A, T> {
+impl<G: Gene<G, A>, A, T> EngineContext<G, A, T> {
     pub fn score(&self) -> f32 {
         match self.population.get(0).score() {
             Some(score) => score.as_float(),
@@ -18,9 +18,9 @@ impl<G: Gene<G, A>, A, T> EngineHandle<G, A, T> {
     }
 }
 
-impl<G: Gene<G, A>, A, T: Clone> Clone for EngineHandle<G, A, T> {
+impl<G: Gene<G, A>, A, T: Clone> Clone for EngineContext<G, A, T> {
     fn clone(&self) -> Self {
-        EngineHandle {
+        EngineContext {
             population: self.population.clone(),
             best: self.best.clone(),
             index: self.index,
@@ -29,7 +29,7 @@ impl<G: Gene<G, A>, A, T: Clone> Clone for EngineHandle<G, A, T> {
     }
 }
 
-impl<G: Gene<G, A>, A, T: std::fmt::Debug> std::fmt::Debug for EngineHandle<G, A, T> {
+impl<G: Gene<G, A>, A, T: std::fmt::Debug> std::fmt::Debug for EngineContext<G, A, T> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "EngineOutput {{\n")?;
         write!(f, "  best: {:?},\n", self.best)?;

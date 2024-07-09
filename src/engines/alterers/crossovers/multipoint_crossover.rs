@@ -47,10 +47,7 @@ impl MultiPointCrossover {
     }
 }
 
-impl<G, A> Crossover<G, A> for MultiPointCrossover
-where
-    G: Gene<G, A>
-{
+impl<G: Gene<G, A>, A> Crossover<G, A> for MultiPointCrossover {
     fn cross_rate(&self) -> f32 {
         self.rate
     }

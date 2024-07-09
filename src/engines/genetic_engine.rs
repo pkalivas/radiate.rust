@@ -8,7 +8,7 @@ use crate::engines::optimize::Optimize;
 use crate::engines::schema::timer::Timer;
 use crate::engines::score::Score;
 
-use super::engine_handle::EngineHandle;
+use super::engine_context::EngineContext;
 use super::genome::phenotype::Phenotype;
 use super::selectors::selector::Select;
 
@@ -29,7 +29,7 @@ impl<G: Gene<G, A>, A, T> GeneticEngine<G, A, T> {
         GeneticEngineParams::new().codex(codex)
     }
 
-    pub fn evaluate(&self, handle: &mut EngineHandle<G, A, T>) {
+    pub fn evaluate(&self, handle: &mut EngineContext<G, A, T>) {
         let codex = self.codex();
         let fitness_fn = self.fitness_fn();
         let optimize = self.optimize();
@@ -62,7 +62,7 @@ impl<G: Gene<G, A>, A, T> GeneticEngine<G, A, T> {
     }
 
     pub fn alter(&self, population: &mut Population<G, A>, generation: i32) {
-        let alterer = self.params.alterer.as_ref().unwrap();
+        let alterer = self.alterer();
         let optimize = self.optimize();
 
         alterer.alter(population, optimize, generation);
@@ -83,7 +83,7 @@ impl<G: Gene<G, A>, A, T> GeneticEngine<G, A, T> {
 
     pub fn recombine(
         &self,
-        handle: &mut EngineHandle<G, A, T>,
+        handle: &mut EngineContext<G, A, T>,
         survivors: Population<G, A>,
         offspring: Population<G, A>,
     ) {
@@ -93,8 +93,12 @@ impl<G: Gene<G, A>, A, T> GeneticEngine<G, A, T> {
             .collect::<Population<G, A>>();
     }
 
-    pub fn audit(&self, output: &mut EngineHandle<G, A, T>) {
+    pub fn audit(&self, output: &mut EngineContext<G, A, T>) {
         let codex = self.codex();
+
+        if !output.population.is_sorted {
+            self.optimize().sort(&mut output.population);
+        }
 
         let best = codex.decode(&output.population.get(0).genotype());
 
@@ -108,6 +112,10 @@ impl<G: Gene<G, A>, A, T> GeneticEngine<G, A, T> {
 
     pub fn offspring_selector(&self) -> &impl Select<G, A> {
         &self.params.offspring_selector
+    }
+
+    pub fn alterer(&self) -> &impl Alter<G, A> {
+        self.params.alterer.as_ref().unwrap()
     }
 
     pub fn codex(&self) -> &Codex<G, A, T> {
@@ -136,7 +144,7 @@ impl<G: Gene<G, A>, A, T> GeneticEngine<G, A, T> {
 }
 
 impl<G: Gene<G, A>, A, T: Clone> Engine<G, A, T> for GeneticEngine<G, A, T> {
-    fn fit<F: Fn(&EngineHandle<G, A, T>) -> bool>(&self, limit: F) -> EngineHandle<G, A, T> {
+    fn fit<F: Fn(&EngineContext<G, A, T>) -> bool>(&self, limit: F) -> EngineContext<G, A, T> {
         let mut handle = self.start();
 
         loop {
@@ -163,10 +171,10 @@ impl<G: Gene<G, A>, A, T: Clone> Engine<G, A, T> for GeneticEngine<G, A, T> {
         self.stop(&mut handle)
     }
 
-    fn start(&self) -> EngineHandle<G, A, T> {
+    fn start(&self) -> EngineContext<G, A, T> {
         let population = self.population();
 
-        EngineHandle {
+        EngineContext {
             population: population.clone(),
             best: self.codex().decode(&population.get(0).genotype()),
             index: 0,
