@@ -1,13 +1,10 @@
 mod engines;
 
 use engines::alterers::alter::Alterer;
-use engines::alterers::crossovers::uniform_crossover::UniformCrossover;
-use engines::alterers::mutators::mutator::Mutator;
 use engines::alterers::mutators::numeric_mutator::NumericMutator;
 use engines::codex;
 use engines::engine::Engine;
 use engines::genetic_engine::GeneticEngine;
-use engines::genome::genes::char_gene::CharGene;
 use engines::score::Score;
 use engines::selectors::selector::Selector;
 

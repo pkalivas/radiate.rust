@@ -1,5 +1,4 @@
 use crate::engines::alterers::composite_alterer::CompositeAlterer;
-use crate::engines::alterers::crossovers::crossover::Crossover;
 use crate::engines::codex::Codex;
 use crate::engines::genetic_engine::GeneticEngine;
 use crate::engines::genome::genes::gene::Gene;
@@ -10,7 +9,6 @@ use crate::engines::score::Score;
 use crate::engines::selectors::selector::Selector;
 
 use super::alterers::alter::Alterer;
-use super::alterers::mutators::mutate::Mutate;
 
 pub struct GeneticEngineParams<G, A, T>
 where

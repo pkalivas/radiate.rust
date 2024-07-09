@@ -6,10 +6,8 @@ use crate::engines::optimize::Optimize;
 use crate::engines::schema::subset;
 
 use super::alter::{AlterWrap, Alterer};
-use super::crossovers::crossover::Crossover;
 use super::crossovers::multipoint_crossover::MultiPointCrossover;
 use super::crossovers::uniform_crossover::UniformCrossover;
-use super::mutators::mutate::Mutate;
 use super::mutators::mutator::Mutator;
 use super::mutators::swap_mutator::SwapMutator;
 
