@@ -21,13 +21,16 @@ impl<G: NumericGene<G, A>, A> Mutate<G, A> for NumericMutator {
         self.rate
     }
 
-    fn mutate_chromosome(&self, chromosome: &mut Chromosome<G, A>, probability: f32) {
+    fn mutate_chromosome(&self, chromosome: &mut Chromosome<G, A>, probability: f32) -> i32 {
         let mut random = rand::thread_rng();
+        let mut mutations = 0;
 
         for gene in chromosome.iter_mut() {
             if random.gen::<f32>() < probability {
                 let new_instance = gene.new_instance();
                 let operator = random.gen_range(0..4);
+                
+                mutations += 1;
 
                 *gene = match operator {
                     0 => gene.add(&new_instance),
@@ -38,5 +41,7 @@ impl<G: NumericGene<G, A>, A> Mutate<G, A> for NumericMutator {
                 };
             }
         }
+
+        mutations
     }
 }

@@ -56,10 +56,11 @@ impl<G: Gene<G, A>, A> Crossover<G, A> for MultiPointCrossover {
         &self,
         chrom_one: &mut Chromosome<G, A>,
         chrom_two: &mut Chromosome<G, A>
-    ) {
+    ) -> i32 {
         let min_index = std::cmp::min(chrom_one.len(), chrom_two.len());
         let min_points = std::cmp::min(self.num_points, DEFAULT_NUM_POINTS);
 
+        let mut cross_count = 0;
         let mut random = rand::thread_rng();
         let indexes = if min_points > 0 {
             subset::subset(min_index, min_points, &mut random)
@@ -72,11 +73,13 @@ impl<G: Gene<G, A>, A> Crossover<G, A> for MultiPointCrossover {
             let end = indexes[i + 1] as usize;
 
             MultiPointCrossover::swap(chrom_one, start, end, chrom_two, start);
+            cross_count += 1;
         }
 
         if indexes.len() % 2 == 1 {
             let index = indexes[indexes.len() - 1] as usize;
 
+            cross_count += 1;
             MultiPointCrossover::swap(
                 chrom_one,
                 index,
@@ -85,5 +88,7 @@ impl<G: Gene<G, A>, A> Crossover<G, A> for MultiPointCrossover {
                 index,
             );
         }
+
+        cross_count
     }
 }

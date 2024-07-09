@@ -63,7 +63,7 @@ fn run_string_evolve(target: &'static str) {
 }
 
 fn run_min_sum() {
-    let codex = codex::int(1, 10, 0, 100);
+    let codex = codex::int_with_bounds(1, 10, 0, 100, 0, 100);
 
     let engine = GeneticEngine::from_codex(codex)
         .population_size(100)

@@ -22,10 +22,6 @@ impl<G: Gene<G, A>, A, T> GeneticEngine<G, A, T> {
         GeneticEngine { params }
     }
 
-    pub fn builder() -> GeneticEngineParams<G, A, T> {
-        GeneticEngineParams::new()
-    }
-
     pub fn from_codex(codex: Codex<G, A, T>) -> GeneticEngineParams<G, A, T> {
         GeneticEngineParams::new().codex(codex)
     }

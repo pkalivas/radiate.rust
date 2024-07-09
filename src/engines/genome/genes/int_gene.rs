@@ -18,8 +18,8 @@ impl IntGene {
             allele: rand.gen_range(min..max),
             min,
             max,
-            upper_bound: std::i32::MAX,
-            lower_bound: std::i32::MIN,
+            upper_bound: i32::MAX,
+            lower_bound: i32::MIN,
         }
     }
 }
