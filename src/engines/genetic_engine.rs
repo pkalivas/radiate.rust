@@ -97,9 +97,7 @@ impl<G: Gene<G, A>, A, T> GeneticEngine<G, A, T> {
             self.optimize().sort(&mut output.population);
         }
 
-        let best = codex.decode(&output.population.get(0).genotype());
-
-        output.best = best;
+        output.best = codex.decode(&output.population.get(0).genotype());;
         output.index += 1;
     }
 
