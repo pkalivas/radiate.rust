@@ -146,30 +146,30 @@ impl<G: Gene<G, A>, A, T> GeneticEngine<G, A, T> {
 
 impl<G: Gene<G, A>, A, T: Clone> Engine<G, A, T> for GeneticEngine<G, A, T> {
     fn fit<F: Fn(&EngineContext<G, A, T>) -> bool>(&self, limit: F) -> EngineContext<G, A, T> {
-        let mut handle = self.start();
+        let mut ctx = self.start();
 
         loop {
-            self.evaluate(&mut handle);
+            self.evaluate(&mut ctx);
 
-            let mut survivors = self.select_survivors(&handle.population);
-            let mut offspring = self.select_offspring(&handle.population);
+            let mut survivors = self.select_survivors(&ctx.population);
+            let mut offspring = self.select_offspring(&ctx.population);
 
-            self.alter(&mut offspring, handle.index);
+            self.alter(&mut offspring, ctx.index);
 
-            self.filter(&mut survivors, handle.index);
-            self.filter(&mut offspring, handle.index);
+            self.filter(&mut survivors, ctx.index);
+            self.filter(&mut offspring, ctx.index);
 
-            self.recombine(&mut handle, survivors, offspring);
+            self.recombine(&mut ctx, survivors, offspring);
 
-            self.evaluate(&mut handle);
-            self.audit(&mut handle);
+            self.evaluate(&mut ctx);
+            self.audit(&mut ctx);
 
-            if limit(&handle) {
+            if limit(&ctx) {
                 break;
             }
         }
 
-        self.stop(&mut handle)
+        self.stop(&mut ctx)
     }
 
     fn start(&self) -> EngineContext<G, A, T> {
