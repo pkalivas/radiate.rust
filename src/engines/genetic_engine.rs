@@ -161,11 +161,9 @@ impl<G: Gene<G, A>, A, T: Clone> Engine<G, A, T> for GeneticEngine<G, A, T> {
             self.audit(&mut ctx);
 
             if limit(&ctx) {
-                break;
+                break self.stop(&mut ctx)
             }
         }
-
-        self.stop(&mut ctx)
     }
 
     fn start(&self) -> EngineContext<G, A, T> {
