@@ -17,6 +17,7 @@ pub struct GeneticEngine<G: Gene<G, A>, A, T> {
 }
 
 impl<G: Gene<G, A>, A, T> GeneticEngine<G, A, T> {
+
     pub fn new(params: GeneticEngineParams<G, A, T>) -> Self {
         GeneticEngine { params }
     }
