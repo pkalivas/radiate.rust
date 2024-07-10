@@ -158,7 +158,7 @@ mod tests {
 
     #[test]
     fn test_eq() {
-        let node = Node::new(1, NodeType::Input, 0.5);
+        let node = Node::new(1, NodeType::Input, 0.5_f32);
         let new_node = node.clone();
         assert_eq!(node, new_node);
     }
