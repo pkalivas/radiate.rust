@@ -2,9 +2,11 @@
 <module type="EMPTY_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/radiate-examples/min-sum/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/radiate-examples/string-evolver/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/radiate-rust/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/radiate-examples/min-sum/target" />
       <excludeFolder url="file://$MODULE_DIR$/radiate-examples/string-evolver/target" />
       <excludeFolder url="file://$MODULE_DIR$/radiate-rust/target" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
