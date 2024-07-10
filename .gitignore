@@ -6,3 +6,4 @@
 /radiate-examples/min-sum/target/
 /radiate-examples/string-evolver/target/
 /radiate-examples/string-evolver/Cargo.lock
+/radiate-examples/string-evolver/target/debug/
