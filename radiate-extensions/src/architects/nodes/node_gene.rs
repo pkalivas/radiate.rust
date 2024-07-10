@@ -1,4 +1,5 @@
 use std::collections::HashSet;
+use uuid::Uuid;
 use radiate_rust::engines::genome::genes::gene::{Gene, Valid};
 use crate::architects::node_types::NodeType;
 use crate::architects::nodes::node::Node;
@@ -7,7 +8,8 @@ pub struct NodeGene<T>
 where
     T: Clone + PartialEq 
 {
-    pub id: i32,
+    pub id: Uuid,
+    pub index: i32,
     pub node_type: NodeType,
     pub value: T,
     pub incoming: HashSet<i32>,
@@ -19,9 +21,10 @@ impl<T> NodeGene<T>
 where
     T: Clone + PartialEq 
 {
-    pub fn new(id: i32, node_type: NodeType, value: T) -> NodeGene<T> {
+    pub fn new(index: i32, node_type: NodeType, value: T) -> NodeGene<T> {
         NodeGene {
-            id,
+            id: Uuid::new_v4(),
+            index,
             node_type,
             value,
             incoming: HashSet::new(),
@@ -34,8 +37,12 @@ impl<T> Node<T> for NodeGene<T>
 where
     T: Clone + PartialEq
 {
-    fn id(&self) -> &i32 {
+    fn id(&self) -> &Uuid {
         &self.id
+    }
+
+    fn index(&self) -> &i32 {
+        &self.index
     }
 
     fn node_type(&self) -> &NodeType {
@@ -46,12 +53,12 @@ where
         &self.value
     }
 
-    fn incoming(&self) -> &HashSet<i32> {
-        &self.incoming
+    fn incoming(&mut self) -> &mut HashSet<i32> {
+        &mut self.incoming
     }
 
-    fn outgoing(&self) -> &HashSet<i32> {
-        &self.outgoing
+    fn outgoing(&mut self) -> &mut HashSet<i32> {
+        &mut self.outgoing
     }
 }
 
@@ -69,7 +76,8 @@ where
 
     fn new_instance(&self) -> NodeGene<T> {
         NodeGene {
-            id: self.id,
+            id: Uuid::new_v4(),
+            index: self.index,
             node_type: self.node_type.clone(),
             value: self.value.clone(),
             incoming: self.incoming.clone(),
@@ -79,7 +87,8 @@ where
 
     fn from_allele(&self, allele: &T) -> NodeGene<T> {
         NodeGene {
-            id: self.id,
+            id: Uuid::new_v4(),
+            index: self.index,
             node_type: self.node_type.clone(),
             value: allele.clone(),
             incoming: self.incoming.clone(),
@@ -95,6 +104,7 @@ where
     fn clone(&self) -> Self {
         NodeGene {
             id: self.id,
+            index: self.index,
             node_type: self.node_type.clone(),
             value: self.value.clone(),
             incoming: self.incoming.clone(),
@@ -108,7 +118,8 @@ where
     T: Clone + PartialEq,
 {
     fn eq(&self, other: &Self) -> bool {
-        self.id == other.id
+        self.index == other.index
+            && self.id == other.id
             && self.node_type == other.node_type
             && self.value == other.value
             && self.incoming == other.incoming
