@@ -16,8 +16,8 @@ impl CharGene {
 }
 
 impl Gene<CharGene, char> for CharGene {
-    fn allele(&self) -> char {
-        self.allele
+    fn allele(&self) -> &char {
+        &self.allele
     }
 
     fn new_instance(&self) -> CharGene {

@@ -6,6 +6,7 @@
       <sourceFolder url="file://$MODULE_DIR$/radiate-examples/string-evolver/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/radiate-rust/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/radiate-extensions/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/radiate-examples/min-sum/target" />
       <excludeFolder url="file://$MODULE_DIR$/radiate-examples/string-evolver/target" />
       <excludeFolder url="file://$MODULE_DIR$/radiate-rust/target" />

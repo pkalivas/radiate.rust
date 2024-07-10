@@ -117,7 +117,7 @@ pub fn float(
                 .map(|chromosome| {
                     chromosome
                         .iter()
-                        .map(|gene| gene.allele())
+                        .map(|gene| *gene.allele())
                         .collect::<Vec<f32>>()
                 })
                 .collect::<Vec<Vec<f32>>>()
@@ -141,7 +141,7 @@ pub fn bit(num_chromosomes: i32, num_genes: i32) -> Codex<BitGene, bool , Vec<Ve
                 .map(|chromosome| {
                     chromosome
                         .iter()
-                        .map(|gene| gene.allele())
+                        .map(|gene| *gene.allele())
                         .collect::<Vec<bool>>()
                 })
                 .collect::<Vec<Vec<bool>>>()
@@ -181,7 +181,7 @@ pub fn int_with_bounds(
                 .map(|chromosome| {
                     chromosome
                         .iter()
-                        .map(|gene| gene.allele())
+                        .map(|gene| *gene.allele())
                         .collect::<Vec<i32>>()
                 })
                 .collect::<Vec<Vec<i32>>>()
