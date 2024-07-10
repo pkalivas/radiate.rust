@@ -1,5 +1,6 @@
 
 pub mod architect;
 pub mod node_types;
-mod nodes;
-mod node_collection_builder;
+pub mod nodes;
+pub mod node_collection_builder;
+pub mod node_collections;

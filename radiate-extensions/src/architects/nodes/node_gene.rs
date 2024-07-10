@@ -9,11 +9,11 @@ where
     T: Clone + PartialEq 
 {
     pub id: Uuid,
-    pub index: i32,
+    pub index: usize,
     pub node_type: NodeType,
     pub value: T,
-    pub incoming: HashSet<i32>,
-    pub outgoing: HashSet<i32>
+    pub incoming: HashSet<usize>,
+    pub outgoing: HashSet<usize>
 }
 
 
@@ -21,7 +21,7 @@ impl<T> NodeGene<T>
 where
     T: Clone + PartialEq 
 {
-    pub fn new(index: i32, node_type: NodeType, value: T) -> NodeGene<T> {
+    pub fn new(index: usize, node_type: NodeType, value: T) -> NodeGene<T> {
         NodeGene {
             id: Uuid::new_v4(),
             index,
@@ -37,11 +37,15 @@ impl<T> Node<T> for NodeGene<T>
 where
     T: Clone + PartialEq
 {
+    fn new_node(index: usize, node_type: NodeType, value: T) -> Self {
+        NodeGene::new(index, node_type, value)
+    }
+
     fn id(&self) -> &Uuid {
         &self.id
     }
 
-    fn index(&self) -> &i32 {
+    fn index(&self) -> &usize {
         &self.index
     }
 
@@ -53,11 +57,17 @@ where
         &self.value
     }
 
-    fn incoming(&mut self) -> &mut HashSet<i32> {
+    fn reindex(&mut self, index: usize) -> Self {
+        let mut new_node = NodeGene::new(index, self.node_type.clone(), self.value.clone());
+        new_node.id = self.id.clone();
+        new_node as Self
+    }
+
+    fn incoming_mut(&mut self) -> &mut HashSet<usize> {
         &mut self.incoming
     }
 
-    fn outgoing(&mut self) -> &mut HashSet<i32> {
+    fn outgoing_mut(&mut self) -> &mut HashSet<usize> {
         &mut self.outgoing
     }
 }
