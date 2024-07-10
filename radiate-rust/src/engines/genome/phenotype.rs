@@ -49,7 +49,9 @@ impl<G: Gene<G, A>, A> Clone for Phenotype<G, A> {
 
 impl<G: Gene<G, A>, A> PartialEq for Phenotype<G, A> {
     fn eq(&self, other: &Self) -> bool {
-        self.genotype == other.genotype && self.score == other.score && self.generation == other.generation
+        self.genotype == other.genotype
+            && self.score == other.score
+            && self.generation == other.generation
     }
 }
 

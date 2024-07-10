@@ -160,10 +160,10 @@ pub fn int(
 pub fn int_with_bounds(
     num_chromosomes: i32,
     num_genes: i32,
-    max: i32,
     min: i32,
-    upper_bound: i32,
+    max: i32,
     lower_bound: i32,
+    upper_bound: i32,
 ) -> Codex<IntGene, i32, Vec<Vec<i32>>> {
     Codex::new()
         .encoder(move || Genotype {
@@ -171,7 +171,7 @@ pub fn int_with_bounds(
                 .into_iter()
                 .map(|_| Chromosome::from_genes((0..num_genes)
                     .into_iter()
-                    .map(|_| IntGene::new(min, max).with_bounds(upper_bound, lower_bound))
+                    .map(|_| IntGene::new(min, max).with_bounds(lower_bound, upper_bound))
                     .collect::<Vec<IntGene>>()))
                 .collect::<Vec<Chromosome<IntGene, i32>>>()
         })
