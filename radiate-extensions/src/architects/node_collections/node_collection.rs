@@ -4,7 +4,7 @@ use crate::architects::nodes::node::Node;
 pub trait NodeCollection<C, N, T>
 where
     C: NodeCollection<C, N, T>,
-    N: Node<T>,
+    N: Node<N, T>,
     T: Clone + PartialEq
 {
     fn new() -> Self;

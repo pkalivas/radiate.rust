@@ -33,11 +33,11 @@ where
     }
 }
 
-impl<T> Node<T> for NodeGene<T>
+impl<T> Node<NodeGene<T>, T> for NodeGene<T>
 where
     T: Clone + PartialEq
 {
-    fn new_node(index: usize, node_type: NodeType, value: T) -> Self {
+    fn new_node(index: usize, node_type: NodeType, value: T) -> NodeGene<T> {
         NodeGene::new(index, node_type, value)
     }
 
@@ -57,7 +57,7 @@ where
         &self.value
     }
 
-    fn reindex(&mut self, index: usize) -> Self {
+    fn reindex(&mut self, index: usize) -> NodeGene<T> {
         let mut new_node = NodeGene::new(index, self.node_type.clone(), self.value.clone());
         new_node.id = self.id.clone();
         new_node as Self

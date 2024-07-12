@@ -5,6 +5,7 @@ use crate::engines::genome::genes::gene::Gene;
 use crate::engines::genome::phenotype::Phenotype;
 use crate::engines::genome::population::Population;
 use crate::engines::optimize::Optimize;
+use crate::engines::problem::{DefaultProblem, Problem};
 use crate::engines::score::Score;
 use crate::engines::selectors::selector::Selector;
 
@@ -24,6 +25,7 @@ where
     pub codex: Option<Codex<G, A, T>>,
     pub population: Option<Population<G, A>>,
     pub fitness_fn: Option<Box<dyn Fn(&T) -> Score>>,
+    pub problem: Option<Box<dyn Problem<G, A, T>>>,
 }
 
 impl<G: Gene<G, A>, A, T> GeneticEngineParams<G, A, T> {
@@ -39,6 +41,7 @@ impl<G: Gene<G, A>, A, T> GeneticEngineParams<G, A, T> {
             codex: None,
             population: None,
             fitness_fn: None,
+            problem: None,
         }
     }
 
@@ -97,8 +100,14 @@ impl<G: Gene<G, A>, A, T> GeneticEngineParams<G, A, T> {
         self
     }
 
+    pub fn problem(mut self, problem: impl Problem<G, A, T> + 'static) -> Self {
+        self.problem = Some(Box::new(problem));
+        self
+    }
+
     pub fn build(mut self) -> GeneticEngine<G, A, T> {
         self.build_population();
+        self.build_alterer();
 
         GeneticEngine::new(self)
     }
@@ -113,5 +122,23 @@ impl<G: Gene<G, A>, A, T> GeneticEngineParams<G, A, T> {
             }),
             Some(pop) => Some(pop.clone()),
         };
+    }
+
+    fn build_alterer(&mut self) {
+        if self.alterer.is_none() {
+            self.alterer = Some(CompositeAlterer::new(vec![
+                Alterer::Mutator(0.001),
+                Alterer::UniformCrossover(0.5),
+            ]));
+        }
+    }
+
+    fn build_problem(&mut self) {
+        // if !self.problem.is_some() {
+        //     self.problem = Some(Box::new(DefaultProblem {
+        //         fitness_fn: &self.fitness_fn,
+        //         codex: self.codex.unwrap(),
+        //     }));
+        // }
     }
 }
