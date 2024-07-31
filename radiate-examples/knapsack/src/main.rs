@@ -1,12 +1,8 @@
 
 use rand::random;
-use radiate_rust::engines::alterers::alter::Alterer;
-use radiate_rust::engines::codex;
-use radiate_rust::engines::genetic_engine::GeneticEngine;
-use radiate_rust::engines::score::Score;
-use radiate_rust::engines::selectors::selector::Selector;
 
 fn main() {
+
     let knapsack = Knapsack::new(10);
     // let codex = codex::subset(&knapsack.items);
 

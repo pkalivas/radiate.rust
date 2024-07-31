@@ -210,10 +210,11 @@ pub fn int_with_bounds(
 
 /// Subset codex
 pub fn subset<T: Clone>(alleles: &'static Vec<T>) -> Codex<BitGene, bool, Vec<T>> {
+    let count = alleles.len();
     Codex::new()
         .encoder(move || Genotype {
-            chromosomes: vec![Chromosome::from_genes(alleles
-                .iter()
+            chromosomes: vec![Chromosome::from_genes((0..count)
+                .into_iter()
                 .map(|_| BitGene::new())
                 .collect::<Vec<BitGene>>())]
         })

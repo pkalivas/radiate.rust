@@ -12,11 +12,11 @@ pub enum MathOp<T> {
 impl<T> Op<T> for MathOp<T> {
     fn name(&self) -> &str {
         match self {
-            MathOp::Add(_, _) => "Add",
-            MathOp::Subtract(_, _) => "Subtract",
-            MathOp::Multiply(_, _) => "Multiply",
-            MathOp::Divide(_, _) => "Divide",
-            MathOp::Sum(_, _) => "Sum"
+            MathOp::Add(_, _) => "+",
+            MathOp::Subtract(_, _) => "-",
+            MathOp::Multiply(_, _) => "*",
+            MathOp::Divide(_, _) => "/",
+            MathOp::Sum(_, _) => "sum"
         }
     }
 
