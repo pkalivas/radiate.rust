@@ -12,7 +12,6 @@ where
     fn index(&self) -> &usize;
     fn node_type(&self) -> &NodeType;
     fn value(&self) -> &T;
-    fn reindex(&mut self, index: usize) -> N;
     fn incoming_mut(&mut self) -> &mut HashSet<usize>;
     fn outgoing_mut(&mut self) -> &mut HashSet<usize>;
 }

@@ -57,12 +57,6 @@ where
         &self.value
     }
 
-    fn reindex(&mut self, index: usize) -> NodeGene<T> {
-        let mut new_node = NodeGene::new(index, self.node_type.clone(), self.value.clone());
-        new_node.id = self.id.clone();
-        new_node as Self
-    }
-
     fn incoming_mut(&mut self) -> &mut HashSet<usize> {
         &mut self.incoming
     }

@@ -8,6 +8,12 @@ pub trait Op<T> {
     fn apply(&self, inputs: &[T]) -> T;
 }
 
+impl<T> std::fmt::Display for dyn Op<T> {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{}", self.name())
+    }
+}
+
 impl<T, F> Op<T> for F where F: Fn(&[T]) -> T {
     fn name(&self) -> &str {
         "Op"
