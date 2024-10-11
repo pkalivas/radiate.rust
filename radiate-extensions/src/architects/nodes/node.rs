@@ -2,6 +2,9 @@ use std::collections::HashSet;
 use uuid::Uuid;
 use crate::architects::node_types::NodeType;
 
+#[derive(Debug, Clone, Copy, Hash, PartialEq, Eq)]
+struct Id(usize);
+
 pub trait Node<N, T> 
 where 
     N: Node<N, T>,
