@@ -1,4 +1,3 @@
-
 use rand::random;
 
 fn main() {
@@ -64,21 +63,3 @@ impl Item {
             .collect()
     }
 }
-
-// public class Item
-// {
-// public float Weight { get; set; }
-// public float Value { get; set; }
-//
-// public override string ToString() => $"Item[size={Weight}, value={Value}]";
-//
-//
-// public static Item[] RandomCollection(int size, Random random) => Enumerable
-// .Range(0, size)
-// .Select(_ => new Item
-// {
-// Weight = random.NextSingle() * 100f,
-// Value = random.NextSingle() * 100f
-// })
-// .ToArray();
-// }
