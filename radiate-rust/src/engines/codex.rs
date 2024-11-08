@@ -8,12 +8,13 @@ use crate::engines::genome::genes::int_gene::IntGene;
 use crate::engines::genome::population::Population;
 use crate::engines::genome::phenotype::Phenotype;
 
+
 pub struct Codex<G, A, T>
 where
     G: Gene<G, A> 
 {
     pub encoder: Option<Box<dyn Fn() -> Genotype<G, A>>>,
-    pub decoder: Option<fn(&Genotype<G, A>) -> T>,
+    pub decoder: Option<Box<dyn Fn(&Genotype<G, A>) -> T>>,
 }
 
 impl<G: Gene<G, A>, A, T> Codex<G, A, T> {
@@ -43,8 +44,8 @@ impl<G: Gene<G, A>, A, T> Codex<G, A, T> {
         self
     }
 
-    pub fn decoder(mut self, decoder: fn(&Genotype<G, A>) -> T) -> Self {
-        self.decoder = Some(decoder);
+    pub fn decoder(mut self, decoder: impl Fn(&Genotype<G, A>) -> T + 'static) -> Self {
+        self.decoder = Some(Box::new(decoder));
         self
     }
 
@@ -71,6 +72,7 @@ impl<G: Gene<G, A>, A, T> Codex<G, A, T> {
 }
 
 
+/// char codex
 pub fn char(num_chromosomes: usize, num_genes: usize) -> Codex<CharGene, char, String> {
     Codex::new()
         .encoder(move || Genotype {
@@ -95,11 +97,25 @@ pub fn char(num_chromosomes: usize, num_genes: usize) -> Codex<CharGene, char, S
         })
 }
 
+
+/// float codex
 pub fn float(
     num_chromosomes: i32,
     num_genes: i32,
     min: f32,
     max: f32,
+) -> Codex<FloatGene, f32, Vec<Vec<f32>>>
+{
+    float_with_bounds(num_chromosomes, num_genes, min, max, f32::MIN, f32::MAX)
+}
+
+pub fn float_with_bounds(
+    num_chromosomes: i32,
+    num_genes: i32,
+    min: f32,
+    max: f32,
+    lower_bound: f32,
+    upper_bound: f32,
 ) -> Codex<FloatGene, f32, Vec<Vec<f32>>> {
     Codex::new()
         .encoder(move || Genotype {
@@ -107,7 +123,7 @@ pub fn float(
                 .into_iter()
                 .map(|_| Chromosome::from_genes((0..num_genes)
                         .into_iter()
-                        .map(|_| FloatGene::new(min, max))
+                        .map(|_| FloatGene::new(min, max).with_bounds(lower_bound, upper_bound))
                         .collect::<Vec<FloatGene>>()))
                 .collect::<Vec<Chromosome<FloatGene, f32>>>()
         })
@@ -117,13 +133,14 @@ pub fn float(
                 .map(|chromosome| {
                     chromosome
                         .iter()
-                        .map(|gene| gene.allele())
+                        .map(|gene| *gene.allele())
                         .collect::<Vec<f32>>()
                 })
                 .collect::<Vec<Vec<f32>>>()
         })
 }
 
+/// bit codex
 pub fn bit(num_chromosomes: i32, num_genes: i32) -> Codex<BitGene, bool , Vec<Vec<bool>>> {
     Codex::new()
         .encoder(move || Genotype {
@@ -141,13 +158,15 @@ pub fn bit(num_chromosomes: i32, num_genes: i32) -> Codex<BitGene, bool , Vec<Ve
                 .map(|chromosome| {
                     chromosome
                         .iter()
-                        .map(|gene| gene.allele())
+                        .map(|gene| *gene.allele())
                         .collect::<Vec<bool>>()
                 })
                 .collect::<Vec<Vec<bool>>>()
         })
 }
 
+
+/// int codex
 pub fn int(
     num_chromosomes: i32,
     num_genes: i32,
@@ -160,10 +179,10 @@ pub fn int(
 pub fn int_with_bounds(
     num_chromosomes: i32,
     num_genes: i32,
-    max: i32,
     min: i32,
-    upper_bound: i32,
+    max: i32,
     lower_bound: i32,
+    upper_bound: i32,
 ) -> Codex<IntGene, i32, Vec<Vec<i32>>> {
     Codex::new()
         .encoder(move || Genotype {
@@ -171,7 +190,7 @@ pub fn int_with_bounds(
                 .into_iter()
                 .map(|_| Chromosome::from_genes((0..num_genes)
                     .into_iter()
-                    .map(|_| IntGene::new(min, max).with_bounds(upper_bound, lower_bound))
+                    .map(|_| IntGene::new(min, max).with_bounds(lower_bound, upper_bound))
                     .collect::<Vec<IntGene>>()))
                 .collect::<Vec<Chromosome<IntGene, i32>>>()
         })
@@ -181,12 +200,39 @@ pub fn int_with_bounds(
                 .map(|chromosome| {
                     chromosome
                         .iter()
-                        .map(|gene| gene.allele())
+                        .map(|gene| *gene.allele())
                         .collect::<Vec<i32>>()
                 })
                 .collect::<Vec<Vec<i32>>>()
         })
 }
+
+
+/// Subset codex
+pub fn subset<T: Clone>(alleles: &'static Vec<T>) -> Codex<BitGene, bool, Vec<T>> {
+    let count = alleles.len();
+    Codex::new()
+        .encoder(move || Genotype {
+            chromosomes: vec![Chromosome::from_genes((0..count)
+                .into_iter()
+                .map(|_| BitGene::new())
+                .collect::<Vec<BitGene>>())]
+        })
+        .decoder(|genotype| {
+            let chromosome = &genotype.chromosomes[0];
+            let mut idx = 0;
+            let mut result = Vec::new();
+            for gene in chromosome.iter() {
+                if *gene.allele() {
+                    result.push(alleles[idx].clone());
+                }
+                idx += 1;
+            }
+
+            result
+        })
+}
+
 
 
 #[cfg(test)]

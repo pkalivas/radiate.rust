@@ -25,8 +25,8 @@ impl IntGene {
 }
 
 impl Gene<IntGene, i32> for IntGene {
-    fn allele(&self) -> i32 {
-        self.allele
+    fn allele(&self) -> &i32 {
+        &self.allele
     }
 
     fn new_instance(&self) -> IntGene {
@@ -98,9 +98,9 @@ impl NumericGene<IntGene, i32> for IntGene {
     }
 
     fn div(&self, other: &IntGene) -> IntGene {
-        let other_allele = match other.allele() == 0_i32 {
+        let other_allele = match other.allele() == &0_i32 {
             true => 1_i32,
-            false => other.allele()
+            false => *other.allele()
         };
         
         IntGene {

@@ -102,7 +102,7 @@ where
         if !output.population.is_sorted {
             self.optimize().sort(&mut output.population);
         }
-
+        
         output.best = codex.decode(&output.population.get(0).genotype());
         output.index += 1;
     }

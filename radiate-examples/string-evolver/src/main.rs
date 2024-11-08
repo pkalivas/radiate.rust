@@ -35,4 +35,5 @@ fn main() {
         output.score() == target.len() as f32
     });
 
-    println!("{:?}", result);}
+    println!("{:?}", result);
+}

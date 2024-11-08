@@ -13,8 +13,8 @@ impl BitGene {
 }
 
 impl Gene<BitGene, bool> for BitGene {
-    fn allele(&self) -> bool {
-        self.allele
+    fn allele(&self) -> &bool {
+        &self.allele
     }
 
     fn new_instance(&self) -> BitGene {

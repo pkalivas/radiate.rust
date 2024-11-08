@@ -30,8 +30,8 @@ impl Valid for FloatGene {
 
 
 impl Gene<FloatGene, f32> for FloatGene {
-    fn allele(&self) -> f32 {
-        self.allele
+    fn allele(&self) -> &f32 {
+        &self.allele
     }
 
     fn new_instance(&self) -> FloatGene {
@@ -96,9 +96,9 @@ impl NumericGene<FloatGene, f32> for FloatGene {
     }
 
     fn div(&self, other: &FloatGene) -> FloatGene {
-        let other_allele = match other.allele() == 0_f32 {
+        let other_allele = match other.allele() == &0_f32 {
             true => 1_f32,
-            false => other.allele(),
+            false => *other.allele(),
         };
         
         FloatGene {
