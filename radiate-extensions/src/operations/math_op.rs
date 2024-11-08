@@ -32,11 +32,11 @@ impl<T> Op<T> for MathOp<T> {
 
     fn apply(&self, inputs: &[T]) -> T {
         match self {
-            MathOp::Add(_, op) => (op)(inputs),
-            MathOp::Subtract(_, op) => (op)(inputs),
-            MathOp::Multiply(_, op) => (op)(inputs),
-            MathOp::Divide(_, op) => (op)(inputs),
-            MathOp::Sum(_, op) => (op)(inputs)
+            MathOp::Add(_, op) => op(inputs),
+            MathOp::Subtract(_, op) => op(inputs),
+            MathOp::Multiply(_, op) => op(inputs),
+            MathOp::Divide(_, op) => op(inputs),
+            MathOp::Sum(_, op) => op(inputs)
         }
     }
 }
