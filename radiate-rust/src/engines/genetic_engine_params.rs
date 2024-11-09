@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use crate::engines::alterers::composite_alterer::CompositeAlterer;
 use crate::engines::codex::Codex;
 use crate::engines::genetic_engine::GeneticEngine;
@@ -11,9 +13,11 @@ use crate::engines::selectors::selector::Selector;
 
 use super::alterers::alter::Alterer;
 
-pub struct GeneticEngineParams<G, A, T>
+pub struct GeneticEngineParams<'a, G, A, T>
 where
-    G: Gene<G, A>,
+    G: Gene<G, A> + 'a,
+    A: 'a,
+    T: 'a
 {
     pub population_size: usize,
     pub max_age: i32,
@@ -24,11 +28,17 @@ where
     pub alterer: Option<CompositeAlterer<G, A>>,
     pub codex: Option<Codex<G, A, T>>,
     pub population: Option<Population<G, A>>,
-    pub fitness_fn: Option<Box<dyn Fn(&T) -> Score>>,
-    pub problem: Option<Box<dyn Problem<G, A, T>>>,
+    pub fitness_fn: Option<Arc<dyn Fn(&T) -> Score>>,
+    pub problem: Option<Arc<dyn Problem<'a, G, A, T>>>,
 }
 
-impl<G: Gene<G, A>, A, T> GeneticEngineParams<G, A, T> {
+impl<'a, G, A, T> GeneticEngineParams<'a, G, A, T> 
+where
+    G: Gene<G, A> + 'a,
+    A: 'a,
+    T: 'a,
+    'a: 'static
+{
     pub fn new() -> Self {
         GeneticEngineParams {
             population_size: 100,
@@ -41,7 +51,7 @@ impl<G: Gene<G, A>, A, T> GeneticEngineParams<G, A, T> {
             codex: None,
             population: None,
             fitness_fn: None,
-            problem: None,
+            problem: None//Some(Box::new(DefaultProblem::new())),
         }
     }
 
@@ -71,7 +81,7 @@ impl<G: Gene<G, A>, A, T> GeneticEngineParams<G, A, T> {
     }
 
     pub fn fitness_fn(mut self, fitness_func: impl Fn(&T) -> Score + 'static) -> Self {
-        self.fitness_fn = Some(Box::new(fitness_func));
+        self.fitness_fn = Some(Arc::new(fitness_func));
         self
     }
 
@@ -100,14 +110,15 @@ impl<G: Gene<G, A>, A, T> GeneticEngineParams<G, A, T> {
         self
     }
 
-    pub fn problem(mut self, problem: impl Problem<G, A, T> + 'static) -> Self {
-        self.problem = Some(Box::new(problem));
+    pub fn problem(mut self, problem: impl Problem<'a, G, A, T> + 'static) -> Self {
+        self.problem = Some(Arc::new(problem));
         self
     }
 
-    pub fn build(mut self) -> GeneticEngine<G, A, T> {
+    pub fn build(mut self) -> GeneticEngine<'a, G, A, T> {
         self.build_population();
         self.build_alterer();
+        self.build_problem();
 
         GeneticEngine::new(self)
     }
@@ -134,11 +145,25 @@ impl<G: Gene<G, A>, A, T> GeneticEngineParams<G, A, T> {
     }
 
     fn build_problem(&mut self) {
-        // if !self.problem.is_some() {
-        //     self.problem = Some(Box::new(DefaultProblem {
-        //         fitness_fn: &self.fitness_fn,
-        //         codex: self.codex.unwrap(),
-        //     }));
-        // }
+        if self.problem.is_some() {
+            return;
+        }
+
+        if self.fitness_fn.is_none() {
+            panic!("Fitness function not set");
+        }
+
+        if self.codex.is_none() {
+            panic!("Codex not set");
+        }
+
+        let encoder = self.codex.as_ref().unwrap().encoder.clone().unwrap();
+        let decoder = self.codex.as_ref().unwrap().decoder.clone().unwrap();
+
+        self.problem = Some(Arc::new(DefaultProblem::new()
+            .encoder(encoder)
+            .decoder(decoder)
+            .fitness_fn(self.fitness_fn.as_ref().unwrap().clone())
+        ));
     }
 }

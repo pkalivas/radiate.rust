@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use crate::engines::alterers::alter::Alter;
 use crate::engines::codex::Codex;
 use crate::engines::engine::Engine;
@@ -10,38 +12,42 @@ use crate::engines::score::Score;
 
 use super::engine_context::EngineContext;
 use super::genome::phenotype::Phenotype;
+use super::problem::{DefaultProblem, Problem};
 use super::selectors::selector::Select;
 
-pub struct GeneticEngine<G, A, T>
+pub struct GeneticEngine<'a, G, A, T>
 where
-    G: Gene<G, A>
+    G: Gene<G, A> + 'a,
+    A: 'a,
+    T: 'a
 {
-    pub params: GeneticEngineParams<G, A, T>,
+    pub params: GeneticEngineParams<'a, G, A, T>,
 }
 
-impl<G, A, T> GeneticEngine<G, A, T>
-where
-    G: Gene<G, A>
+impl<'a, G, A, T> GeneticEngine<'a, G, A, T>
+where 
+    G: Gene<G, A> + 'a,
+    A: 'a,
+    T: 'a,
+    'a: 'static
 {
 
-    pub fn new(params: GeneticEngineParams<G, A, T>) -> Self {
+    pub fn new(params: GeneticEngineParams<'a, G, A, T>) -> Self {
         GeneticEngine { params }
     }
 
-    pub fn from_codex(codex: Codex<G, A, T>) -> GeneticEngineParams<G, A, T> {
+    pub fn from_codex(codex: Codex<G, A, T>) -> GeneticEngineParams<'a, G, A, T> {
         GeneticEngineParams::new().codex(codex)
     }
 
     pub fn evaluate(&self, handle: &mut EngineContext<G, A, T>) {
-        let codex = self.codex();
-        let fitness_fn = self.fitness_fn();
         let optimize = self.optimize();
+        let problem = self.problem();
 
         for idx in 0..handle.population.len() {
             let individual = handle.population.get_mut(idx);
             if !individual.score().is_some() {
-                let decoded = codex.decode(individual.genotype());
-                let score = fitness_fn(&decoded);
+                let score = problem.evaluate(individual.genotype());
 
                 individual.set_score(Some(score));
             }
@@ -123,8 +129,8 @@ where
         self.params.codex.as_ref().unwrap()
     }
 
-    pub fn fitness_fn(&self) -> &impl Fn(&T) -> Score {
-        self.params.fitness_fn.as_ref().unwrap()
+    pub fn problem(&self) -> &Arc<dyn Problem<'a, G, A, T>> {
+        self.params.problem.as_ref().unwrap()
     }
 
     pub fn population(&self) -> &Population<G, A> {
@@ -144,7 +150,13 @@ where
     }
 }
 
-impl<G: Gene<G, A>, A, T: Clone> Engine<G, A, T> for GeneticEngine<G, A, T> {
+impl<'a, G, A, T: Clone> Engine<G, A, T> for GeneticEngine<'a, G, A, T>
+where
+    G: Gene<G, A> + 'a,
+    A: 'a,
+    T: 'a,
+    'a: 'static
+{
     fn fit<F: Fn(&EngineContext<G, A, T>) -> bool>(&self, limit: F) -> EngineContext<G, A, T> {
         let mut ctx = self.start();
 

@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use super::genome::{genes::gene::Gene, genotype::Genotype};
 use crate::engines::genome::chromosome::Chromosome;
 use crate::engines::genome::genes::bit_gene::BitGene;
@@ -11,13 +13,16 @@ use crate::engines::genome::phenotype::Phenotype;
 
 pub struct Codex<G, A, T>
 where
-    G: Gene<G, A> 
+    G: Gene<G, A>
 {
-    pub encoder: Option<Box<dyn Fn() -> Genotype<G, A>>>,
-    pub decoder: Option<Box<dyn Fn(&Genotype<G, A>) -> T>>,
+    pub encoder: Option<Arc<dyn Fn() -> Genotype<G, A>>>,
+    pub decoder: Option<Arc<dyn Fn(&Genotype<G, A>) -> T>>,
 }
 
-impl<G: Gene<G, A>, A, T> Codex<G, A, T> {
+impl<G, A, T> Codex<G, A, T> 
+where 
+    G: Gene<G, A>
+{
     pub fn new() -> Self {
         Codex {
             encoder: None,
@@ -40,12 +45,12 @@ impl<G: Gene<G, A>, A, T> Codex<G, A, T> {
     }
 
     pub fn encoder(mut self, encoder: impl Fn() -> Genotype<G, A> + 'static) -> Self {
-        self.encoder = Some(Box::new(encoder));
+        self.encoder = Some(Arc::new(encoder));
         self
     }
 
     pub fn decoder(mut self, decoder: impl Fn(&Genotype<G, A>) -> T + 'static) -> Self {
-        self.decoder = Some(Box::new(decoder));
+        self.decoder = Some(Arc::new(decoder));
         self
     }
 
