@@ -2,7 +2,6 @@ use std::sync::LazyLock;
 
 use rand::random;
 
-use radiate_rust::engines::alterers::alter::Alterer;
 use radiate_rust::engines::codexes::subset_codex::SubSetCodex;
 use radiate_rust::engines::genetic_engine::GeneticEngine;
 use radiate_rust::engines::score::Score;
@@ -18,10 +17,6 @@ fn main() {
     let codex = SubSetCodex::new(&KNAPSACK.items);
 
     let engine = GeneticEngine::from_codex(codex)
-        .alterer(vec![
-            Alterer::Mutator(0.001),
-            Alterer::SinglePointCrossover(0.5)
-        ])
         .fitness_fn(move |genotype: &Vec<&Item>| KNAPSACK.fitness(genotype))
         .build();
 
