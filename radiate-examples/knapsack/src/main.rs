@@ -11,9 +11,7 @@ use radiate_rust::engines::engine::Engine;
 static KNAPSACK: LazyLock<Knapsack> = LazyLock::new(|| Knapsack::new(15));
 
 
-fn main() {
-    println!("Knapsack Capacity=[ {:?} ]", KNAPSACK.capacity);
-    
+fn main() {    
     let codex = SubSetCodex::new(&KNAPSACK.items);
     let engine = GeneticEngine::from_codex(codex)
         .fitness_fn(|genotype: &Vec<&Item>| KNAPSACK.fitness(genotype))
@@ -28,8 +26,9 @@ fn main() {
         output.index == 50
     });
 
-    println!("Result Capacity=[ {:?} ]", Knapsack::value_total(&result.best));
-    println!("Result Weight=[ {:?} ]", Knapsack::weight_total(&result.best));
+    println!("Result Value Total=[ {:?} ]", Knapsack::value_total(&result.best));
+    println!("Result Weigh Total=[ {:?} ]", Knapsack::weight_total(&result.best));
+    println!("Max Weight=[{:?}]", KNAPSACK.capacity);
 }
 
 pub struct Knapsack {

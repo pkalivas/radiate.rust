@@ -26,7 +26,7 @@ fn main() {
         .build();
 
     let result = engine.fit(|output| {
-        println!("[ {:?} ]: {:?}", output.index, output.best);
+        println!("[ {:?} ]: {:?}", output.index, output.best.first().unwrap());
         output.score() == 0.0
     });
 
