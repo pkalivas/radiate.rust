@@ -15,7 +15,7 @@ fn main() {
 
     let engine = GeneticEngine::from_problem(knapsack)
         .population_size(100)
-        .minimizing()
+        .maximizing()
         .offspring_selector(Selector::Elitism)
         .survivor_selector(Selector::Tournament(4))
         .alterer(vec![
@@ -25,7 +25,7 @@ fn main() {
         .build();
 
     let result = engine.fit(|output| {
-        output.index % 100 == 0
+        output.index == 100
     });
 
     let t = "";
