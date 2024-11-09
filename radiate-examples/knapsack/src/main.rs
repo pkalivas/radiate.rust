@@ -1,25 +1,41 @@
+use std::sync::LazyLock;
+
 use rand::random;
-use radiate_rust::engines::codex;
+
+use radiate_rust::engines::alterers::alter::Alterer;
+use radiate_rust::engines::codexes::subset_codex::SubSetCodex;
+use radiate_rust::engines::genetic_engine::GeneticEngine;
+use radiate_rust::engines::score::Score;
+use radiate_rust::engines::selectors::selector::Selector;
+use radiate_rust::engines::engine::Engine;
+
+
+static KNAPSACK: LazyLock<Knapsack> = LazyLock::new(|| Knapsack::new(10));
+
 
 fn main() {
+    println!("Knapsack Capacity=[ {:?} ]", KNAPSACK.capacity);
+    
+    let codex = SubSetCodex::new(&KNAPSACK.items);
 
-    let knapsack = Knapsack::new(10);
-    // let codex = codex::subset(&knapsack.items);
+    let engine = GeneticEngine::from_codex(codex)
+        .population_size(100)
+        .maximizing()
+        .offspring_selector(Selector::Elitism)
+        .survivor_selector(Selector::Tournament(4))
+        .alterer(vec![
+            Alterer::Mutator(0.001),
+            Alterer::UniformCrossover(0.5)
+        ])
+        .fitness_fn(move |genotype: &Vec<&Item>| KNAPSACK.fitness(genotype))
+        .build();
 
-    // let engine = GeneticEngine::from_codex(codex)
-    //     .population_size(100)
-    //     .minimizing()
-    //     .offspring_selector(Selector::Elitism)
-    //     .survivor_selector(Selector::Tournament(4))
-    //     .alterer(vec![
-    //         Alterer::Mutator(0.001),
-    //         Alterer::UniformCrossover(0.5)
-    //     ])
-    //     .fitness_fn(|genotype: &Vec<Item>| {
-    //         Score::from_int(0)
-    //     })
-    //     .build();
-    println!("{:?}", knapsack);
+    let result = engine.fit(|output| { 
+        println!("[ {:?} ]: {:?}", output.index, output.score());
+        output.index == 100
+    });
+
+    println!("{:?}", result);
 }
 
 pub struct Knapsack {
@@ -32,6 +48,21 @@ impl Knapsack {
     pub fn new(size: usize) -> Self {
         let items = Item::random_collection(size);
         Knapsack { capacity: size as f32 * 100_f32 / 3_f32, size, items }
+    }
+
+    pub fn fitness(&self, genotype: &Vec<&Item>) -> Score {
+        let mut sum = 0_f32;
+        let mut weight = 0_f32;
+        for item in genotype {
+            sum += item.value;
+            weight += item.weight;
+        }
+
+        if weight > self.capacity {
+            Score::from_f32(0_f32)
+        } else {
+            Score::from_f32(sum)
+        }
     }
 }
 

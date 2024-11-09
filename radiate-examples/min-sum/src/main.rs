@@ -1,13 +1,13 @@
 use radiate_rust::engines::alterers::alter::Alterer;
 use radiate_rust::engines::alterers::mutators::numeric_mutator::NumericMutator;
-use radiate_rust::engines::codex;
+use radiate_rust::engines::codexes::int_codex::IntCodex;
 use radiate_rust::engines::genetic_engine::GeneticEngine;
 use radiate_rust::engines::score::Score;
 use radiate_rust::engines::selectors::selector::Selector;
 use radiate_rust::engines::engine::Engine;
 
 fn main() {
-    let codex = codex::int_with_bounds(1, 10, 0, 100, 0, 100);
+    let codex = IntCodex::new(1, 10, 0, 100).with_bounds(0, 100);
 
     let engine = GeneticEngine::from_codex(codex)
         .population_size(100)
