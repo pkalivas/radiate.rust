@@ -1,11 +1,12 @@
+use std::sync::Arc;
+
 use crate::engines::alterers::composite_alterer::CompositeAlterer;
-use crate::engines::codex::Codex;
+use crate::engines::codexes::codex::Codex;
 use crate::engines::genetic_engine::GeneticEngine;
 use crate::engines::genome::genes::gene::Gene;
 use crate::engines::genome::phenotype::Phenotype;
 use crate::engines::genome::population::Population;
 use crate::engines::optimize::Optimize;
-use crate::engines::problem::{DefaultProblem, Problem};
 use crate::engines::score::Score;
 use crate::engines::selectors::selector::Selector;
 
@@ -22,10 +23,9 @@ where
     pub survivor_selector: Selector,
     pub offspring_selector: Selector,
     pub alterer: Option<CompositeAlterer<G, A>>,
-    pub codex: Option<Codex<G, A, T>>,
+    pub codex: Option<Arc<dyn Codex<G, A, T>>>,
     pub population: Option<Population<G, A>>,
     pub fitness_fn: Option<Box<dyn Fn(&T) -> Score>>,
-    pub problem: Option<Box<dyn Problem<G, A, T>>>,
 }
 
 impl<G: Gene<G, A>, A, T> GeneticEngineParams<G, A, T> {
@@ -41,7 +41,6 @@ impl<G: Gene<G, A>, A, T> GeneticEngineParams<G, A, T> {
             codex: None,
             population: None,
             fitness_fn: None,
-            problem: None,
         }
     }
 
@@ -60,8 +59,8 @@ impl<G: Gene<G, A>, A, T> GeneticEngineParams<G, A, T> {
         self
     }
 
-    pub fn codex(mut self, codex: Codex<G, A, T>) -> Self {
-        self.codex = Some(codex);
+    pub fn codex(mut self, codex: impl Codex<G, A, T> + 'static) -> Self {
+        self.codex = Some(Arc::new(codex));
         self
     }
 
@@ -100,10 +99,10 @@ impl<G: Gene<G, A>, A, T> GeneticEngineParams<G, A, T> {
         self
     }
 
-    pub fn problem(mut self, problem: impl Problem<G, A, T> + 'static) -> Self {
-        self.problem = Some(Box::new(problem));
-        self
-    }
+    // pub fn problem(mut self, problem: impl Problem<G, A, T> + 'static) -> Self {
+    //     self.problem = Some(Box::new(problem));
+    //     self
+    // }
 
     pub fn build(mut self) -> GeneticEngine<G, A, T> {
         self.build_population();

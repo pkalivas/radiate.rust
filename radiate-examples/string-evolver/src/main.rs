@@ -1,13 +1,13 @@
 use radiate_rust::engines::alterers::alter::Alterer;
+use radiate_rust::engines::codexes::char_codex::CharCodex;
 use radiate_rust::engines::genetic_engine::GeneticEngine;
-use radiate_rust::engines::codex;
 use radiate_rust::engines::score::Score;
 use radiate_rust::engines::selectors::selector::Selector;
 use radiate_rust::engines::engine::Engine;
 
 fn main() {
     let target = "Chicago, IL";
-    let codex = codex::char(1, target.len());
+    let codex = CharCodex::new(1, target.len());
 
     let engine = GeneticEngine::from_codex(codex)
         .offspring_selector(Selector::Elitism)

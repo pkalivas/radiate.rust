@@ -1,5 +1,5 @@
 pub mod alterers;
-pub mod codex;
+pub mod codexes;
 pub mod engine;
 pub mod genetic_engine;
 pub mod genetic_engine_params;

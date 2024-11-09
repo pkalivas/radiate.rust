@@ -3,7 +3,7 @@ pub struct Score {
 }
 
 impl Score {
-    pub fn from_float(value: f32) -> Self {
+    pub fn from_f32(value: f32) -> Self {
         Score { value }
     }
 
