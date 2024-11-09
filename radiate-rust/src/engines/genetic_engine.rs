@@ -125,7 +125,7 @@ where
         self.params.codex.as_ref().unwrap()
     }
 
-    pub fn fitness_fn(&self) -> &impl Fn(&T) -> Score {
+    pub fn fitness_fn(&self) -> &Arc<dyn Fn(&T) -> Score> {
         self.params.fitness_fn.as_ref().unwrap()
     }
 
@@ -146,8 +146,14 @@ where
     }
 }
 
-impl<G: Gene<G, A>, A, T: Clone> Engine<G, A, T> for GeneticEngine<G, A, T> {
-    fn fit<F: Fn(&EngineContext<G, A, T>) -> bool>(&self, limit: F) -> EngineContext<G, A, T> {
+impl<G, A, T: Clone> Engine<G, A, T> for GeneticEngine<G, A, T>
+where
+    G: Gene<G, A>
+{
+    fn fit<F>(&self, limit: F) -> EngineContext<G, A, T> 
+    where
+        F: Fn(&EngineContext<G, A, T>) -> bool
+    {
         let mut ctx = self.start();
 
         loop {

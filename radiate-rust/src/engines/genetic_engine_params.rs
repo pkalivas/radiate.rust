@@ -23,9 +23,9 @@ where
     pub survivor_selector: Selector,
     pub offspring_selector: Selector,
     pub alterer: Option<CompositeAlterer<G, A>>,
-    pub codex: Option<Arc<dyn Codex<G, A, T>>>,
     pub population: Option<Population<G, A>>,
-    pub fitness_fn: Option<Box<dyn Fn(&T) -> Score>>,
+    pub codex: Option<Arc<dyn Codex<G, A, T>>>,
+    pub fitness_fn: Option<Arc<dyn Fn(&T) -> Score>>,
 }
 
 impl<G: Gene<G, A>, A, T> GeneticEngineParams<G, A, T> {
@@ -70,7 +70,7 @@ impl<G: Gene<G, A>, A, T> GeneticEngineParams<G, A, T> {
     }
 
     pub fn fitness_fn(mut self, fitness_func: impl Fn(&T) -> Score + 'static) -> Self {
-        self.fitness_fn = Some(Box::new(fitness_func));
+        self.fitness_fn = Some(Arc::new(fitness_func));
         self
     }
 
@@ -99,11 +99,6 @@ impl<G: Gene<G, A>, A, T> GeneticEngineParams<G, A, T> {
         self
     }
 
-    // pub fn problem(mut self, problem: impl Problem<G, A, T> + 'static) -> Self {
-    //     self.problem = Some(Box::new(problem));
-    //     self
-    // }
-
     pub fn build(mut self) -> GeneticEngine<G, A, T> {
         self.build_population();
         self.build_alterer();
@@ -130,14 +125,5 @@ impl<G: Gene<G, A>, A, T> GeneticEngineParams<G, A, T> {
                 Alterer::UniformCrossover(0.5),
             ]));
         }
-    }
-
-    fn build_problem(&mut self) {
-        // if !self.problem.is_some() {
-        //     self.problem = Some(Box::new(DefaultProblem {
-        //         fitness_fn: &self.fitness_fn,
-        //         codex: self.codex.unwrap(),
-        //     }));
-        // }
     }
 }

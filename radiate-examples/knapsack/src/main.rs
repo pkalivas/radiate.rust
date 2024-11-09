@@ -19,13 +19,11 @@ fn main() {
     let codex = SubSetCodex::new(&KNAPSACK.items);
 
     let engine = GeneticEngine::from_codex(codex)
-        .population_size(100)
-        .maximizing()
-        .offspring_selector(Selector::Elitism)
+        .offspring_selector(Selector::Roulette)
         .survivor_selector(Selector::Tournament(4))
         .alterer(vec![
             Alterer::Mutator(0.001),
-            Alterer::UniformCrossover(0.5)
+            Alterer::SinglePointCrossover(0.5)
         ])
         .fitness_fn(move |genotype: &Vec<&Item>| KNAPSACK.fitness(genotype))
         .build();
