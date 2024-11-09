@@ -2,7 +2,6 @@ use crate::engines::genome::{chromosome::Chromosome, genes::bit_gene::BitGene, g
 
 use super::codex::Codex;
 
-
 pub struct SubSetCodex<'a, T> {
     pub items: &'a Vec<T>,
 }

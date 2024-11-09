@@ -1,7 +1,6 @@
 use radiate_rust::engines::alterers::alter::Alterer;
 use radiate_rust::engines::codexes::char_codex::CharCodex;
 use radiate_rust::engines::genetic_engine::GeneticEngine;
-use radiate_rust::engines::codexes::codex;
 use radiate_rust::engines::score::Score;
 use radiate_rust::engines::selectors::selector::Selector;
 use radiate_rust::engines::engine::Engine;

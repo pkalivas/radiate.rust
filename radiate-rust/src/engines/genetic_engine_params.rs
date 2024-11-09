@@ -7,7 +7,6 @@ use crate::engines::genome::genes::gene::Gene;
 use crate::engines::genome::phenotype::Phenotype;
 use crate::engines::genome::population::Population;
 use crate::engines::optimize::Optimize;
-// use crate::engines::problem::{DefaultProblem, Problem};
 use crate::engines::score::Score;
 use crate::engines::selectors::selector::Selector;
 
@@ -27,7 +26,6 @@ where
     pub codex: Option<Arc<dyn Codex<G, A, T>>>,
     pub population: Option<Population<G, A>>,
     pub fitness_fn: Option<Box<dyn Fn(&T) -> Score>>,
-    // pub problem: Option<Box<dyn Problem<G, A, T>>>,
 }
 
 impl<G: Gene<G, A>, A, T> GeneticEngineParams<G, A, T> {
@@ -43,7 +41,6 @@ impl<G: Gene<G, A>, A, T> GeneticEngineParams<G, A, T> {
             codex: None,
             population: None,
             fitness_fn: None,
-            // problem: None,
         }
     }
 
