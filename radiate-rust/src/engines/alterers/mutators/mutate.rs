@@ -2,7 +2,10 @@ use crate::engines::genome::chromosome::Chromosome;
 use crate::engines::genome::genes::gene::Gene;
 use crate::engines::genome::genotype::Genotype;
 
-pub trait Mutate<G: Gene<G, A>, A> {
+pub trait Mutate<G, A> 
+where
+    G: Gene<G, A>
+{
 
     fn mutate_rate(&self) -> f32;
     

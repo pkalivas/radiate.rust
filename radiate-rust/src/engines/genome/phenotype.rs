@@ -2,13 +2,19 @@ use crate::engines::score::Score;
 
 use super::{genes::gene::Gene, genotype::Genotype};
 
-pub struct Phenotype<G: Gene<G, A>, A> {
+pub struct Phenotype<G, A> 
+where
+    G: Gene<G, A>
+{
     pub genotype: Genotype<G, A>,
     pub score: Option<Score>,
     pub generation: i32,
 }
 
-impl<G: Gene<G, A>, A> Phenotype<G, A> {
+impl<G, A> Phenotype<G, A> 
+where
+    G: Gene<G, A>
+{
     pub fn genotype(&self) -> &Genotype<G, A> {
         &self.genotype
     }
@@ -34,7 +40,10 @@ impl<G: Gene<G, A>, A> Phenotype<G, A> {
     }
 }
 
-impl<G: Gene<G, A>, A> Clone for Phenotype<G, A> {
+impl<G, A> Clone for Phenotype<G, A> 
+where
+    G: Gene<G, A>
+{
     fn clone(&self) -> Self {
         Phenotype {
             genotype: self.genotype.clone(),
@@ -47,7 +56,10 @@ impl<G: Gene<G, A>, A> Clone for Phenotype<G, A> {
     }
 }
 
-impl<G: Gene<G, A>, A> PartialEq for Phenotype<G, A> {
+impl<G, A> PartialEq for Phenotype<G, A> 
+where
+    G: Gene<G, A>
+{
     fn eq(&self, other: &Self) -> bool {
         self.genotype == other.genotype
             && self.score == other.score
@@ -55,13 +67,19 @@ impl<G: Gene<G, A>, A> PartialEq for Phenotype<G, A> {
     }
 }
 
-impl<G: Gene<G, A>, A> PartialOrd for Phenotype<G, A> {
+impl<G, A> PartialOrd for Phenotype<G, A> 
+where
+    G: Gene<G, A>
+{
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
         self.score.partial_cmp(&other.score)
     }
 }
 
-impl<G: Gene<G, A> + std::fmt::Debug, A> std::fmt::Debug for Phenotype<G, A> {
+impl<G, A> std::fmt::Debug for Phenotype<G, A> 
+where
+    G: Gene<G, A> + std::fmt::Debug
+{
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{:?}, generation: {:?}, score: {:?}", self.genotype, self.generation, self.score)
     }
