@@ -10,7 +10,8 @@ use radiate_rust::engines::selectors::selector::Selector;
 use radiate_rust::engines::engine::Engine;
 
 
-static KNAPSACK: LazyLock<Knapsack> = LazyLock::new(|| Knapsack::new(10));
+static KNAPSACK: LazyLock<Knapsack> = LazyLock::new(|| Knapsack::new(15));
+
 
 fn main() {
     println!("Knapsack Capacity=[ {:?} ]", KNAPSACK.capacity);
@@ -19,7 +20,7 @@ fn main() {
 
     let engine = GeneticEngine::from_codex(codex)
         .offspring_selector(Selector::Roulette)
-        .survivor_selector(Selector::Tournament(3))
+        .survivor_selector(Selector::Elitism)
         .alterer(vec![
             Alterer::Mutator(0.001),
             Alterer::SinglePointCrossover(0.5)
@@ -27,12 +28,16 @@ fn main() {
         .fitness_fn(move |genotype: &Vec<&Item>| KNAPSACK.fitness(genotype))
         .build();
 
-    let result = engine.fit(|output| { 
-        println!("[ {:?} ]: {:?}", output.index, output.score());
+    let result = engine.fit(|output| {
+        let total_value = output.best.iter().fold(0_f32, |acc, item| acc + item.value);
+        let total_weight = output.best.iter().fold(0_f32, |acc, item| acc + item.weight);
+
+        println!("[ {:?} ]: Value={:?} Weight={:?}", output.index, total_value, total_weight);
         output.index == 100
     });
 
-    println!("{:?}", result);
+    println!("Result Capacity=[ {:?} ]", result.best.iter().fold(0_f32, |acc, item| acc + item.value));
+    println!("Result Weight=[ {:?} ]", result.best.iter().fold(0_f32, |acc, item| acc + item.weight));
 }
 
 pub struct Knapsack {
