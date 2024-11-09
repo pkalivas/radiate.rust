@@ -2,7 +2,10 @@ use crate::engines::genome::genes::gene::Gene;
 use crate::engines::genome::population::Population;
 use rand::Rng;
 
-pub trait Select<G: Gene<G, A>, A> {
+pub trait Select<G, A> 
+where
+    G: Gene<G, A>
+{
     fn select(&self, population: &Population<G, A>, count: usize) -> Population<G, A>;
 }
 
@@ -16,7 +19,10 @@ pub enum Selector {
 }
 
 impl Selector {
-    pub fn total_fitness<G: Gene<G, A>, A>(&self, population: &Population<G, A>) -> f32 {
+    pub fn total_fitness<G, A>(&self, population: &Population<G, A>) -> f32
+    where
+        G: Gene<G, A>
+    {
         population
             .iter()
             .map(|i| match i.score() {
@@ -27,7 +33,10 @@ impl Selector {
     }
 }
 
-impl<G: Gene<G, A>, A> Select<G, A> for Selector {
+impl<G, A> Select<G, A> for Selector 
+where
+    G: Gene<G, A>
+{
     fn select(&self, population: &Population<G, A>, count: usize) -> Population<G, A> {
         match self {
             Selector::Tournament(size) => {
