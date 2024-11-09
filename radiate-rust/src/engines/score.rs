@@ -1,67 +1,83 @@
 pub struct Score {
-    pub value: f32,
+    pub values: Vec<f32>,
 }
 
 impl Score {
     pub fn from_f32(value: f32) -> Self {
-        Score { value }
+        Score { values: vec![value] }
     }
 
     pub fn from_int(value: i32) -> Self {
         Score {
-            value: value as f32,
+            values: vec![value as f32],
         }
     }
 
     pub fn from_usize(value: usize) -> Self {
         Score {
-            value: value as f32,
+            values: vec![value as f32],
         }
     }
 
     pub fn from_string(value: &str) -> Self {
         Score {
-            value: value.parse::<f32>().unwrap(),
+            values: vec![value.parse::<f32>().unwrap()],
         }
     }
 
     pub fn as_float(&self) -> f32 {
-        self.value
+        if self.values.len() > 1 {
+            panic!("Score has multiple values, cannot be converted to float")
+        }
+
+        self.values[0]
     }
 
     pub fn as_int(&self) -> i32 {
-        self.value as i32
+        if self.values.len() > 1 {
+            panic!("Score has multiple values, cannot be converted to int")
+        }
+
+        self.values[0] as i32
     }
 
     pub fn as_string(&self) -> String {
-        self.value.to_string()
+        if self.values.len() > 1 {
+            panic!("Score has multiple values, cannot be converted to string")
+        }
+
+        self.values[0].to_string()
     }
 
     pub fn as_usize(&self) -> usize {
-        self.value as usize
+        if self.values.len() > 1 {
+            panic!("Score has multiple values, cannot be converted to usize")
+        }
+
+        self.values[0] as usize
     }
 }
 
 impl Clone for Score {
     fn clone(&self) -> Self {
-        Score { value: self.value }
+        Score { values: self.values.clone() }
     }
 }
 
 impl PartialEq for Score {
     fn eq(&self, other: &Self) -> bool {
-        self.value == other.value
+        self.values == other.values
     }
 }
 
 impl PartialOrd for Score {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        self.value.partial_cmp(&other.value)
+        self.values.partial_cmp(&other.values)
     }
 }
 
 impl std::fmt::Debug for Score {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.value)
+        write!(f, "{:?}", self.values)
     }
 }

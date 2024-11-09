@@ -1,7 +1,11 @@
 use super::genome::genes::gene::Gene;
 use crate::engines::engine_context::EngineContext;
 
-pub trait Engine<G: Gene<G, A>, A, T: Clone> {
+pub trait Engine<G, A, T>
+where
+    G: Gene<G, A>,
+    T: Clone,
+{
     fn fit<F: Fn(&EngineContext<G, A, T>) -> bool>(&self, limit: F) -> EngineContext<G, A, T>;
 
     fn start(&self) -> EngineContext<G, A, T>;
