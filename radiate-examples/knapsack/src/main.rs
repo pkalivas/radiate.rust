@@ -6,7 +6,6 @@ use radiate_rust::engines::alterers::alter::Alterer;
 use radiate_rust::engines::codexes::subset_codex::SubSetCodex;
 use radiate_rust::engines::genetic_engine::GeneticEngine;
 use radiate_rust::engines::score::Score;
-use radiate_rust::engines::selectors::selector::Selector;
 use radiate_rust::engines::engine::Engine;
 
 
@@ -19,8 +18,6 @@ fn main() {
     let codex = SubSetCodex::new(&KNAPSACK.items);
 
     let engine = GeneticEngine::from_codex(codex)
-        .offspring_selector(Selector::Roulette)
-        .survivor_selector(Selector::Elitism)
         .alterer(vec![
             Alterer::Mutator(0.001),
             Alterer::SinglePointCrossover(0.5)
@@ -29,15 +26,15 @@ fn main() {
         .build();
 
     let result = engine.fit(|output| {
-        let total_value = output.best.iter().fold(0_f32, |acc, item| acc + item.value);
-        let total_weight = output.best.iter().fold(0_f32, |acc, item| acc + item.weight);
+        let value_total = Knapsack::value_total(&output.best);
+        let weight_total = Knapsack::weight_total(&output.best);
 
-        println!("[ {:?} ]: Value={:?} Weight={:?}", output.index, total_value, total_weight);
-        output.index == 100
+        println!("[ {:?} ]: Value={:?} Weight={:?}", output.index, value_total, weight_total);
+        output.index == 50
     });
 
-    println!("Result Capacity=[ {:?} ]", result.best.iter().fold(0_f32, |acc, item| acc + item.value));
-    println!("Result Weight=[ {:?} ]", result.best.iter().fold(0_f32, |acc, item| acc + item.weight));
+    println!("Result Capacity=[ {:?} ]", Knapsack::value_total(&result.best));
+    println!("Result Weight=[ {:?} ]", Knapsack::weight_total(&result.best));
 }
 
 pub struct Knapsack {
@@ -65,6 +62,14 @@ impl Knapsack {
         } else {
             Score::from_f32(sum)
         }
+    }
+
+    pub fn value_total(items: &Vec<&Item>) -> f32 {
+        items.iter().fold(0_f32, |acc, item| acc + item.value)
+    }
+
+    pub fn weight_total(items: &Vec<&Item>) -> f32 {
+        items.iter().fold(0_f32, |acc, item| acc + item.weight)
     }
 }
 
