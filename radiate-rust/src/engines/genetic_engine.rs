@@ -150,9 +150,10 @@ where
     }
 }
 
-impl<G, A, T: Clone> Engine<G, A, T> for GeneticEngine<G, A, T>
+impl<G, A, T> Engine<G, A, T> for GeneticEngine<G, A, T>
 where
-    G: Gene<G, A>
+    G: Gene<G, A>,
+    T: Clone,
 {
     fn fit<F>(&self, limit: F) -> EngineContext<G, A, T> 
     where
