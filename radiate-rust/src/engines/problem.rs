@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use crate::engines::codex::Codex;
 use crate::engines::genome::genotype::Genotype;
 use crate::engines::genome::genes::gene::Gene;
@@ -11,14 +13,14 @@ pub trait Problem<G, A, T>
     fn codex(&self) -> &Codex<G, A, T>;
 }
 
-pub struct DefaultProblem<'a, G, A, T> 
+pub struct DefaultProblem<G, A, T> 
     where G: Gene<G, A>
 {
-    pub fitness_fn: &'a dyn Fn(&T) -> Score,
-    pub codex: Codex<G, A, T>
+    pub fitness_fn: Arc<dyn Fn(&T) -> Score>,
+    pub codex: Arc<Codex<G, A, T>>
 }
 
-impl<'a, G, A, T> Problem<G, A, T> for DefaultProblem<'a, G, A, T>
+impl<G, A, T> Problem<G, A, T> for DefaultProblem<G, A, T>
     where G: Gene<G, A>
 {
     fn evaluate(&self, genotype: &Genotype<G, A>) -> Score {

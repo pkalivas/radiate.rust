@@ -1,3 +1,4 @@
+use std::sync::Arc;
 use crate::engines::alterers::alter::Alter;
 use crate::engines::codex::Codex;
 use crate::engines::engine::Engine;
@@ -12,7 +13,7 @@ use super::engine_context::EngineContext;
 use super::genome::phenotype::Phenotype;
 use super::selectors::selector::Select;
 
-pub struct GeneticEngine<G, A, T>
+pub struct GeneticEngine<G: 'static, A: 'static, T: 'static>
 where
     G: Gene<G, A>
 {
@@ -123,8 +124,8 @@ where
         self.params.codex.as_ref().unwrap()
     }
 
-    pub fn fitness_fn(&self) -> &impl Fn(&T) -> Score {
-        self.params.fitness_fn.as_ref().unwrap()
+    pub fn fitness_fn(&self) -> &dyn Fn(&T) -> Score {
+        self.params.fitness_fn.as_ref().unwrap().as_ref()
     }
 
     pub fn population(&self) -> &Population<G, A> {

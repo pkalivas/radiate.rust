@@ -1,3 +1,4 @@
+use std::sync::Arc;
 use crate::engines::alterers::composite_alterer::CompositeAlterer;
 use crate::engines::codex::Codex;
 use crate::engines::genetic_engine::GeneticEngine;
@@ -11,7 +12,7 @@ use crate::engines::selectors::selector::Selector;
 
 use super::alterers::alter::Alterer;
 
-pub struct GeneticEngineParams<G, A, T>
+pub struct GeneticEngineParams<G: 'static, A: 'static, T: 'static>
 where
     G: Gene<G, A>,
 {
@@ -22,13 +23,15 @@ where
     pub survivor_selector: Selector,
     pub offspring_selector: Selector,
     pub alterer: Option<CompositeAlterer<G, A>>,
-    pub codex: Option<Codex<G, A, T>>,
+    pub codex: Option<Arc<Codex<G, A, T>>>,
     pub population: Option<Population<G, A>>,
-    pub fitness_fn: Option<Box<dyn Fn(&T) -> Score>>,
-    pub problem: Option<Box<dyn Problem<G, A, T>>>,
+    pub fitness_fn: Option<Arc<dyn Fn(&T) -> Score>>,
+    pub problem: Option<Arc<dyn Problem<G, A, T>>>,
 }
 
-impl<G: Gene<G, A>, A, T> GeneticEngineParams<G, A, T> {
+impl<G: 'static, A: 'static, T: 'static> GeneticEngineParams<G, A, T> 
+    where G: Gene<G, A>
+{
     pub fn new() -> Self {
         GeneticEngineParams {
             population_size: 100,
@@ -61,7 +64,7 @@ impl<G: Gene<G, A>, A, T> GeneticEngineParams<G, A, T> {
     }
 
     pub fn codex(mut self, codex: Codex<G, A, T>) -> Self {
-        self.codex = Some(codex);
+        self.codex = Some(Arc::new(codex));
         self
     }
 
@@ -71,7 +74,7 @@ impl<G: Gene<G, A>, A, T> GeneticEngineParams<G, A, T> {
     }
 
     pub fn fitness_fn(mut self, fitness_func: impl Fn(&T) -> Score + 'static) -> Self {
-        self.fitness_fn = Some(Box::new(fitness_func));
+        self.fitness_fn = Some(Arc::new(fitness_func));
         self
     }
 
@@ -101,7 +104,7 @@ impl<G: Gene<G, A>, A, T> GeneticEngineParams<G, A, T> {
     }
 
     pub fn problem(mut self, problem: impl Problem<G, A, T> + 'static) -> Self {
-        self.problem = Some(Box::new(problem));
+        self.problem = Some(Arc::new(problem));
         self
     }
 
@@ -134,11 +137,22 @@ impl<G: Gene<G, A>, A, T> GeneticEngineParams<G, A, T> {
     }
 
     fn build_problem(&mut self) {
-        // if !self.problem.is_some() {
-        //     self.problem = Some(Box::new(DefaultProblem {
-        //         fitness_fn: &self.fitness_fn,
-        //         codex: self.codex.unwrap(),
-        //     }));
-        // }
+        if !self.problem.is_some() {
+            let fitness_fn = self.fitness_fn.clone().unwrap();
+            let codex = self.codex.clone().unwrap();
+
+            let problem = DefaultProblem {
+                fitness_fn,
+                codex,
+            };
+
+            self.problem = Some(Arc::new(problem));
+
+            // self.problem(Some(Arc::new(problem)));
+            // self.problem = Some(Arc::new(DefaultProblem {
+            //     fitness_fn: self.fitness_fn.clone().unwrap(),
+            //     codex: self.codex.clone().unwrap(),
+            // }));
+        }
     }
 }
