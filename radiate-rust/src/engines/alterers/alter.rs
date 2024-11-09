@@ -13,14 +13,20 @@ where
 }
 
 
-pub struct AlterWrap<G: Gene<G, A>, A> {
+pub struct AlterWrap<G, A> 
+where
+    G: Gene<G, A>
+{
     pub rate: f32,
     pub mutator: Option<Box<dyn Mutate<G, A>>>,
     pub crossover: Option<Box<dyn Crossover<G, A>>>
 }
 
 
-pub enum Alterer<G: Gene<G, A>, A> {
+pub enum Alterer<G, A> 
+where
+    G: Gene<G, A>
+{
     Mutator(f32),
     UniformCrossover(f32),
     MultiPointCrossover(f32, usize),

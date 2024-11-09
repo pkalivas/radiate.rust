@@ -12,12 +12,17 @@ use super::mutators::mutator::Mutator;
 use super::mutators::swap_mutator::SwapMutator;
 
 
-pub struct CompositeAlterer<G: Gene<G, A>, A> {
+pub struct CompositeAlterer<G, A> 
+where
+    G: Gene<G, A>
+{
     alterers: Vec<AlterWrap<G, A>>,
 }
 
-impl<G: Gene<G, A>, A> CompositeAlterer<G, A> {
-
+impl<G, A> CompositeAlterer<G, A> 
+where
+    G: Gene<G, A>
+{
     pub fn new(alterers: Vec<Alterer<G, A>>) -> Self {
         let mut alterer_wraps = Vec::new();
         for alterer in alterers {

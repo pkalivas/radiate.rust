@@ -1,11 +1,17 @@
 use super::{genes::gene::Gene, phenotype::Phenotype};
 
-pub struct Population<G: Gene<G, A>, A> {
+pub struct Population<G, A> 
+where
+    G: Gene<G, A>
+{
     pub individuals: Vec<Phenotype<G, A>>,
     pub is_sorted: bool,
 }
 
-impl<G: Gene<G, A>, A> Population<G, A> {
+impl<G, A> Population<G, A> 
+where
+    G: Gene<G, A>
+{
     pub fn get(&self, index: usize) -> &Phenotype<G, A> {
         self.individuals.get(index).expect("Index out of bounds")
     }
@@ -70,7 +76,10 @@ impl<G: Gene<G, A>, A> Population<G, A> {
     }
 }
 
-impl<G: Gene<G, A>, A> IntoIterator for Population<G, A> {
+impl<G, A> IntoIterator for Population<G, A> 
+where
+    G: Gene<G, A>
+{
 
     type Item = Phenotype<G, A>;
     type IntoIter = std::vec::IntoIter<Phenotype<G, A>>;
@@ -80,7 +89,10 @@ impl<G: Gene<G, A>, A> IntoIterator for Population<G, A> {
     }
 }
 
-impl<G: Gene<G, A>, A> FromIterator<Phenotype<G, A>> for Population<G, A> {
+impl<G, A> FromIterator<Phenotype<G, A>> for Population<G, A> 
+where
+    G: Gene<G, A>
+{
     fn from_iter<I: IntoIterator<Item = Phenotype<G, A>>>(iter: I) -> Self {
         let individuals = iter.into_iter().collect();
         Population {
@@ -90,7 +102,10 @@ impl<G: Gene<G, A>, A> FromIterator<Phenotype<G, A>> for Population<G, A> {
     }
 }
 
-impl<G: Gene<G, A>, A> Clone for Population<G, A> {
+impl<G, A> Clone for Population<G, A> 
+where
+    G: Gene<G, A>
+{
     fn clone(&self) -> Self {
         Population {
             individuals: self.individuals.clone(),
@@ -99,7 +114,10 @@ impl<G: Gene<G, A>, A> Clone for Population<G, A> {
     }
 }
 
-impl<G: Gene<G, A> + std::fmt::Debug, A> std::fmt::Debug for Population<G, A> {
+impl<G, A> std::fmt::Debug for Population<G, A> 
+where
+    G: Gene<G, A> + std::fmt::Debug
+{
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "[")?;
         for individual in &self.individuals {

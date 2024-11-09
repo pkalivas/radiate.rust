@@ -1,11 +1,16 @@
 use super::genes::gene::Gene;
 
-pub struct Chromosome<G: Gene<G, A>, A> {
+pub struct Chromosome<G, A>
+where
+    G: Gene<G, A>,
+{
     pub genes: Vec<G>,
     _allele: std::marker::PhantomData<A>,
 }
 
-impl<G: Gene<G, A>, A> Chromosome<G, A>
+impl<G, A> Chromosome<G, A>
+where
+    G: Gene<G, A>,
 {
     pub fn from_genes(genes: Vec<G>) -> Self {
         Chromosome {
@@ -45,7 +50,10 @@ impl<G: Gene<G, A>, A> Chromosome<G, A>
     }
 }
 
-impl<G: Gene<G, A>, A> Clone for Chromosome<G, A> {
+impl<G, A> Clone for Chromosome<G, A> 
+where
+    G: Gene<G, A>
+{
     fn clone(&self) -> Self {
         Chromosome {
             genes: self.genes.clone(),
@@ -54,7 +62,10 @@ impl<G: Gene<G, A>, A> Clone for Chromosome<G, A> {
     }
 }
 
-impl<G: Gene<G, A>, A> PartialEq for Chromosome<G, A> {
+impl<G, A> PartialEq for Chromosome<G, A> 
+where
+    G: Gene<G, A>
+{
     fn eq(&self, other: &Self) -> bool {
         for (a, b) in self.genes.iter().zip(other.genes.iter()) {
             if a != b {
@@ -66,7 +77,10 @@ impl<G: Gene<G, A>, A> PartialEq for Chromosome<G, A> {
     }
 }
 
-impl<G: Gene<G, A> + std::fmt::Debug, A> std::fmt::Debug for Chromosome<G, A> {
+impl<G, A> std::fmt::Debug for Chromosome<G, A> 
+where
+    G: Gene<G, A> + std::fmt::Debug
+{
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "[")?;
         for gene in &self.genes {

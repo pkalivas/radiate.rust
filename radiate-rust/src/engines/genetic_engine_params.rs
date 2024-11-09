@@ -28,7 +28,10 @@ where
     pub fitness_fn: Option<Arc<dyn Fn(&T) -> Score>>,
 }
 
-impl<G: Gene<G, A>, A, T> GeneticEngineParams<G, A, T> {
+impl<G, A, T> GeneticEngineParams<G, A, T> 
+where
+    G: Gene<G, A>
+{
     pub fn new() -> Self {
         GeneticEngineParams {
             population_size: 100,
