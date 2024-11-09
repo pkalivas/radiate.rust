@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 // use super::genome::{genes::gene::Gene, genotype::Genotype};
 use crate::engines::genome::chromosome::Chromosome;
 use crate::engines::genome::genes::bit_gene::BitGene;
@@ -40,6 +42,7 @@ pub trait Codex<G, A, T>
             .collect::<Population<G, A>>()
     }
 }
+
 
 // pub struct Codex<G, A, T>
 // where

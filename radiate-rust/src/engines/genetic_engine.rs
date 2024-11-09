@@ -1,5 +1,7 @@
+use std::sync::Arc;
+
 use crate::engines::alterers::alter::Alter;
-use crate::engines::codex::Codex;
+use crate::engines::codexes::codex::Codex;
 use crate::engines::engine::Engine;
 use crate::engines::genetic_engine_params::GeneticEngineParams;
 use crate::engines::genome::genes::gene::Gene;
@@ -28,7 +30,7 @@ where
         GeneticEngine { params }
     }
 
-    pub fn from_codex(codex: Codex<G, A, T>) -> GeneticEngineParams<G, A, T> {
+    pub fn from_codex(codex: impl Codex<G, A, T> + 'static) -> GeneticEngineParams<G, A, T> {
         GeneticEngineParams::new().codex(codex)
     }
 
@@ -119,7 +121,7 @@ where
         self.params.alterer.as_ref().unwrap()
     }
 
-    pub fn codex(&self) -> &Codex<G, A, T> {
+    pub fn codex(&self) -> &Arc<dyn Codex<G, A, T>> {
         self.params.codex.as_ref().unwrap()
     }
 

@@ -1,4 +1,4 @@
-use crate::engines::codexes::Codex::Codex;
+use crate::engines::codexes::codex::Codex;
 use crate::engines::genome::chromosome::Chromosome;
 use crate::engines::genome::genes::char_gene::CharGene;
 use crate::engines::genome::genes::gene::Gene;

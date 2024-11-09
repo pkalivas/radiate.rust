@@ -1,25 +1,44 @@
 use rand::random;
-use radiate_rust::engines::codex;
+use radiate_rust::engines::{alterers::alter::Alterer,
+    
+codexes::{codex::Codex, subset_codex::SubSetCodex}, genetic_engine::GeneticEngine, score::Score, selectors::selector::Selector};
+
 
 fn main() {
 
     let knapsack = Knapsack::new(10);
+    let codex = SubSetCodex::new(&knapsack.items);
+
+    let genotype = codex.encode();
+    let decoded = codex.decode(&genotype);
+
+
     // let codex = codex::subset(&knapsack.items);
 
-    // let engine = GeneticEngine::from_codex(codex)
-    //     .population_size(100)
-    //     .minimizing()
-    //     .offspring_selector(Selector::Elitism)
-    //     .survivor_selector(Selector::Tournament(4))
-    //     .alterer(vec![
-    //         Alterer::Mutator(0.001),
-    //         Alterer::UniformCrossover(0.5)
-    //     ])
-    //     .fitness_fn(|genotype: &Vec<Item>| {
-    //         Score::from_int(0)
-    //     })
-    //     .build();
-    println!("{:?}", knapsack);
+    let engine = GeneticEngine::from_codex(codex)
+        .population_size(100)
+        .minimizing()
+        .offspring_selector(Selector::Elitism)
+        .survivor_selector(Selector::Tournament(4))
+        .alterer(vec![
+            Alterer::Mutator(0.001),
+            Alterer::UniformCrossover(0.5)
+        ])
+        .fitness_fn(move |genotype: &Vec<&Item>| {
+            let mut sum = 0_f32;
+            let mut weight = 0_f32;
+            for item in genotype {
+                sum += item.value;
+                weight += item.weight;
+            }
+
+            if weight > knapsack.capacity {
+                Score::from_f32(0_f32)
+            } else {
+                Score::from_f32(sum)
+            }
+        })
+        .build();
 }
 
 pub struct Knapsack {
