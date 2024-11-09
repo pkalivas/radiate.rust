@@ -111,6 +111,7 @@ impl<G: 'static, A: 'static, T: 'static> GeneticEngineParams<G, A, T>
     pub fn build(mut self) -> GeneticEngine<G, A, T> {
         self.build_population();
         self.build_alterer();
+        self.build_problem();
 
         GeneticEngine::new(self)
     }

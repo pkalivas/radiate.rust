@@ -11,6 +11,7 @@ use crate::engines::score::Score;
 
 use super::engine_context::EngineContext;
 use super::genome::phenotype::Phenotype;
+use super::problem::Problem;
 use super::selectors::selector::Select;
 
 pub struct GeneticEngine<G: 'static, A: 'static, T: 'static>
@@ -33,16 +34,18 @@ where
         GeneticEngineParams::new().codex(codex)
     }
 
+    pub fn from_problem(problem: impl Problem<G, A, T> + 'static) -> GeneticEngineParams<G, A, T> {
+        GeneticEngineParams::new().problem(problem)
+    }
+
     pub fn evaluate(&self, handle: &mut EngineContext<G, A, T>) {
-        let codex = self.codex();
-        let fitness_fn = self.fitness_fn();
         let optimize = self.optimize();
+        let problem = self.problem();
 
         for idx in 0..handle.population.len() {
             let individual = handle.population.get_mut(idx);
             if !individual.score().is_some() {
-                let decoded = codex.decode(individual.genotype());
-                let score = fitness_fn(&decoded);
+                let score = problem.evaluate(&individual.genotype());
 
                 individual.set_score(Some(score));
             }
@@ -121,11 +124,15 @@ where
     }
 
     pub fn codex(&self) -> &Codex<G, A, T> {
-        self.params.codex.as_ref().unwrap()
+        self.problem().codex()
     }
 
     pub fn fitness_fn(&self) -> &dyn Fn(&T) -> Score {
         self.params.fitness_fn.as_ref().unwrap().as_ref()
+    }
+
+    pub fn problem(&self) -> &dyn Problem<G, A, T> {
+        self.params.problem.as_ref().unwrap().as_ref()
     }
 
     pub fn population(&self) -> &Population<G, A> {

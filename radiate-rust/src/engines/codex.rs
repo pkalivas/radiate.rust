@@ -235,6 +235,26 @@ pub fn subset<T: Clone>(alleles: &'static Vec<T>) -> Codex<BitGene, bool, Vec<T>
         })
 }
 
+pub fn subset_indices(length: usize) -> Codex<BitGene, bool, Vec<i32>> {
+    Codex::new()
+        .encoder(move || Genotype {
+            chromosomes: vec![Chromosome::from_genes((0..length)
+                .into_iter()
+                .map(|_| BitGene::new())
+                .collect::<Vec<BitGene>>())]
+        })
+        .decoder(|genotype| {
+            let chromosome = &genotype.chromosomes[0];
+            let mut values = Vec::new();
+            for (idx, gene) in chromosome.iter().enumerate() {
+                if *gene.allele() {
+                    values.push(idx as i32);
+                }
+            }
+
+            values
+        })
+}
 
 
 #[cfg(test)]
