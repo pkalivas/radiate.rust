@@ -12,7 +12,6 @@ use radiate_rust::engines::engine::Engine;
 
 static KNAPSACK: LazyLock<Knapsack> = LazyLock::new(|| Knapsack::new(10));
 
-
 fn main() {
     println!("Knapsack Capacity=[ {:?} ]", KNAPSACK.capacity);
     
@@ -20,7 +19,7 @@ fn main() {
 
     let engine = GeneticEngine::from_codex(codex)
         .offspring_selector(Selector::Roulette)
-        .survivor_selector(Selector::Tournament(4))
+        .survivor_selector(Selector::Tournament(3))
         .alterer(vec![
             Alterer::Mutator(0.001),
             Alterer::SinglePointCrossover(0.5)
