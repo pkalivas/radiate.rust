@@ -15,9 +15,8 @@ fn main() {
     println!("Knapsack Capacity=[ {:?} ]", KNAPSACK.capacity);
     
     let codex = SubSetCodex::new(&KNAPSACK.items);
-
     let engine = GeneticEngine::from_codex(codex)
-        .fitness_fn(move |genotype: &Vec<&Item>| KNAPSACK.fitness(genotype))
+        .fitness_fn(|genotype: &Vec<&Item>| KNAPSACK.fitness(genotype))
         .build();
 
     let result = engine.fit(|output| {
@@ -25,6 +24,7 @@ fn main() {
         let weight_total = Knapsack::weight_total(&output.best);
 
         println!("[ {:?} ]: Value={:?} Weight={:?}", output.index, value_total, weight_total);
+
         output.index == 50
     });
 
