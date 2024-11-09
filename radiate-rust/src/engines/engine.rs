@@ -1,4 +1,4 @@
-use super::genome::genes::gene::Gene;
+use super::{genetic_engine::EngineIterator, genome::genes::gene::Gene};
 use crate::engines::engine_context::EngineContext;
 
 pub trait Engine<G, A, T>
@@ -7,6 +7,10 @@ where
     T: Clone,
 {
     fn fit<F: Fn(&EngineContext<G, A, T>) -> bool>(&self, limit: F) -> EngineContext<G, A, T>;
+
+    fn run(self) -> EngineIterator<G, A, T>;
+
+    fn move_next(&self, ctx: &mut EngineContext<G, A, T>);
 
     fn start(&self) -> EngineContext<G, A, T>;
 

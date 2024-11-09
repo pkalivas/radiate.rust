@@ -35,5 +35,12 @@ fn main() {
         output.score() == target.len() as f32
     });
 
+    // let result = engine.run()
+    //     .take_while(|output| output.score() < target.len() as f32)
+    //     .inspect(|output| {
+    //         println!("[ {:?} ]: {:?}", output.index, output.best);
+    //     })
+    //     .last();
+
     println!("{:?}", result);
 }

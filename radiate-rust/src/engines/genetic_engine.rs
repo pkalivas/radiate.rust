@@ -11,6 +11,7 @@ use crate::engines::schema::timer::Timer;
 use crate::engines::score::Score;
 
 use super::engine_context::EngineContext;
+use super::genome::genes::int_gene::IntGene;
 use super::genome::phenotype::Phenotype;
 use super::selectors::selector::Select;
 
@@ -162,24 +163,35 @@ where
         let mut ctx = self.start();
 
         loop {
-            self.evaluate(&mut ctx);
-
-            let mut survivors = self.select_survivors(&ctx.population);
-            let mut offspring = self.select_offspring(&ctx.population);
-
-            self.alter(&mut offspring, ctx.index);
-
-            self.filter(&mut survivors, ctx.index);
-            self.filter(&mut offspring, ctx.index);
-
-            self.recombine(&mut ctx, survivors, offspring);
-
-            self.evaluate(&mut ctx);
-            self.audit(&mut ctx);
+            self.move_next(&mut ctx);
 
             if limit(&ctx) {
                 break self.stop(&mut ctx)
             }
+        }
+    }
+
+    fn move_next(&self, ctx: &mut EngineContext<G, A, T>) {
+        self.evaluate(ctx);
+
+        let mut survivors = self.select_survivors(&ctx.population);
+        let mut offspring = self.select_offspring(&ctx.population);
+
+        self.alter(&mut offspring, ctx.index);
+
+        self.filter(&mut survivors, ctx.index);
+        self.filter(&mut offspring, ctx.index);
+
+        self.recombine(ctx, survivors, offspring);
+
+        self.evaluate(ctx);
+        self.audit(ctx);
+    }
+
+    fn run(self) -> EngineIterator<G, A, T> {
+        EngineIterator {
+            context: Some(Box::new(self.start())),
+            engine: self,
         }
     }
 
@@ -192,5 +204,33 @@ where
             index: 0,
             timer: Timer::new(),
         }
+    }
+}
+
+
+pub struct EngineIterator<G, A, T>
+where
+    G: Gene<G, A>
+{
+    context: Option<Box<EngineContext<G, A, T>>>,
+    engine: GeneticEngine<G, A, T>,
+}
+
+impl<G, A, T> Iterator for EngineIterator<G, A, T>
+where
+    G: Gene<G, A>,
+    T: Clone,
+{
+    type Item = EngineContext<G, A, T>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let ctx = self.context.as_mut()?;
+        self.engine.move_next(ctx);
+
+        let output = ctx.clone();
+        Some(*output)
+        // self.context = Some(Box::new());
+
+        // return Some(*self.context.take().unwrap());
     }
 }
