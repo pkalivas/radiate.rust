@@ -103,6 +103,14 @@ impl<G: Gene<G, A>, A, T> GeneticEngineParams<G, A, T> {
         self.build_population();
         self.build_alterer();
 
+        if !self.codex.is_some() {
+            panic!("Codex not set");
+        }
+
+        if !self.fitness_fn.is_some() {
+            panic!("Fitness function not set");
+        }
+
         GeneticEngine::new(self)
     }
 

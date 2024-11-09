@@ -30,6 +30,10 @@ where
         GeneticEngine { params }
     }
 
+    pub fn builder() -> GeneticEngineParams<G, A, T> {
+        GeneticEngineParams::new()
+    }
+
     pub fn from_codex(codex: impl Codex<G, A, T> + 'static) -> GeneticEngineParams<G, A, T> {
         GeneticEngineParams::new().codex(codex)
     }
