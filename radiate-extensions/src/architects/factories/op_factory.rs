@@ -5,7 +5,7 @@ use rand::seq::SliceRandom;
 use crate::architects::schema::node_types::NodeType;
 use crate::architects::nodes::node::Node;
 use crate::architects::factories::node_factory::NodeFactory;
-use crate::operations::op::Ops;
+use crate::operations::op::{self, Ops};
 
 
 pub struct OpFactory<T> 
@@ -23,6 +23,31 @@ where
         OpFactory {
             valeus: HashMap::new()
         }
+    }
+
+    pub fn regression(input_size: usize) -> OpFactory<f32> {
+        OpFactory::new()
+            .inputs((0..input_size)
+                .map(|idx| op::var(idx))
+                .collect::<Vec<Ops<f32>>>())
+            .gates(vec![
+                op::add(),
+                op::sub(),
+                op::mul(),
+                op::div(),
+                op::pow(),
+            ])
+            .aggregates(vec![
+                op::sigmoid(),
+                op::tanh(),
+                op::relu(),
+                op::linear(),
+                op::sum(),
+                op::prod(),
+            ])
+            .weights(vec![op::weight()])
+            .outputs(vec![op::linear()])
+
     }
 
     pub fn inputs(mut self, values: Vec<Ops<T>>) -> OpFactory<T> {

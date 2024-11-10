@@ -166,3 +166,35 @@ pub fn var<T: Clone>(index: usize) -> Ops<T> {
     let var_name = format!("x{}", index);
     Ops::Var(var_name, index)
 }
+
+pub fn sigmoid() -> Ops<f32> {
+    Ops::Fn("sigmoid", 1, Arc::new(|inputs: &[f32]| {
+        let sum = inputs.iter().fold(0_f32, |acc, x| acc + x);
+        1_f32 / (1_f32 + (-sum).exp())
+    }))
+}
+
+pub fn relu() -> Ops<f32> {
+    Ops::Fn("relu", 1, Arc::new(|inputs: &[f32]| {
+        let sum = inputs.iter().fold(0_f32, |acc, x| acc + x);
+        if sum > 0_f32 {
+            sum
+        } else {
+            0_f32
+        }
+    }))
+}
+
+pub fn tanh() -> Ops<f32> {
+    Ops::Fn("tanh", 1, Arc::new(|inputs: &[f32]| {
+        let sum = inputs.iter().fold(0_f32, |acc, x| acc + x);
+        sum.tanh()
+    }))
+}
+
+pub fn linear() -> Ops<f32> {
+    Ops::Fn("linear", 1, Arc::new(|inputs: &[f32]| {
+        let sum = inputs.iter().fold(0_f32, |acc, x| acc + x);
+        sum
+    }))
+}
