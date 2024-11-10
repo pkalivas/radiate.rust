@@ -2,19 +2,21 @@
 #[cfg(test)]
 mod tests {
 
+    use std::sync::Arc;
+
     use radiate_extensions::architects::architect::Architect;
     use radiate_extensions::architects::node_collections::graph::Graph;
     use radiate_extensions::architects::node_collections::node_collection::NodeCollection;
-    use radiate_extensions::architects::factories::node_factory::NodeFactory;
+    use radiate_extensions::architects::factories::value_factory::ValueFactory;
 
     #[test]
     fn test_graph() {
-        let factory = NodeFactory::new()
+        let factory = Arc::new(ValueFactory::new()
             .inputs(vec![1, 2, 3])
             .outputs(vec![4, 5, 6])
             .gates(vec![7, 8, 9])
             .aggregates(vec![10, 11, 12])
-            .weights(vec![13, 14, 15]);
+            .weights(vec![13, 14, 15]));
 
         let architect = Architect::<Graph<i32>, i32>::new(factory);
 

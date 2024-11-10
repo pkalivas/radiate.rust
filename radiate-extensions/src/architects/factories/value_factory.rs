@@ -4,6 +4,8 @@ use rand::seq::SliceRandom;
 use crate::architects::schema::node_types::NodeType;
 use crate::architects::nodes::node::Node;
 
+use super::node_factory::NodeFactory;
+
 pub struct ValueFactory<T> {
     pub node_values: HashMap<NodeType, Vec<T>>
 }
@@ -48,8 +50,10 @@ impl<T> ValueFactory<T> {
     pub fn add_node_values(&mut self, node_type: NodeType, values: Vec<T>) {
         self.node_values.insert(node_type, values);
     }
+}
 
-    pub fn new_node(&self, index: usize, node_type: NodeType) -> Node<T> 
+impl<T> NodeFactory<T> for ValueFactory<T> {
+    fn new_node(&self, index: usize, node_type: NodeType) -> Node<T> 
     where
         T: Clone + PartialEq + Default
     {

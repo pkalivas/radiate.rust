@@ -27,7 +27,7 @@ where
     C: NodeCollection<C, T> + Default,
     T: Clone + PartialEq + Default
 {
-    pub factory: &'a NodeFactory<T>,
+    pub factory: &'a dyn NodeFactory<T>,
     pub nodes: BTreeMap<&'a Uuid, &'a Node<T>>,
     pub relationships: Vec<NodeRelationship<'a>>,
     _phantom_c: std::marker::PhantomData<C>,
@@ -40,7 +40,7 @@ where
     C: NodeCollection<C, T> + Default,
     T: Clone + PartialEq + Default
 {
-    pub fn new(factory: &'a NodeFactory<T>) -> NodeCollectionBuilder<'a, C, T> {
+    pub fn new(factory: &'a dyn NodeFactory<T>) -> NodeCollectionBuilder<'a, C, T> {
         NodeCollectionBuilder {
             factory,
             nodes: BTreeMap::new(),
