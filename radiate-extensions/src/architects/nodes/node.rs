@@ -108,7 +108,18 @@ where
 
 impl<T> Valid for Node<T>
 where
-    T: Clone + PartialEq  {}
+    T: Clone + PartialEq  
+{
+    fn is_valid(&self) -> bool {
+        match self.node_type {
+            NodeType::Input => self.incoming.is_empty() && !self.outgoing.is_empty(),
+            NodeType::Output => self.incoming.len() > 0,
+            NodeType::Gate => !self.incoming.is_empty() && !self.outgoing.is_empty(),
+            NodeType::Aggregate => !self.incoming.is_empty() && !self.outgoing.is_empty(),
+            NodeType::Weight => self.incoming.len() == 1 && self.outgoing.len() == 1
+        }
+    }
+}
 
 
 impl<T> Clone for Node<T>
