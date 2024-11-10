@@ -63,7 +63,7 @@ where
         }
     }
 
-    pub fn evaluate(&self, handle: &mut EngineContext<G, A, T>) {
+    fn evaluate(&self, handle: &mut EngineContext<G, A, T>) {
         let codex = self.codex();
         let fitness_fn = self.fitness_fn();
         let optimize = self.optimize();
@@ -81,28 +81,28 @@ where
         optimize.sort(&mut handle.population);
     }
 
-    pub fn select_survivors(&self, population: &Population<G, A>) -> Population<G, A> {
+    fn select_survivors(&self, population: &Population<G, A>) -> Population<G, A> {
         let selector = self.survivor_selector();
         let count = self.survivor_count();
 
         selector.select(population, count)
     }
 
-    pub fn select_offspring(&self, population: &Population<G, A>) -> Population<G, A> {
+    fn select_offspring(&self, population: &Population<G, A>) -> Population<G, A> {
         let selector = self.offspring_selector();
         let count = self.offspring_count();
 
         selector.select(population, count)
     }
 
-    pub fn alter(&self, population: &mut Population<G, A>, generation: i32) {
+    fn alter(&self, population: &mut Population<G, A>, generation: i32) {
         let alterer = self.alterer();
         let optimize = self.optimize();
 
         alterer.alter(population, optimize, generation);
     }
 
-    pub fn filter(&self, population: &mut Population<G, A>, generation: i32) {
+    fn filter(&self, population: &mut Population<G, A>, generation: i32) {
         let max_age = self.params.max_age;
         let codex = self.codex();
 
@@ -115,7 +115,7 @@ where
         }
     }
 
-    pub fn recombine(
+    fn recombine(
         &self,
         handle: &mut EngineContext<G, A, T>,
         survivors: Population<G, A>,
@@ -127,7 +127,7 @@ where
             .collect::<Population<G, A>>();
     }
 
-    pub fn audit(&self, output: &mut EngineContext<G, A, T>) {
+    fn audit(&self, output: &mut EngineContext<G, A, T>) {
         let codex = self.codex();
 
         if !output.population.is_sorted {
@@ -138,39 +138,39 @@ where
         output.index += 1;
     }
 
-    pub fn survivor_selector(&self) -> &impl Select<G, A> {
+    fn survivor_selector(&self) -> &impl Select<G, A> {
         &self.params.survivor_selector
     }
 
-    pub fn offspring_selector(&self) -> &impl Select<G, A> {
+    fn offspring_selector(&self) -> &impl Select<G, A> {
         &self.params.offspring_selector
     }
 
-    pub fn alterer(&self) -> &impl Alter<G, A> {
+    fn alterer(&self) -> &impl Alter<G, A> {
         self.params.alterer.as_ref().unwrap()
     }
 
-    pub fn codex(&self) -> &Arc<dyn Codex<G, A, T>> {
+    fn codex(&self) -> &Arc<dyn Codex<G, A, T>> {
         self.params.codex.as_ref().unwrap()
     }
 
-    pub fn fitness_fn(&self) -> &Arc<dyn Fn(&T) -> Score> {
+    fn fitness_fn(&self) -> &Arc<dyn Fn(&T) -> Score> {
         self.params.fitness_fn.as_ref().unwrap()
     }
 
-    pub fn population(&self) -> &Population<G, A> {
+    fn population(&self) -> &Population<G, A> {
         self.params.population.as_ref().unwrap()
     }
 
-    pub fn optimize(&self) -> &Optimize {
+    fn optimize(&self) -> &Optimize {
         &self.params.optimize
     }
 
-    pub fn survivor_count(&self) -> usize {
+    fn survivor_count(&self) -> usize {
         self.params.population_size - self.offspring_count()
     }
 
-    pub fn offspring_count(&self) -> usize {
+    fn offspring_count(&self) -> usize {
         (self.params.population_size as f32 * self.params.offspring_fraction) as usize
     }
 
