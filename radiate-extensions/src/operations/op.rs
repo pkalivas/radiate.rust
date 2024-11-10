@@ -46,6 +46,16 @@ where
             Ops::MutableConst(_, _, value, _, operation) => operation(inputs, value),
         }
     }
+
+    pub fn new_instance(&self) -> Ops<T> {
+        match self {
+            Ops::Fn(name, arity, op) => Ops::Fn(name, *arity, op.clone()),
+            Ops::Math(name, arity, op) => Ops::Math(name, *arity, op.clone()),
+            Ops::Var(name, index) => Ops::Var(name.clone(), *index),
+            Ops::Const(name, value) => Ops::Const(name, value.clone()),
+            Ops::MutableConst(name, arity, _, get_value, operation) => Ops::MutableConst(name, *arity, get_value(), get_value.clone(), operation.clone()),
+        }
+    }
 }
 
 impl<T> Clone for Ops<T>

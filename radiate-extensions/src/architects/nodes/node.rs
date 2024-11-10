@@ -1,20 +1,190 @@
 use std::collections::HashSet;
 use uuid::Uuid;
-use crate::architects::schema::node_types::NodeType;
+use radiate_rust::engines::genome::genes::gene::{Gene, Valid};
 
-pub trait Node<N, T> 
-where 
-    N: Node<N, T> + Clone + Default,
+use crate::architects::schema::{direction::Direction, node_types::NodeType};
+
+pub struct Node<T>
+where
+    T: Clone + PartialEq
+{
+    pub id: Uuid,
+    pub index: usize,
+    pub value: T,
+    pub node_type: NodeType,
+    pub direction: Direction,
+    pub incoming: HashSet<usize>,
+    pub outgoing: HashSet<usize>
+}
+
+impl<T> Node<T> 
+where
+    T: Clone + PartialEq 
+{
+    pub fn new(index: usize, node_type: NodeType, value: T) -> Node<T> {
+        Node {
+            id: Uuid::new_v4(),
+            index,
+            value,
+            direction: Direction::Forward,
+            node_type,
+            incoming: HashSet::new(),
+            outgoing: HashSet::new()
+        }
+    }
+
+    pub fn id(&self) -> &Uuid {
+        &self.id
+    }
+
+    pub fn index(&self) -> &usize {
+        &self.index
+    }
+
+    pub fn node_type(&self) -> &NodeType {
+        &self.node_type
+    }
+
+    pub fn value(&self) -> &T {
+        &self.value
+    }
+
+    pub fn is_recurrent(&self) -> bool {
+        self.incoming.contains(&self.index) 
+            || self.outgoing.contains(&self.index) 
+            || self.direction == Direction::Backward
+    }
+
+    pub fn incoming(&self) -> &HashSet<usize> {
+        &self.incoming
+    }
+
+    pub fn outgoing(&self) -> &HashSet<usize> {
+        &self.outgoing
+    }
+
+    pub fn incoming_mut(&mut self) -> &mut HashSet<usize> {
+        &mut self.incoming
+    }
+
+    pub fn outgoing_mut(&mut self) -> &mut HashSet<usize> {
+        &mut self.outgoing
+    }
+}
+
+impl<T> Gene<Node<T>, T> for Node<T>
+where
+    T: Clone + PartialEq
+{
+    fn allele(&self) -> &T {
+        &self.value
+    }
+
+    fn new_instance(&self) -> Node<T> {
+        Node {
+            id: Uuid::new_v4(),
+            index: self.index,
+            value: self.value.clone(),
+            direction: self.direction.clone(),
+            node_type: self.node_type.clone(),
+            incoming: self.incoming.clone(),
+            outgoing: self.outgoing.clone()
+        }
+    }
+
+    fn from_allele(&self, allele: &T) -> Node<T> {
+        Node {
+            id: Uuid::new_v4(),
+            index: self.index,
+            value: allele.clone(),
+            direction: self.direction.clone(),
+            node_type: self.node_type.clone(),
+            incoming: self.incoming.clone(),
+            outgoing: self.outgoing.clone()
+        }
+    }
+}
+
+
+impl<T> Valid for Node<T>
+where
+    T: Clone + PartialEq  {}
+
+
+impl<T> Clone for Node<T>
+where
+    T: Clone + PartialEq
+{
+    fn clone(&self) -> Self {
+        Node {
+            id: self.id.clone(),
+            index: self.index.clone(),
+            value: self.value.clone(),
+            direction: self.direction.clone(),
+            node_type: self.node_type.clone(),
+            incoming: self.incoming.clone(),
+            outgoing: self.outgoing.clone()
+        }
+    }
+}
+
+
+impl<T> PartialEq for Node<T>
+where
+    T: Clone + PartialEq
+{
+    fn eq(&self, other: &Self) -> bool {
+        self.id == other.id 
+            && self.index == other.index 
+            && self.value == other.value 
+            && self.direction == other.direction
+            && self.node_type == other.node_type 
+            && self.incoming == other.incoming 
+            && self.outgoing == other.outgoing
+    }
+}
+
+
+impl<T> Default for Node<T>
+where
     T: Clone + PartialEq + Default
 {
-    fn new_node(index: usize, node_type: NodeType, value: T) -> N;
-    fn id(&self) -> &Uuid;
-    fn index(&self) -> &usize;
-    fn node_type(&self) -> &NodeType;
-    fn value(&self) -> &T;
-    fn is_recurrent(&self) -> bool;
-    fn incoming_mut(&mut self) -> &mut HashSet<usize>;
-    fn outgoing_mut(&mut self) -> &mut HashSet<usize>;
-    fn incoming(&self) -> &HashSet<usize>;
-    fn outgoing(&self) -> &HashSet<usize>;
+    fn default() -> Self {
+        Node {
+            id: Uuid::new_v4(),
+            index: 0,
+            value: T::default(),
+            direction: Direction::Forward,
+            node_type: NodeType::Input,
+            incoming: HashSet::new(),
+            outgoing: HashSet::new()
+        }
+    }
+}
+
+
+impl<T> std::fmt::Display for Node<T>
+where
+    T: Clone + PartialEq
+{
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{}", self.index)
+    }
+}
+
+
+impl<T> std::fmt::Debug for Node<T>
+where
+    T: Clone + PartialEq + std::fmt::Debug
+{
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Node {{ id: {}, index: {}, value: {:?}, dir: {:?}, node_type: {:?}, incoming: {:?}, outgoing: {:?} }}", 
+            self.id,
+            self.index,
+            self.value, 
+            self.direction,
+            self.node_type, 
+            self.incoming, 
+            self.outgoing)
+    }
 }
