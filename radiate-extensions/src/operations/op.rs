@@ -110,7 +110,7 @@ where
             Ops::Math(name, arity, _) => write!(f, "Math: {}({})", name, arity),
             Ops::Var(name, index) => write!(f, "Var: {}({})", name, index),
             Ops::Const(name, value) => write!(f, "Const: {}({:?})", name, value),
-            Ops::MutableConst(name, arity, value, _, _) => write!(f, "MutableConst: {}({})({:?})", name, arity, value),
+            Ops::MutableConst(name, arity, value, _, _) => write!(f, "MutConst: {}({})({:.2?})", name, arity, value),
         }
     }
 }
