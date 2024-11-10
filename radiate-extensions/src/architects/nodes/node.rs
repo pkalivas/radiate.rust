@@ -1,6 +1,7 @@
 use std::collections::HashSet;
-use radiate_rust::engines::genome::genes::gene::{Gene, Valid};
 use uuid::Uuid;
+use radiate_rust::engines::genome::genes::gene::{Gene, Valid};
+
 use crate::architects::schema::node_types::NodeType;
 
 pub struct Node<T>

@@ -95,7 +95,7 @@ where
         }
 
         let mut new_collection = C::from_nodes(new_nodes);
-
+        
         for rel in self.relationships {
             let source_idx = node_id_index_map.get(&rel.source_id).unwrap();
             let target_idx = node_id_index_map.get(&rel.target_id).unwrap();
@@ -107,18 +107,12 @@ where
     }
 
     fn attach(&mut self, connection: ConnectTypes, one: &'a C, two: &'a C) {
-        for node in one.get_nodes() {
+        for node in one.get_nodes().iter().chain(two.get_nodes()) {
             if !self.nodes.contains_key(node.id()) {
                 self.nodes.insert(node.id(), node);
             }
         }
 
-        for node in two.get_nodes() {
-            if !self.nodes.contains_key(node.id()) {
-                self.nodes.insert(node.id(), node);
-            }
-        }
-        
         match connection {
             ConnectTypes::OneToOne => self.one_to_one_connect(one, two),
             ConnectTypes::OneToMany => self.one_to_many_connect(one, two),
@@ -134,9 +128,7 @@ where
         let two_inputs = self.get_inputs(two);
 
         if one_outputs.len() != two_inputs.len() {
-            panic!(
-                "OneToOne - oneGroup outputs must be the same length as twoGroup inputs."
-            );
+            panic!("OneToOne - oneGroup outputs must be the same length as twoGroup inputs.");
         }
 
         for (one, two) in one_outputs.into_iter().zip(two_inputs.into_iter()) {
