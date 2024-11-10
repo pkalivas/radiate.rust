@@ -1,5 +1,5 @@
 
-use std::collections::HashSet;
+use std::collections::{HashSet, VecDeque};
 
 use crate::architects::{nodes::node::Node, schema::direction::Direction};
 
@@ -9,9 +9,13 @@ where
     T: Clone + PartialEq + Default
 {
     fn from_nodes(nodes: Vec<Node<T>>) -> Self;
+    
     fn get_nodes(&self) -> &[Node<T>];
+    
     fn get_node(&self, index: usize) -> Option<&Node<T>>;
+    
     fn get_node_mut(&mut self, index: usize) -> Option<&mut Node<T>>;
+
     fn get_nodes_mut(&mut self) -> &mut [Node<T>];
 
     fn len(&self) -> usize {
@@ -96,13 +100,17 @@ where
     }
 }
 
+
 pub fn get_cycles<T>(nodes: &[Node<T>], index: usize) -> Vec<usize>
 where
     T: Clone + PartialEq + Default
 {
     let mut path = Vec::new();
-    let mut seen = std::collections::HashSet::new();
-    let mut current = nodes[index].incoming().iter().cloned().collect::<std::collections::VecDeque<usize>>();
+    let mut seen = HashSet::new();
+    let mut current = nodes[index].incoming()
+        .iter()
+        .cloned()
+        .collect::<VecDeque<usize>>();
 
     while current.len() > 0 {
         let current_index = current.pop_front().unwrap();
