@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 use uuid::Uuid;
-use crate::architects::node_types::NodeType;
+use crate::architects::schema::node_types::NodeType;
 
 pub trait Node<N, T> 
 where 

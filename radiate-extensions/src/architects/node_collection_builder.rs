@@ -1,7 +1,7 @@
-use std::collections::{BTreeMap, HashMap};
+use std::collections::BTreeMap;
 
 use crate::architects::node_collections::node_collection::NodeCollection;
-use crate::architects::node_types::NodeType;
+use crate::architects::schema::node_types::NodeType;
 use crate::architects::nodes::node::Node;
 
 use uuid::Uuid;
@@ -111,10 +111,18 @@ where
 
     fn attach(&mut self, connection: ConnectTypes, one: &'a C, two: &'a C) {
         for node in one.get_nodes() {
+            if self.nodes.contains_key(node.id()) {
+                continue;
+            }
+
             self.nodes.insert(node.id(), node);
         }
 
         for node in two.get_nodes() {
+            if self.nodes.contains_key(node.id()) {
+                continue;
+            }
+            
             self.nodes.insert(node.id(), node);
         }
         

@@ -1,7 +1,8 @@
 use std::collections::HashMap;
 use rand::seq::SliceRandom;
 
-use super::{node_types::NodeType, nodes::node::Node};
+use crate::architects::schema::node_types::NodeType;
+use crate::architects::nodes::node::Node;
 
 
 pub struct NodeFactory<T> {

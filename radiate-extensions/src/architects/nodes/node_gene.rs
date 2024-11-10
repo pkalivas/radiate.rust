@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 use uuid::Uuid;
 use radiate_rust::engines::genome::genes::gene::{Gene, Valid};
-use crate::architects::node_types::NodeType;
+use crate::architects::schema::node_types::NodeType;
 use crate::architects::nodes::node::Node;
 
 #[derive(Debug)]

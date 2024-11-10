@@ -3,7 +3,7 @@ use crate::architects::nodes::node::Node;
 use crate::architects::node_factory::NodeFactory;
 use crate::architects::node_collections::node_collection::NodeCollection;
 use crate::architects::node_collection_builder::NodeCollectionBuilder;
-use crate::architects::node_types::NodeType;
+use crate::architects::schema::node_types::NodeType;
 
 
 pub struct Architect<C, N, T>
