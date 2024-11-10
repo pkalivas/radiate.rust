@@ -1,41 +1,58 @@
 
+use std::sync::Arc;
+
 use crate::architects::nodes::node::Node;
-use crate::architects::node_factory::NodeFactory;
 use crate::architects::node_collections::node_collection::NodeCollection;
 use crate::architects::node_collection_builder::NodeCollectionBuilder;
 use crate::architects::schema::node_types::NodeType;
+use crate::architects::factories::node_factory::NodeFactory;
 
 
-pub struct Architect<C, N, T>
+pub struct Architect<C, T>
 where
-    C: NodeCollection<C, N, T> + Clone + Default,
-    N: Node<N, T> + Clone + Default,
+    C: NodeCollection<C, T> + Clone + Default,
     T: Clone + PartialEq + Default
 {
-    pub node_factory: NodeFactory<T>,
-    _phantom_c: std::marker::PhantomData<C>,
-    _phantom_n: std::marker::PhantomData<N>,
+    pub node_factory: Arc<dyn NodeFactory<T>>,
+    _phantom: std::marker::PhantomData<C>,
 }
 
-impl<C, N, T> Architect<C, N, T>
+impl<C, T> Architect<C, T>
 where
-    C: NodeCollection<C, N, T> + Clone + Default,
-    N: Node<N, T> + Clone + Default,
+    C: NodeCollection<C, T> + Clone + Default,
     T: Clone + PartialEq + Default
 {
-    pub fn new(node_factory: NodeFactory<T>) -> Architect<C, N, T> {
+    pub fn new(node_factory: Arc<dyn NodeFactory<T>>) -> Architect<C, T> {
         Architect {
             node_factory,
-            _phantom_c: std::marker::PhantomData,
-            _phantom_n: std::marker::PhantomData,
+            _phantom: std::marker::PhantomData
         }
     }
 
     pub fn build<F>(&self, build_fn: F) -> C
     where
-        F: FnOnce(&Architect<C, N, T>, NodeCollectionBuilder<C, N, T>) -> C
+        F: FnOnce(&Architect<C, T>, NodeCollectionBuilder<C, T>) -> C
     {
-        build_fn(self, NodeCollectionBuilder::new(&self.node_factory))
+        build_fn(self, NodeCollectionBuilder::new(&*self.node_factory))
+    }
+
+    pub fn acyclic(&self, input_size: usize, output_size: usize) -> C {
+        self.build(|arc, builder| builder
+            .all_to_all(&arc.input(input_size), &arc.output(output_size))
+            .build())
+    }
+
+    pub fn weighted_acyclic(&self, input_size: usize, output_size: usize) -> C {
+        self.build(|arc, builder| {
+            let input = arc.input(input_size);
+            let output = arc.output(output_size);
+            let weights = arc.weight(input_size * output_size);
+
+            builder
+                .one_to_many(&input, &weights)
+                .many_to_one(&weights, &output)
+                .build()
+        })
     }
 
     pub fn input(&self, siez: usize) -> C {
@@ -63,13 +80,9 @@ where
         C::from_nodes(nodes)
     }
 
-    fn new_nodes(&self, node_type: NodeType, size: usize) -> Vec<N> {
-        let mut nodes = Vec::new();
-
-        for i in 0..size {
-            nodes.push(self.node_factory.new_node(i, node_type));
-        }
-
-        nodes
+    fn new_nodes(&self, node_type: NodeType, size: usize) -> Vec<Node<T>> {
+        (0..size)
+            .map(|i| self.node_factory.new_node(i, node_type))
+            .collect::<Vec<Node<T>>>()
     }
 }
