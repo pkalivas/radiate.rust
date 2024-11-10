@@ -43,12 +43,12 @@ where
     }
 
     pub fn cyclic(&self, input_size: usize, output_size: usize) -> C {
-        let input = self.input(input_size);
-        let aggregate = self.aggregate(input_size);
-        let link = self.gate(input_size);
-        let output = self.output(output_size);
+        self.build(|arc, builder| {
+            let input = arc.input(input_size);
+            let aggregate = arc.aggregate(input_size);
+            let link = arc.gate(input_size);
+            let output = arc.output(output_size);
 
-        self.build(|_, builder| {
             builder
                 .one_to_one(&input, &aggregate)
                 .self_connt(&aggregate, &link)
