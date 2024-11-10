@@ -3,23 +3,6 @@ use radiate_rust::engines::genome::genes::gene::{Gene, Valid};
 use uuid::Uuid;
 use crate::architects::schema::node_types::NodeType;
 
-// pub trait Node<N, T> 
-// where 
-//     N: Node<N, T> + Clone + Default,
-//     T: Clone + PartialEq + Default
-// {
-//     fn new_node(index: usize, node_type: NodeType, value: T) -> N;
-//     fn id(&self) -> &Uuid;
-//     fn index(&self) -> &usize;
-//     fn node_type(&self) -> &NodeType;
-//     fn value(&self) -> &T;
-//     fn is_recurrent(&self) -> bool;
-//     fn incoming_mut(&mut self) -> &mut HashSet<usize>;
-//     fn outgoing_mut(&mut self) -> &mut HashSet<usize>;
-//     fn incoming(&self) -> &HashSet<usize>;
-//     fn outgoing(&self) -> &HashSet<usize>;
-// }
-
 pub struct Node<T>
 where
     T: Clone + PartialEq
@@ -185,6 +168,12 @@ where
     T: Clone + PartialEq + std::fmt::Debug
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Node {{ id: {}, index: {}, node_type: {:?}, value: {:?}, incoming: {:?}, outgoing: {:?} }}", self.id, self.index, self.node_type, self.value, self.incoming, self.outgoing)
+        write!(f, "Node {{ id: {}, index: {}, node_type: {:?}, value: {:?}, incoming: {:?}, outgoing: {:?} }}", 
+            self.id,
+            self.index,
+            self.node_type, 
+            self.value, 
+            self.incoming, 
+            self.outgoing)
     }
 }

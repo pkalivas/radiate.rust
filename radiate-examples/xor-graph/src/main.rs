@@ -16,9 +16,7 @@ fn main() {
             op::var(1),
         ])
         .weights(vec![op::weight()])
-        .outputs(vec![
-            op::add()
-        ]);
+        .outputs(vec![op::add()]);
 
     let architect = Architect::<Graph<Ops<f32>>, Ops<f32>>::new(factory);
 

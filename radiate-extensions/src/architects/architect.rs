@@ -12,7 +12,7 @@ where
     T: Clone + PartialEq + Default
 {
     pub node_factory: NodeFactory<T>,
-    _phantom_c: std::marker::PhantomData<C>,
+    _phantom: std::marker::PhantomData<C>,
 }
 
 impl<C, T> Architect<C, T>
@@ -23,7 +23,7 @@ where
     pub fn new(node_factory: NodeFactory<T>) -> Architect<C, T> {
         Architect {
             node_factory,
-            _phantom_c: std::marker::PhantomData
+            _phantom: std::marker::PhantomData
         }
     }
 
@@ -60,12 +60,8 @@ where
     }
 
     fn new_nodes(&self, node_type: NodeType, size: usize) -> Vec<Node<T>> {
-        let mut nodes = Vec::new();
-
-        for i in 0..size {
-            nodes.push(self.node_factory.new_node(i, node_type));
-        }
-
-        nodes
+        (0..size)
+            .map(|i| self.node_factory.new_node(i, node_type))
+            .collect::<Vec<Node<T>>>()
     }
 }
