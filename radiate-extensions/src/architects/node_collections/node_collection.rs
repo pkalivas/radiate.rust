@@ -1,19 +1,18 @@
 
 use crate::architects::nodes::node::Node;
 
-pub trait NodeCollection<C, N, T>
+pub trait NodeCollection<C, T>
 where
-    C: NodeCollection<C, N, T> + Default,
-    N: Node<N, T> + Clone + Default,
+    C: NodeCollection<C, T> + Default,
     T: Clone + PartialEq + Default
 {
     fn new() -> Self;
-    fn from_nodes(nodes: Vec<N>) -> Self;
+    fn from_nodes(nodes: Vec<Node<T>>) -> Self;
     fn len(&self) -> usize;
-    fn get_nodes(&self) -> &[N];
-    fn get_node(&self, index: usize) -> Option<&N>;
-    fn get_node_mut(&mut self, index: usize) -> Option<&mut N>;
-    fn get_nodes_mut(&mut self) -> &mut [N];
+    fn get_nodes(&self) -> &[Node<T>];
+    fn get_node(&self, index: usize) -> Option<&Node<T>>;
+    fn get_node_mut(&mut self, index: usize) -> Option<&mut Node<T>>;
+    fn get_nodes_mut(&mut self) -> &mut [Node<T>];
 
     fn attach(&mut self, incoming: usize, outgoing: usize) {
         self.get_nodes_mut()[incoming].outgoing_mut().insert(outgoing);

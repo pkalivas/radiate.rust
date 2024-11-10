@@ -6,34 +6,30 @@ use crate::architects::node_collection_builder::NodeCollectionBuilder;
 use crate::architects::schema::node_types::NodeType;
 
 
-pub struct Architect<C, N, T>
+pub struct Architect<C, T>
 where
-    C: NodeCollection<C, N, T> + Clone + Default,
-    N: Node<N, T> + Clone + Default,
+    C: NodeCollection<C, T> + Clone + Default,
     T: Clone + PartialEq + Default
 {
     pub node_factory: NodeFactory<T>,
     _phantom_c: std::marker::PhantomData<C>,
-    _phantom_n: std::marker::PhantomData<N>,
 }
 
-impl<C, N, T> Architect<C, N, T>
+impl<C, T> Architect<C, T>
 where
-    C: NodeCollection<C, N, T> + Clone + Default,
-    N: Node<N, T> + Clone + Default,
+    C: NodeCollection<C, T> + Clone + Default,
     T: Clone + PartialEq + Default
 {
-    pub fn new(node_factory: NodeFactory<T>) -> Architect<C, N, T> {
+    pub fn new(node_factory: NodeFactory<T>) -> Architect<C, T> {
         Architect {
             node_factory,
-            _phantom_c: std::marker::PhantomData,
-            _phantom_n: std::marker::PhantomData,
+            _phantom_c: std::marker::PhantomData
         }
     }
 
     pub fn build<F>(&self, build_fn: F) -> C
     where
-        F: FnOnce(&Architect<C, N, T>, NodeCollectionBuilder<C, N, T>) -> C
+        F: FnOnce(&Architect<C, T>, NodeCollectionBuilder<C, T>) -> C
     {
         build_fn(self, NodeCollectionBuilder::new(&self.node_factory))
     }
@@ -63,7 +59,7 @@ where
         C::from_nodes(nodes)
     }
 
-    fn new_nodes(&self, node_type: NodeType, size: usize) -> Vec<N> {
+    fn new_nodes(&self, node_type: NodeType, size: usize) -> Vec<Node<T>> {
         let mut nodes = Vec::new();
 
         for i in 0..size {

@@ -50,17 +50,16 @@ impl<T> NodeFactory<T> {
         self.node_values.insert(node_type, values);
     }
 
-    pub fn new_node<N>(&self, index: usize, node_type: NodeType) -> N
+    pub fn new_node(&self, index: usize, node_type: NodeType) -> Node<T> 
     where
-        N: Node<N, T> + Clone + Default,
         T: Clone + PartialEq + Default
     {
         let mut rng = rand::thread_rng();
         if let Some(values) = self.node_values.get(&node_type) {
             let value = values.choose(&mut rng).unwrap();
-            N::new_node(index, node_type, value.clone())
+            Node::new(index, node_type, value.clone())
         } else {
-            N::new_node(index, node_type, T::default())
+            Node::new(index, node_type, T::default())
         }
     }
 }

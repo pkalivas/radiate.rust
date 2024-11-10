@@ -6,7 +6,6 @@ mod tests {
     use radiate_extensions::architects::node_collections::graph::Graph;
     use radiate_extensions::architects::node_collections::node_collection::NodeCollection;
     use radiate_extensions::architects::node_factory::NodeFactory;
-    use radiate_extensions::architects::nodes::node_gene::NodeGene;
 
     #[test]
     fn test_graph() {
@@ -17,7 +16,7 @@ mod tests {
             .aggregates(vec![10, 11, 12])
             .weights(vec![13, 14, 15]);
 
-        let architect = Architect::<Graph<NodeGene<i32>, i32>, NodeGene<i32>, i32>::new(factory);
+        let architect = Architect::<Graph<i32>, i32>::new(factory);
 
         let graph = architect
             .build(|arc, builder| builder

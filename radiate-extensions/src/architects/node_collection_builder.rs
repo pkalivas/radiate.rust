@@ -22,27 +22,25 @@ pub struct NodeRelationship<'a> {
     pub target_id: &'a Uuid,
 }
 
-pub struct NodeCollectionBuilder<'a, C, N, T> 
+pub struct NodeCollectionBuilder<'a, C, T> 
 where
-    C: NodeCollection<C, N, T> + Default,
-    N: Node<N, T> + Clone + Default,
+    C: NodeCollection<C, T> + Default,
     T: Clone + PartialEq + Default
 {
     pub factory: &'a NodeFactory<T>,
-    pub nodes: BTreeMap<&'a Uuid, &'a N>,
+    pub nodes: BTreeMap<&'a Uuid, &'a Node<T>>,
     pub relationships: Vec<NodeRelationship<'a>>,
     _phantom_c: std::marker::PhantomData<C>,
     _phantom_t: std::marker::PhantomData<T>
 }
 
 
-impl<'a, C, N, T> NodeCollectionBuilder<'a, C, N, T> 
+impl<'a, C, T> NodeCollectionBuilder<'a, C, T> 
 where
-    C: NodeCollection<C, N, T> + Default,
-    N: Node<N, T> + Clone + Default,
+    C: NodeCollection<C, T> + Default,
     T: Clone + PartialEq + Default
 {
-    pub fn new(factory: &'a NodeFactory<T>) -> NodeCollectionBuilder<'a, C, N, T> {
+    pub fn new(factory: &'a NodeFactory<T>) -> NodeCollectionBuilder<'a, C, T> {
         NodeCollectionBuilder {
             factory,
             nodes: BTreeMap::new(),
@@ -88,7 +86,7 @@ where
         let mut idx = 0;
 
         for (id, node) in self.nodes.iter() {
-            let new_node = N::new_node(idx, *node.node_type(), node.value().clone());
+            let new_node = Node::new(idx, *node.node_type(), node.value().clone());
 
             new_nodes.push(new_node);
             node_id_index_map.insert(id, idx);
@@ -236,14 +234,14 @@ where
         }
     }
 
-    fn get_outputs(&self, collection: &'a C) -> Vec<&'a N> {
+    fn get_outputs(&self, collection: &'a C) -> Vec<&'a Node<T>> {
         let outputs = collection
             .get_nodes()
             .iter()
             .enumerate()
             .skip_while(|(_, node)| node.outgoing().len() > 0)
             .map(|(idx, _)| collection.get_node(idx).unwrap())
-            .collect::<Vec<&N>>();
+            .collect::<Vec<&Node<T>>>();
 
         if outputs.len() > 0 {
             return outputs;
@@ -257,7 +255,7 @@ where
                 && node.is_recurrent() 
                 && (node.node_type() == &NodeType::Gate || node.node_type() == &NodeType::Aggregate))
             .map(|(idx, _)| collection.get_node(idx).unwrap())
-            .collect::<Vec<&N>>();
+            .collect::<Vec<&Node<T>>>();
 
         if recurrent_outputs.len() > 0 {
             return recurrent_outputs;
@@ -269,18 +267,18 @@ where
             .enumerate()
             .filter(|(_, node)| node.incoming().len() == 0)
             .map(|(idx, _)| collection.get_node(idx).unwrap())
-            .collect::<Vec<&N>>()
+            .collect::<Vec<&Node<T>>>()
     }
 
 
-    fn get_inputs(&self, collection: &'a C) -> Vec<&'a N> {
+    fn get_inputs(&self, collection: &'a C) -> Vec<&'a Node<T>> {
         let inputs = collection
             .get_nodes()
             .iter()
             .enumerate()
             .skip_while(|(_, node)| node.incoming().len() > 0)
             .map(|(idx, _)| collection.get_node(idx).unwrap())
-            .collect::<Vec<&N>>();
+            .collect::<Vec<&Node<T>>>();
 
         if inputs.len() > 0 {
             return inputs;
@@ -294,7 +292,7 @@ where
                 && node.is_recurrent() 
                 && node.node_type() == &NodeType::Gate)
             .map(|(idx, _)| collection.get_node(idx).unwrap())
-            .collect::<Vec<&N>>();
+            .collect::<Vec<&Node<T>>>();
 
         if recurrent_inputs.len() > 0 {
             return recurrent_inputs;
@@ -306,6 +304,6 @@ where
             .enumerate()
             .filter(|(_, node)| node.outgoing().len() == 0)
             .map(|(idx, _)| collection.get_node(idx).unwrap())
-            .collect::<Vec<&N>>()
+            .collect::<Vec<&Node<T>>>()
     }
 }
