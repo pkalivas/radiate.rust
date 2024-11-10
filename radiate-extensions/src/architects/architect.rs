@@ -33,7 +33,6 @@ where
     where
         F: FnOnce(&Architect<C, T>, NodeCollectionBuilder<C, T>) -> C
     {
-        let temp = &*self.node_factory;
         build_fn(self, NodeCollectionBuilder::new(&*self.node_factory))
     }
 

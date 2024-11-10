@@ -15,13 +15,14 @@ fn main() {
         .inputs(vec![
             op::var(0),
             op::var(1),
+            op::var(2), 
         ])
         .weights(vec![op::weight()])
         .outputs(vec![op::add()]));
 
     let architect = Architect::<Graph<Ops<f32>>, Ops<f32>>::new(factory);
 
-    let graph = architect.weighted_acyclic(2, 2);
+    let graph = architect.weighted_acyclic(3, 2);
     // let graph = architect
     //     .build(|arc, builder| builder
     //         .all_to_all(&arc.input(2), &arc.output(2))
