@@ -2,7 +2,6 @@ use std::sync::Arc;
 
 use crate::engines::alterers::alter::Alter;
 use crate::engines::codexes::codex::Codex;
-use crate::engines::engine::Engine;
 use crate::engines::genetic_engine_params::GeneticEngineParams;
 use crate::engines::genome::genes::gene::Gene;
 use crate::engines::genome::population::Population;
@@ -16,26 +15,52 @@ use super::selectors::selector::Select;
 
 pub struct GeneticEngine<G, A, T>
 where
-    G: Gene<G, A>
+    G: Gene<G, A>,
+    T: Clone,
 {
     pub params: GeneticEngineParams<G, A, T>,
 }
 
 impl<G, A, T> GeneticEngine<G, A, T>
 where
-    G: Gene<G, A>
+    G: Gene<G, A>,
+    T: Clone
 {
 
     pub fn new(params: GeneticEngineParams<G, A, T>) -> Self {
         GeneticEngine { params }
     }
 
-    pub fn builder() -> GeneticEngineParams<G, A, T> {
-        GeneticEngineParams::new()
-    }
-
     pub fn from_codex(codex: impl Codex<G, A, T> + 'static) -> GeneticEngineParams<G, A, T> {
         GeneticEngineParams::new().codex(codex)
+    }
+
+    pub fn run<F>(&self, limit: F) -> EngineContext<G, A, T> 
+    where
+        F: Fn(&EngineContext<G, A, T>) -> bool
+    {
+        let mut ctx = self.start();
+
+        loop {
+            self.evaluate(&mut ctx);
+
+            let mut survivors = self.select_survivors(&ctx.population);
+            let mut offspring = self.select_offspring(&ctx.population);
+
+            self.alter(&mut offspring, ctx.index);
+
+            self.filter(&mut survivors, ctx.index);
+            self.filter(&mut offspring, ctx.index);
+
+            self.recombine(&mut ctx, survivors, offspring);
+
+            self.evaluate(&mut ctx);
+            self.audit(&mut ctx);
+
+            if limit(&ctx) {
+                break self.stop(&mut ctx)
+            }
+        }
     }
 
     pub fn evaluate(&self, handle: &mut EngineContext<G, A, T>) {
@@ -148,40 +173,6 @@ where
     pub fn offspring_count(&self) -> usize {
         (self.params.population_size as f32 * self.params.offspring_fraction) as usize
     }
-}
-
-impl<G, A, T> Engine<G, A, T> for GeneticEngine<G, A, T>
-where
-    G: Gene<G, A>,
-    T: Clone,
-{
-    fn fit<F>(&self, limit: F) -> EngineContext<G, A, T> 
-    where
-        F: Fn(&EngineContext<G, A, T>) -> bool
-    {
-        let mut ctx = self.start();
-
-        loop {
-            self.evaluate(&mut ctx);
-
-            let mut survivors = self.select_survivors(&ctx.population);
-            let mut offspring = self.select_offspring(&ctx.population);
-
-            self.alter(&mut offspring, ctx.index);
-
-            self.filter(&mut survivors, ctx.index);
-            self.filter(&mut offspring, ctx.index);
-
-            self.recombine(&mut ctx, survivors, offspring);
-
-            self.evaluate(&mut ctx);
-            self.audit(&mut ctx);
-
-            if limit(&ctx) {
-                break self.stop(&mut ctx)
-            }
-        }
-    }
 
     fn start(&self) -> EngineContext<G, A, T> {
         let population = self.population();
@@ -192,5 +183,10 @@ where
             index: 0,
             timer: Timer::new(),
         }
+    }
+
+    fn stop(&self, output: &mut EngineContext<G, A, T>) -> EngineContext<G, A, T> {
+        output.timer.stop();
+        output.clone()
     }
 }

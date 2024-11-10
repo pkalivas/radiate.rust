@@ -15,6 +15,7 @@ use super::alterers::alter::Alterer;
 pub struct GeneticEngineParams<G, A, T>
 where
     G: Gene<G, A>,
+    T: Clone,
 {
     pub population_size: usize,
     pub max_age: i32,
@@ -30,7 +31,8 @@ where
 
 impl<G, A, T> GeneticEngineParams<G, A, T> 
 where
-    G: Gene<G, A>
+    G: Gene<G, A>,
+    T: Clone,
 {
     pub fn new() -> Self {
         GeneticEngineParams {
