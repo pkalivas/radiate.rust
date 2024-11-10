@@ -1,4 +1,5 @@
 
+use std::mem;
 use std::sync::Arc;
 
 use crate::architects::nodes::node::Node;
@@ -42,6 +43,21 @@ where
             .build())
     }
 
+    pub fn cyclic(&self, input_size: usize, output_size: usize) -> C {
+        let input = self.input(input_size);
+        let aggregate = self.aggregate(input_size);
+        let link = self.gate(input_size);
+        let output = self.output(output_size);
+
+        self.build(|_, builder| {
+            builder
+                .one_to_one(&input, &aggregate)
+                .self_connt(&aggregate, &link)
+                .all_to_all(&aggregate, &output)
+                .build()
+        })
+    }
+
     pub fn weighted_acyclic(&self, input_size: usize, output_size: usize) -> C {
         self.build(|arc, builder| {
             let input = arc.input(input_size);
@@ -51,6 +67,23 @@ where
             builder
                 .one_to_many(&input, &weights)
                 .many_to_one(&weights, &output)
+                .build()
+        })
+    }
+
+    pub fn weighted_cyclic(&self, input_size: usize, output_size: usize, memory_size: usize) -> C {
+        self.build(|arc, builder| {
+            let input = arc.input(input_size);
+            let output = arc.output(output_size);
+            let weights = arc.weight(input_size * memory_size);
+            let aggregate = arc.aggregate(memory_size);
+            let aggregate_weights = arc.weight(memory_size);
+
+            builder
+                .one_to_many(&input, &weights)
+                .many_to_one(&weights, &aggregate)
+                .self_connt(&aggregate, &aggregate_weights)
+                .all_to_all(&aggregate, &output)
                 .build()
         })
     }

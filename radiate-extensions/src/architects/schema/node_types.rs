@@ -5,5 +5,6 @@ pub enum NodeType {
     Output,
     Gate,
     Aggregate,
-    Weight
+    Weight,
+    Link
 }

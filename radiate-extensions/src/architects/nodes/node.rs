@@ -116,7 +116,8 @@ where
             NodeType::Output => self.incoming.len() > 0,
             NodeType::Gate => !self.incoming.is_empty() && !self.outgoing.is_empty(),
             NodeType::Aggregate => !self.incoming.is_empty() && !self.outgoing.is_empty(),
-            NodeType::Weight => self.incoming.len() == 1 && self.outgoing.len() == 1
+            NodeType::Weight => self.incoming.len() == 1 && self.outgoing.len() == 1,
+            NodeType::Link => self.incoming.len() == 1 && self.outgoing.len() > 0
         }
     }
 }
