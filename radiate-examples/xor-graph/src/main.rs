@@ -1,6 +1,8 @@
 use std::vec;
 
+use radiate_extensions::architects::architect::Architect;
 use radiate_extensions::architects::node_collection_builder::NodeCollectionBuilder;
+use radiate_extensions::architects::node_collections::graph::Graph;
 use radiate_extensions::architects::node_factory::NodeFactory;
 use radiate_extensions::architects::node_types::NodeType;
 use radiate_extensions::architects::nodes::node_gene::NodeGene;
@@ -22,6 +24,8 @@ fn main() {
     factory.add_node_values(NodeType::Gate, vec![7, 8, 9]);
     factory.add_node_values(NodeType::Aggregate, vec![10, 11, 12]);
     factory.add_node_values(NodeType::Weight, vec![13, 14, 15]);
+
+    let arch = Architect::<Graph<NodeGene<i32>, i32>, NodeGene<i32>, i32>::new(factory);
 
 
     // let input = factory.new_node::<NodeGene<i32>>(0, NodeType::Input);
