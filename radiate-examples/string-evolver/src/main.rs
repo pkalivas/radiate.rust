@@ -3,7 +3,6 @@ use radiate_rust::engines::codexes::char_codex::CharCodex;
 use radiate_rust::engines::genetic_engine::GeneticEngine;
 use radiate_rust::engines::score::Score;
 use radiate_rust::engines::selectors::selector::Selector;
-use radiate_rust::engines::engine::Engine;
 
 fn main() {
     let target = "Chicago, IL";
@@ -30,9 +29,9 @@ fn main() {
         })
         .build();
 
-    let result = engine.fit(|output| {
+    let result = engine.run(|output| {
         println!("[ {:?} ]: {:?}", output.index, output.best);
-        output.score() == target.len() as f32
+        output.score().as_usize() == target.len()
     });
 
     println!("{:?}", result);

@@ -5,7 +5,6 @@ use rand::random;
 use radiate_rust::engines::codexes::subset_codex::SubSetCodex;
 use radiate_rust::engines::genetic_engine::GeneticEngine;
 use radiate_rust::engines::score::Score;
-use radiate_rust::engines::engine::Engine;
 
 
 static KNAPSACK: LazyLock<Knapsack> = LazyLock::new(|| Knapsack::new(15));
@@ -17,7 +16,7 @@ fn main() {
         .fitness_fn(|genotype: &Vec<&Item>| KNAPSACK.fitness(genotype))
         .build();
 
-    let result = engine.fit(|output| {
+    let result = engine.run(|output| {
         let value_total = Knapsack::value_total(&output.best);
         let weight_total = Knapsack::weight_total(&output.best);
 

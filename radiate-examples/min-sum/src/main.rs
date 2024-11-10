@@ -4,7 +4,6 @@ use radiate_rust::engines::codexes::int_codex::IntCodex;
 use radiate_rust::engines::genetic_engine::GeneticEngine;
 use radiate_rust::engines::score::Score;
 use radiate_rust::engines::selectors::selector::Selector;
-use radiate_rust::engines::engine::Engine;
 
 fn main() {
     let codex = IntCodex::new(1, 10, 0, 100).with_bounds(0, 100);
@@ -25,9 +24,9 @@ fn main() {
         })
         .build();
 
-    let result = engine.fit(|output| {
+    let result = engine.run(|output| {
         println!("[ {:?} ]: {:?}", output.index, output.best.first().unwrap());
-        output.score() == 0.0
+        output.score().as_float() == 0.0
     });
 
     println!("{:?}", result);

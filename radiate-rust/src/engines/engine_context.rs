@@ -2,6 +2,8 @@ use crate::engines::genome::genes::gene::Gene;
 use crate::engines::genome::population::Population;
 use crate::engines::schema::timer::Timer;
 
+use super::score::Score;
+
 pub struct EngineContext<G, A, T>
 where
     G: Gene<G, A>
@@ -16,11 +18,10 @@ impl<G, A, T> EngineContext<G, A, T>
 where
     G: Gene<G, A>
 {
-    pub fn score(&self) -> f32 {
-        match self.population.get(0).score() {
-            Some(score) => score.as_float(),
-            None => 0.0,
-        }
+    pub fn score(&self) -> &Score {
+        self.population.get(0).score
+            .as_ref()
+            .expect("Phenotype has no score")
     }
 }
 

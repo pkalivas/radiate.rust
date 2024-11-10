@@ -28,11 +28,7 @@ impl Gene<BitGene, bool> for BitGene {
     }
 }
 
-impl Valid for BitGene {
-    fn is_valid(&self) -> bool {
-        true
-    }
-}
+impl Valid for BitGene { }
 
 impl Clone for BitGene {
     fn clone(&self) -> Self {
