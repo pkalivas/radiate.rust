@@ -15,4 +15,14 @@ impl Optimize {
             Optimize::Maximize => population.sort_by(|a, b| b.partial_cmp(&a).unwrap()),
         }
     }
+
+    pub fn is_better<T>(&self, a: &T, b: &T) -> bool
+    where
+        T: PartialOrd
+    {
+        match self {
+            Optimize::Minimize => a < b,
+            Optimize::Maximize => a > b,
+        }
+    }
 }
