@@ -57,12 +57,24 @@ where
         &self.value
     }
 
+    fn is_recurrent(&self) -> bool {
+        self.incoming.contains(&self.index)
+    }
+
     fn incoming_mut(&mut self) -> &mut HashSet<usize> {
         &mut self.incoming
     }
 
     fn outgoing_mut(&mut self) -> &mut HashSet<usize> {
         &mut self.outgoing
+    }
+
+    fn incoming(&self) -> &HashSet<usize> {
+        &self.incoming
+    }
+
+    fn outgoing(&self) -> &HashSet<usize> {
+        &self.outgoing
     }
 }
 
