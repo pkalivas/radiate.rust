@@ -12,7 +12,7 @@ static KNAPSACK: LazyLock<Knapsack> = LazyLock::new(|| Knapsack::new(15));
 
 fn main() {    
     let codex = SubSetCodex::new(&KNAPSACK.items);
-    let engine = GeneticEngine::from_codex(codex)
+    let engine = GeneticEngine::from_codex(&codex)
         .fitness_fn(|genotype: &Vec<&Item>| KNAPSACK.fitness(genotype))
         .build();
 
