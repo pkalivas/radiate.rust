@@ -24,9 +24,7 @@ fn main() {
 
     let graph = architect.weighted_cyclic(2, 2, 2);
 
-    let nodes = graph.get_nodes();
-
-    for node in nodes {
+    for node in graph.get_nodes() {
         println!("{:?}", node);
     }
 }
