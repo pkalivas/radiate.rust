@@ -3,7 +3,7 @@ use std::vec;
 use radiate_extensions::architects::architect::Architect;
 use radiate_extensions::architects::node_collections::graph::Graph;
 use radiate_extensions::architects::node_collections::node_collection::NodeCollection;
-use radiate_extensions::architects::node_factory::NodeFactory;
+use radiate_extensions::architects::factories::node_factory::NodeFactory;
 use radiate_extensions::operations::op;
 use radiate_extensions::operations::op::Ops;
 

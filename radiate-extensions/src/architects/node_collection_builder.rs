@@ -3,7 +3,7 @@ use std::collections::BTreeMap;
 use crate::architects::node_collections::node_collection::NodeCollection;
 use crate::architects::schema::node_types::NodeType;
 use crate::architects::nodes::node::Node;
-use crate::architects::node_factory::NodeFactory;
+use crate::architects::factories::node_factory::NodeFactory;
 
 use uuid::Uuid;
 
@@ -95,7 +95,7 @@ where
         }
 
         let mut new_collection = C::from_nodes(new_nodes);
-        
+
         for rel in self.relationships {
             let source_idx = node_id_index_map.get(&rel.source_id).unwrap();
             let target_idx = node_id_index_map.get(&rel.target_id).unwrap();
