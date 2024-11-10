@@ -1,11 +1,36 @@
+use std::vec;
+
+use radiate_extensions::architects::node_collection_builder::NodeCollectionBuilder;
+use radiate_extensions::architects::node_factory::NodeFactory;
+use radiate_extensions::architects::node_types::NodeType;
+use radiate_extensions::architects::nodes::node_gene::NodeGene;
 use radiate_extensions::operations::op;
 use radiate_extensions::operations::op::Op;
 
+// Input,
+// Output,
+// Gate,
+// Aggregate,
+// Weight
+
 fn main() {
-    let add_op = op::add();
-    let name = add_op.name();
 
-    let result = add_op.apply(&[1, 2]);
+    let mut factory = NodeFactory::new();
 
-    println!("{:?} Result: {}", add_op.name(), result);
+    factory.add_node_values(NodeType::Input, vec![1, 2, 3]);
+    factory.add_node_values(NodeType::Output, vec![4, 5, 6]);
+    factory.add_node_values(NodeType::Gate, vec![7, 8, 9]);
+    factory.add_node_values(NodeType::Aggregate, vec![10, 11, 12]);
+    factory.add_node_values(NodeType::Weight, vec![13, 14, 15]);
+
+
+    // let input = factory.new_node::<NodeGene<i32>>(0, NodeType::Input);
+
+    // let add_op = op::add();
+    // let name = add_op.name();
+
+    // let result = add_op.apply(&[1, 2]);
+
+    // println!("{:?} Result: {}", add_op.name(), result);
 }
+
