@@ -1,9 +1,12 @@
 
+use std::sync::Arc;
+
 use crate::architects::nodes::node::Node;
-use crate::architects::factories::node_factory::NodeFactory;
 use crate::architects::node_collections::node_collection::NodeCollection;
 use crate::architects::node_collection_builder::NodeCollectionBuilder;
 use crate::architects::schema::node_types::NodeType;
+use crate::architects::factories::node_factory::NodeFactory;
+use super::factories::node_factory::NodeFactory;
 
 
 pub struct Architect<C, T>
@@ -11,7 +14,7 @@ where
     C: NodeCollection<C, T> + Clone + Default,
     T: Clone + PartialEq + Default
 {
-    pub node_factory: NodeFactory<T>,
+    pub node_factory: Arc<dyn NodeFactory<T>>,
     _phantom: std::marker::PhantomData<C>,
 }
 
