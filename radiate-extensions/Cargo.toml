@@ -6,3 +6,4 @@ edition = "2021"
 [dependencies]
 radiate-rust = { path = "../radiate-rust" }
 uuid = { version = "1.10.0", features = ["v4"] }
+rand = "0.8.5"

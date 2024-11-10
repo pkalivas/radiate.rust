@@ -1,37 +1,83 @@
-use std::ops::Add;
+use std::{ops::{Add, Div, Mul, Sub}, sync::Arc};
 
-use crate::operations::math_op::MathOp;
+use rand::{prelude::Distribution, random};
 
-pub trait Op<T> {
-    fn name(&self) -> &str;
-    fn arity(&self) -> u8;
-    fn apply(&self, inputs: &[T]) -> T;
-}
+use super::ops::Ops;
 
-impl<T> std::fmt::Display for dyn Op<T> {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "{}", self.name())
-    }
-}
-
-impl<T, F> Op<T> for F where F: Fn(&[T]) -> T {
-    fn name(&self) -> &str {
-        "Op"
-    }
-
-    fn arity(&self) -> u8 {
-        0
-    }
-
-    fn apply(&self, inputs: &[T]) -> T {
-        (self)(inputs)
-    }
-}
-
-
-pub fn add<T>() -> impl Op<T> 
+pub fn add<T>() -> Ops<T>
 where
     T: Add<Output = T> + Clone
 {
-    MathOp::Add(2, Box::new(|inputs: &[T]| inputs[0].clone() + inputs[1].clone()))
+    Ops::Math("+", 2, Arc::new(|inputs: &[T]| inputs[0].clone() + inputs[1].clone()))
+}
+
+pub fn sub<T>() -> Ops<T>
+where
+    T: Sub<Output = T> + Clone
+{
+    Ops::Math("-", 2, Arc::new(|inputs: &[T]| inputs[0].clone() - inputs[1].clone()))
+}
+
+pub fn mul<T>() -> Ops<T>
+where
+    T: Mul<Output = T> + Clone
+{
+    Ops::Math("*", 2, Arc::new(|inputs: &[T]| inputs[0].clone() * inputs[1].clone()))
+}
+
+pub fn div<T>() -> Ops<T>
+where
+    T: Div<Output = T> + Clone
+{
+    Ops::Math("/", 2, Arc::new(|inputs: &[T]| inputs[0].clone() / inputs[1].clone()))
+}
+
+pub fn sum<T>() -> Ops<T>
+where
+    T: Add<Output = T> + Clone + Default
+{
+    Ops::Math("sum", 2, Arc::new(|inputs: &[T]| inputs
+        .iter()
+        .fold(T::default(), |acc, x| acc + x.clone())))
+}
+
+pub fn prod<T>() -> Ops<T>
+where
+    T: Mul<Output = T> + Clone + Default
+{
+    Ops::Math("prod", 2, Arc::new(|inputs: &[T]| inputs
+        .iter()
+        .fold(T::default(), |acc, x| acc * x.clone())))
+}
+
+pub fn neg<T>() -> Ops<T>
+where
+    T: std::ops::Neg<Output = T> + Clone + Default
+{
+    Ops::Math("neg", 1, Arc::new(|inputs: &[T]| -inputs[0].clone()))
+}
+
+pub fn pow<T>() -> Ops<T>
+where
+    T: Mul<Output = T> + Clone
+{
+    Ops::Math("pow", 2, Arc::new(|inputs: &[T]| inputs[0].clone() * inputs[1].clone()))
+}
+
+pub fn weight<T>() -> Ops<T>
+where
+    rand::distributions::Standard: Distribution<T>,
+    T: Sub<Output = T> + Mul<Output = T> + Copy + Default
+{
+    let supplier = || random::<T>() - random::<T>();
+    let operation = |inputs: &[T], weight: &T| inputs[0] * *weight;
+    Ops::MutableConst("w", 1, supplier(), Arc::new(supplier), Arc::new(operation))
+}
+
+pub fn var<T>(index: usize) -> Ops<T>
+where
+    T: Clone
+{
+    let var_name = format!("x{}", index);
+    Ops::Var(var_name, index)
 }

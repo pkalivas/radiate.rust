@@ -1,0 +1,19 @@
+{
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Launch Rust Program",
+            "program": "${workspaceFolder}/${input:programPath}",
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ],
+    "inputs": [
+        {
+            "type": "promptString",
+            "id": "programPath",
+            "description": "Enter the relative path to your Rust program"
+        }
+    ]
+}

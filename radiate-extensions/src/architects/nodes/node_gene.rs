@@ -1,12 +1,13 @@
 use std::collections::HashSet;
 use uuid::Uuid;
 use radiate_rust::engines::genome::genes::gene::{Gene, Valid};
-use crate::architects::node_types::NodeType;
+use crate::architects::schema::node_types::NodeType;
 use crate::architects::nodes::node::Node;
 
+#[derive(Debug)]
 pub struct NodeGene<T>
 where
-    T: Clone + PartialEq 
+    T: Clone + PartialEq
 {
     pub id: Uuid,
     pub index: usize,
@@ -15,7 +16,6 @@ where
     pub incoming: HashSet<usize>,
     pub outgoing: HashSet<usize>
 }
-
 
 impl<T> NodeGene<T> 
 where
@@ -35,7 +35,7 @@ where
 
 impl<T> Node<NodeGene<T>, T> for NodeGene<T>
 where
-    T: Clone + PartialEq
+    T: Clone + PartialEq + Default
 {
     fn new_node(index: usize, node_type: NodeType, value: T) -> NodeGene<T> {
         NodeGene::new(index, node_type, value)
@@ -57,6 +57,10 @@ where
         &self.value
     }
 
+    fn is_recurrent(&self) -> bool {
+        self.incoming.contains(&self.index)
+    }
+
     fn incoming_mut(&mut self) -> &mut HashSet<usize> {
         &mut self.incoming
     }
@@ -64,11 +68,35 @@ where
     fn outgoing_mut(&mut self) -> &mut HashSet<usize> {
         &mut self.outgoing
     }
+
+    fn incoming(&self) -> &HashSet<usize> {
+        &self.incoming
+    }
+
+    fn outgoing(&self) -> &HashSet<usize> {
+        &self.outgoing
+    }
 }
 
 impl<T> Valid for NodeGene<T>
 where
     T: Clone + PartialEq  {}
+
+impl<T> Default for NodeGene<T>
+where
+    T: Clone + PartialEq + Default
+{
+    fn default() -> Self {
+        NodeGene {
+            id: Uuid::new_v4(),
+            index: 0,
+            node_type: NodeType::Input,
+            value: Default::default(),
+            incoming: HashSet::new(),
+            outgoing: HashSet::new()
+        }
+    }
+}
 
 impl<T> Gene<NodeGene<T>, T> for NodeGene<T>
 where
