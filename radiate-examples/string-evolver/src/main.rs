@@ -8,7 +8,7 @@ fn main() {
     let target = "Chicago, IL";
     let codex = CharCodex::new(1, target.len());
 
-    let engine = GeneticEngine::from_codex(codex)
+    let engine = GeneticEngine::from_codex(&codex)
         .offspring_selector(Selector::Elitism)
         .survivor_selector(Selector::Tournament(3))
         .alterer(vec![

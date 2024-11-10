@@ -13,25 +13,25 @@ use super::engine_context::EngineContext;
 use super::genome::phenotype::Phenotype;
 use super::selectors::selector::Select;
 
-pub struct GeneticEngine<G, A, T>
+pub struct GeneticEngine<'a, G, A, T>
 where
     G: Gene<G, A>,
     T: Clone,
 {
-    pub params: GeneticEngineParams<G, A, T>,
+    pub params: GeneticEngineParams<'a, G, A, T>,
 }
 
-impl<G, A, T> GeneticEngine<G, A, T>
+impl<'a, G, A, T> GeneticEngine<'a, G, A, T>
 where
     G: Gene<G, A>,
     T: Clone
 {
 
-    pub fn new(params: GeneticEngineParams<G, A, T>) -> Self {
+    pub fn new(params: GeneticEngineParams<'a, G, A, T>) -> Self {
         GeneticEngine { params }
     }
 
-    pub fn from_codex(codex: impl Codex<G, A, T> + 'static) -> GeneticEngineParams<G, A, T> {
+    pub fn from_codex(codex: &'a impl Codex<G, A, T>) -> GeneticEngineParams<G, A, T> {
         GeneticEngineParams::new().codex(codex)
     }
 
@@ -115,12 +115,7 @@ where
         }
     }
 
-    fn recombine(
-        &self,
-        handle: &mut EngineContext<G, A, T>,
-        survivors: Population<G, A>,
-        offspring: Population<G, A>,
-    ) {
+    fn recombine(&self, handle: &mut EngineContext<G, A, T>, survivors: Population<G, A>, offspring: Population<G, A>) {
         handle.population = survivors
             .into_iter()
             .chain(offspring.into_iter())
@@ -150,7 +145,7 @@ where
         self.params.alterer.as_ref().unwrap()
     }
 
-    fn codex(&self) -> &Arc<dyn Codex<G, A, T>> {
+    fn codex(&self) -> &Arc<&'a dyn Codex<G, A, T>> {
         self.params.codex.as_ref().unwrap()
     }
 
