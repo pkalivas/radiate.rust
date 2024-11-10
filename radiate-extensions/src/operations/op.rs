@@ -4,10 +4,7 @@ use rand::{prelude::Distribution, random};
 
 use super::ops::Ops;
 
-pub fn add<T>() -> Ops<T>
-where
-    T: Add<Output = T> + Clone
-{
+pub fn add<T: Add<Output = T> + Clone>() -> Ops<T> {
     Ops::Math("+", 2, Arc::new(|inputs: &[T]| inputs[0].clone() + inputs[1].clone()))
 }
 

@@ -16,14 +16,13 @@ fn main() {
             op::var(0),
             op::var(1),
         ])
+        .weights(vec![op::weight()])
         .outputs(vec![
             op::add(),
             op::sub(),
         ]);
 
-    // let architect = Architect::<Graph<NodeGene<i32>, i32>, NodeGene<i32>, i32>::new(factory);
     let architect = Architect::<Graph<NodeGene<Ops<f32>>, Ops<f32>>, NodeGene<Ops<f32>>, Ops<f32>>::new(factory);
-
 
     let graph = architect
         .build(|arc, builder| builder
