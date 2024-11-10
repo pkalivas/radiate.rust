@@ -2,9 +2,8 @@
 use crate::architects::nodes::node::Node;
 use crate::architects::node_factory::NodeFactory;
 use crate::architects::node_collections::node_collection::NodeCollection;
-
-use super::node_collection_builder::NodeCollectionBuilder;
-use super::node_types::NodeType;
+use crate::architects::node_collection_builder::NodeCollectionBuilder;
+use crate::architects::node_types::NodeType;
 
 
 pub struct Architect<C, N, T>
@@ -32,7 +31,7 @@ where
         }
     }
 
-    pub fn build<F>(&self, build_fn: F) -> C 
+    pub fn build<F>(&self, build_fn: F) -> C
     where
         F: FnOnce(&Architect<C, N, T>, NodeCollectionBuilder<C, N, T>) -> C
     {
@@ -62,7 +61,6 @@ where
 
     fn new_collection(&self, node_type: NodeType, size: usize) -> C {
         let nodes = self.new_nodes(node_type, size);
-
         C::from_nodes(nodes)
     }
 

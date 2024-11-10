@@ -1,6 +1,10 @@
 use std::ops::{Add, Div, Mul, Sub};
 
+use rand::{prelude::Distribution, random};
+
 use crate::operations::math_op::MathOp;
+use crate::operations::var_op::VarOp;
+use crate::operations::mutable_const_op::MutableConstOp;
 
 pub trait Op<T> {
     fn name(&self) -> &str;
@@ -73,4 +77,22 @@ where
     MathOp::Prod(2, Box::new(|inputs: &[T]| inputs
         .iter()
         .fold(T::default(), |acc, &x| acc * x)))
+}
+
+pub fn weight<T>() -> impl Op<T> 
+where
+    rand::distributions::Standard: Distribution<T>,
+    T: Sub<Output = T> + Mul<Output = T> + Copy + Default
+{
+    let supplier = || random::<T>() - random::<T>();
+    let operation = |inputs: &[T], weight: &T| inputs[0] * *weight;
+    MutableConstOp::new("w", 1, Box::new(supplier), Box::new(operation))
+}
+
+pub fn var<T>(index: usize) -> impl Op<T> 
+where
+    T: Clone
+{
+    let var_name = format!("x{}", index);
+    VarOp::new(var_name, index)
 }

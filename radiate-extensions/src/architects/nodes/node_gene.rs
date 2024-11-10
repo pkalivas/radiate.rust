@@ -17,7 +17,6 @@ where
     pub outgoing: HashSet<usize>
 }
 
-
 impl<T> NodeGene<T> 
 where
     T: Clone + PartialEq 

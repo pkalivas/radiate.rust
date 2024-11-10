@@ -15,6 +15,36 @@ impl<T> NodeFactory<T> {
         }
     }
 
+    pub fn inputs(mut self, values: Vec<T>) -> NodeFactory<T> {
+        self.add_node_values(NodeType::Input, values);
+        self
+    }
+
+    pub fn outputs(mut self, values: Vec<T>) -> NodeFactory<T> {
+        self.add_node_values(NodeType::Output, values);
+        self
+    }
+    
+    pub fn gates(mut self, values: Vec<T>) -> NodeFactory<T> {
+        self.add_node_values(NodeType::Gate, values);
+        self
+    }
+    
+    pub fn aggregates(mut self, values: Vec<T>) -> NodeFactory<T> {
+        self.add_node_values(NodeType::Aggregate, values);
+        self
+    }
+    
+    pub fn weights(mut self, values: Vec<T>) -> NodeFactory<T> {
+        self.add_node_values(NodeType::Weight, values);
+        self
+    }
+
+    pub fn set_values(mut self, node_type: NodeType, values: Vec<T>) -> NodeFactory<T> {
+        self.add_node_values(node_type, values);
+        self
+    }
+
     pub fn add_node_values(&mut self, node_type: NodeType, values: Vec<T>) {
         self.node_values.insert(node_type, values);
     }
