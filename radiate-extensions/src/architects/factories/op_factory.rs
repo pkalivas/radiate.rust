@@ -41,7 +41,9 @@ where
                 op::sigmoid(),
                 op::tanh(),
                 op::relu(),
-                op::linear()
+                op::linear(),
+                op::sum(),
+                op::prod(),
             ])
             .weights(vec![op::weight()])
             .outputs(vec![op::linear()])
