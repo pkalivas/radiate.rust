@@ -1,9 +1,10 @@
 use std::collections::HashSet;
 use uuid::Uuid;
 use radiate_rust::engines::genome::genes::gene::{Gene, Valid};
-use crate::architects::node_types::NodeType;
+use crate::architects::schema::node_types::NodeType;
 use crate::architects::nodes::node::Node;
 
+#[derive(Debug)]
 pub struct NodeGene<T>
 where
     T: Clone + PartialEq
@@ -15,7 +16,6 @@ where
     pub incoming: HashSet<usize>,
     pub outgoing: HashSet<usize>
 }
-
 
 impl<T> NodeGene<T> 
 where
@@ -57,12 +57,24 @@ where
         &self.value
     }
 
+    fn is_recurrent(&self) -> bool {
+        self.incoming.contains(&self.index)
+    }
+
     fn incoming_mut(&mut self) -> &mut HashSet<usize> {
         &mut self.incoming
     }
 
     fn outgoing_mut(&mut self) -> &mut HashSet<usize> {
         &mut self.outgoing
+    }
+
+    fn incoming(&self) -> &HashSet<usize> {
+        &self.incoming
+    }
+
+    fn outgoing(&self) -> &HashSet<usize> {
+        &self.outgoing
     }
 }
 
