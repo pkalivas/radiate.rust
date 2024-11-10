@@ -33,7 +33,7 @@ where
             .iter()
             .enumerate()
             .map(|(i, node)| Node {
-                index: i,
+                index: index + i,
                 incoming: HashSet::new(),
                 outgoing: HashSet::new(),
                 ..node.clone()
@@ -128,3 +128,4 @@ where
 
     Vec::new()
 }
+
