@@ -115,12 +115,7 @@ where
         }
     }
 
-    fn recombine(
-        &self,
-        handle: &mut EngineContext<G, A, T>,
-        survivors: Population<G, A>,
-        offspring: Population<G, A>,
-    ) {
+    fn recombine(&self, handle: &mut EngineContext<G, A, T>, survivors: Population<G, A>, offspring: Population<G, A>) {
         handle.population = survivors
             .into_iter()
             .chain(offspring.into_iter())
