@@ -25,7 +25,18 @@ fn main() {
     factory.add_node_values(NodeType::Aggregate, vec![10, 11, 12]);
     factory.add_node_values(NodeType::Weight, vec![13, 14, 15]);
 
-    let arch = Architect::<Graph<NodeGene<i32>, i32>, NodeGene<i32>, i32>::new(factory);
+    let architect = Architect::<Graph<NodeGene<i32>, i32>, NodeGene<i32>, i32>::new(factory);
+    let graph = architect.build(|builder| {
+        let input = builder.input(3);
+        let output = builder.output(3);
+
+        builder.one_to_one(&input, &output).build()
+    });
+
+    let t = "";
+    // let graph = architect.build(|builder: NodeCollectionBuilder<Graph<NodeGene<i32>, i32>, NodeGene<i32>, i32>| {
+    //     builder.one_to_one(builder.input(3), builder.output(3)).build()
+    // });
 
 
     // let input = factory.new_node::<NodeGene<i32>>(0, NodeType::Input);

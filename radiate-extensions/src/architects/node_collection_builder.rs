@@ -6,6 +6,8 @@ use crate::architects::nodes::node::Node;
 
 use uuid::Uuid;
 
+use super::node_factory::NodeFactory;
+
 
 pub enum ConnectTypes {
     OneToOne,
@@ -27,7 +29,7 @@ where
     N: Node<N, T> + Clone + Default,
     T: Clone + PartialEq + Default
 {
-    pub factory: Box<dyn Fn(usize, NodeType) -> N>,
+    pub factory: &'a NodeFactory<T>,
     pub nodes: HashMap<&'a Uuid, &'a N>,
     pub relationships: Vec<NodeRelationship<'a>>,
     _phantom_c: std::marker::PhantomData<C>,
@@ -41,7 +43,7 @@ where
     N: Node<N, T> + Clone + Default,
     T: Clone + PartialEq + Default
 {
-    pub fn new(factory: Box<dyn Fn(usize, NodeType) -> N>) -> NodeCollectionBuilder<'a, C, N, T> {
+    pub fn new(factory: &'a NodeFactory<T>) -> NodeCollectionBuilder<'a, C, N, T> {
         NodeCollectionBuilder {
             factory,
             nodes: HashMap::new(),
@@ -51,37 +53,73 @@ where
         }
     }
 
-    fn one_to_one(mut self, one: &'a C, two: &'a C) -> Self {
+    pub fn input(&self, siez: usize) -> C {
+        self.new_collection(NodeType::Input, siez)
+    }
+
+    pub fn output(&self, siez: usize) -> C {
+        self.new_collection(NodeType::Output, siez)
+    }
+
+    pub fn gate(&self, siez: usize) -> C {
+        self.new_collection(NodeType::Gate, siez)
+    }
+
+    pub fn aggregate(&self, siez: usize) -> C {
+        self.new_collection(NodeType::Aggregate, siez)
+    }
+
+    pub fn weight(&self, siez: usize) -> C {
+        self.new_collection(NodeType::Weight, siez)
+    }
+
+    fn new_collection(&self, node_type: NodeType, size: usize) -> C {
+        let nodes = self.new_nodes(node_type, size);
+
+        C::from_nodes(nodes)
+    }
+
+    fn new_nodes(&self, node_type: NodeType, size: usize) -> Vec<N> {
+        let mut nodes = Vec::new();
+
+        for i in 0..size {
+            nodes.push(self.factory.new_node(i, node_type));
+        }
+
+        nodes
+    }
+
+    pub fn one_to_one(mut self, one: &'a C, two: &'a C) -> Self {
         self.attach(ConnectTypes::OneToOne, one, two);
         self
     }
 
-    fn one_to_many(mut self, one: &'a C, two: &'a C) -> Self {
+    pub fn one_to_many(mut self, one: &'a C, two: &'a C) -> Self {
         self.attach(ConnectTypes::OneToMany, one, two);
         self
     }
 
-    fn many_to_one(mut self, one: &'a C, two: &'a C) -> Self {
+    pub fn many_to_one(mut self, one: &'a C, two: &'a C) -> Self {
         self.attach(ConnectTypes::ManyToOne, one, two);
         self
     }
 
-    fn all_to_all(mut self, one: &'a C, two: &'a C) -> Self {
+    pub fn all_to_all(mut self, one: &'a C, two: &'a C) -> Self {
         self.attach(ConnectTypes::AllToAll, one, two);
         self
     }
 
-    fn self_connt(mut self, one: &'a C, two: &'a C) -> Self {
+    pub fn self_connt(mut self, one: &'a C, two: &'a C) -> Self {
         self.attach(ConnectTypes::AllToAllSelf, one, two);
         self
     }
 
-    fn parent_to_child(mut self, one: &'a C, two: &'a C) -> Self {
+    pub fn parent_to_child(mut self, one: &'a C, two: &'a C) -> Self {
         self.attach(ConnectTypes::ParentToChild, one, two);
         self
     }
 
-    fn build(mut self) -> C {
+    pub fn build(mut self) -> C {
         let mut new_nodes = Vec::new();
         let mut node_id_index_map = HashMap::new();
         let mut idx = 0;
