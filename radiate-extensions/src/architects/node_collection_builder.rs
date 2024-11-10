@@ -103,7 +103,8 @@ where
             new_collection.attach(*source_idx, *target_idx);
         }
 
-        new_collection
+        // TODO: check me out - I'm not sure if this is correct
+        new_collection.reindex(0)
     }
 
     fn attach(&mut self, connection: ConnectTypes, one: &'a C, two: &'a C) {

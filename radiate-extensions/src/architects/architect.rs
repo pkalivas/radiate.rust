@@ -34,6 +34,25 @@ where
         build_fn(self, NodeCollectionBuilder::new(&self.node_factory))
     }
 
+    pub fn acyclic(&self, input_size: usize, output_size: usize) -> C {
+        self.build(|arc, builder| builder
+            .all_to_all(&arc.input(input_size), &arc.output(output_size))
+            .build())
+    }
+
+    pub fn weighted_acyclic(&self, input_size: usize, output_size: usize) -> C {
+        self.build(|arc, builder| {
+            let input = arc.input(input_size);
+            let output = arc.output(output_size);
+            let weights = arc.weight(input_size * output_size);
+
+            builder
+                .one_to_many(&input, &weights)
+                .many_to_one(&weights, &output)
+                .build()
+        })
+    }
+
     pub fn input(&self, siez: usize) -> C {
         self.new_collection(NodeType::Input, siez)
     }

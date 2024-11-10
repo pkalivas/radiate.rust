@@ -2,7 +2,7 @@ use std::collections::HashSet;
 use uuid::Uuid;
 use radiate_rust::engines::genome::genes::gene::{Gene, Valid};
 
-use crate::architects::schema::node_types::NodeType;
+use crate::architects::schema::{direction::Direction, node_types::NodeType};
 
 pub struct Node<T>
 where
@@ -10,8 +10,9 @@ where
 {
     pub id: Uuid,
     pub index: usize,
-    pub node_type: NodeType,
     pub value: T,
+    pub node_type: NodeType,
+    pub direction: Direction,
     pub incoming: HashSet<usize>,
     pub outgoing: HashSet<usize>
 }
@@ -24,8 +25,9 @@ where
         Node {
             id: Uuid::new_v4(),
             index,
-            node_type,
             value,
+            direction: Direction::Forward,
+            node_type,
             incoming: HashSet::new(),
             outgoing: HashSet::new()
         }
@@ -48,7 +50,9 @@ where
     }
 
     pub fn is_recurrent(&self) -> bool {
-        self.incoming.contains(&self.index)
+        self.incoming.contains(&self.index) 
+            || self.outgoing.contains(&self.index) 
+            || self.direction == Direction::Backward
     }
 
     pub fn incoming(&self) -> &HashSet<usize> {
@@ -80,8 +84,9 @@ where
         Node {
             id: Uuid::new_v4(),
             index: self.index,
-            node_type: self.node_type.clone(),
             value: self.value.clone(),
+            direction: self.direction.clone(),
+            node_type: self.node_type.clone(),
             incoming: self.incoming.clone(),
             outgoing: self.outgoing.clone()
         }
@@ -91,8 +96,9 @@ where
         Node {
             id: Uuid::new_v4(),
             index: self.index,
-            node_type: self.node_type.clone(),
             value: allele.clone(),
+            direction: self.direction.clone(),
+            node_type: self.node_type.clone(),
             incoming: self.incoming.clone(),
             outgoing: self.outgoing.clone()
         }
@@ -113,8 +119,9 @@ where
         Node {
             id: self.id.clone(),
             index: self.index.clone(),
-            node_type: self.node_type.clone(),
             value: self.value.clone(),
+            direction: self.direction.clone(),
+            node_type: self.node_type.clone(),
             incoming: self.incoming.clone(),
             outgoing: self.outgoing.clone()
         }
@@ -129,8 +136,9 @@ where
     fn eq(&self, other: &Self) -> bool {
         self.id == other.id 
             && self.index == other.index 
-            && self.node_type == other.node_type 
             && self.value == other.value 
+            && self.direction == other.direction
+            && self.node_type == other.node_type 
             && self.incoming == other.incoming 
             && self.outgoing == other.outgoing
     }
@@ -145,8 +153,9 @@ where
         Node {
             id: Uuid::new_v4(),
             index: 0,
-            node_type: NodeType::Input,
             value: T::default(),
+            direction: Direction::Forward,
+            node_type: NodeType::Input,
             incoming: HashSet::new(),
             outgoing: HashSet::new()
         }
@@ -169,11 +178,12 @@ where
     T: Clone + PartialEq + std::fmt::Debug
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Node {{ id: {}, index: {}, node_type: {:?}, value: {:?}, incoming: {:?}, outgoing: {:?} }}", 
+        write!(f, "Node {{ id: {}, index: {}, value: {:?}, dir: {:?}, node_type: {:?}, incoming: {:?}, outgoing: {:?} }}", 
             self.id,
             self.index,
-            self.node_type, 
             self.value, 
+            self.direction,
+            self.node_type, 
             self.incoming, 
             self.outgoing)
     }
