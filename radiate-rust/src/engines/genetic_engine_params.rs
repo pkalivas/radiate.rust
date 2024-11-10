@@ -12,7 +12,7 @@ use crate::engines::selectors::selector::Selector;
 
 use super::alterers::alter::Alterer;
 
-pub struct GeneticEngineParams<G, A, T>
+pub struct GeneticEngineParams<'a, G, A, T>
 where
     G: Gene<G, A>,
     T: Clone,
@@ -25,11 +25,11 @@ where
     pub offspring_selector: Selector,
     pub alterer: Option<CompositeAlterer<G, A>>,
     pub population: Option<Population<G, A>>,
-    pub codex: Option<Arc<dyn Codex<G, A, T>>>,
+    pub codex: Option<Arc<&'a dyn Codex<G, A, T>>>,
     pub fitness_fn: Option<Arc<dyn Fn(&T) -> Score>>,
 }
 
-impl<G, A, T> GeneticEngineParams<G, A, T> 
+impl<'a, G, A, T> GeneticEngineParams<'a, G, A, T> 
 where
     G: Gene<G, A>,
     T: Clone,
@@ -64,7 +64,7 @@ where
         self
     }
 
-    pub fn codex(mut self, codex: impl Codex<G, A, T> + 'static) -> Self {
+    pub fn codex(mut self, codex: &'a impl Codex<G, A, T>) -> Self {
         self.codex = Some(Arc::new(codex));
         self
     }
@@ -104,7 +104,7 @@ where
         self
     }
 
-    pub fn build(mut self) -> GeneticEngine<G, A, T> {
+    pub fn build(mut self) -> GeneticEngine<'a, G, A, T> {
         self.build_population();
         self.build_alterer();
 

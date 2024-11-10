@@ -8,7 +8,7 @@ use radiate_rust::engines::selectors::selector::Selector;
 fn main() {
     let codex = IntCodex::new(1, 10, 0, 100).with_bounds(0, 100);
 
-    let engine = GeneticEngine::from_codex(codex)
+    let engine = GeneticEngine::from_codex(&codex)
         .population_size(100)
         .minimizing()
         .offspring_selector(Selector::Elitism)
