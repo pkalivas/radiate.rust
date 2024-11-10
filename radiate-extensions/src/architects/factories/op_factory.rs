@@ -80,8 +80,8 @@ where
                     return Node::new(index, node_type, value.new_instance());
                 }
             }
-        } else {
-            Node::new(index, node_type, Ops::default())
         }
+        
+        Node::new(index, node_type, Ops::default())
     }
 }
