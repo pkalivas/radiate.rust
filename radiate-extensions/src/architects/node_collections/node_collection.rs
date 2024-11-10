@@ -4,8 +4,8 @@ use crate::architects::nodes::node::Node;
 pub trait NodeCollection<C, N, T>
 where
     C: NodeCollection<C, N, T>,
-    N: Node<N, T>,
-    T: Clone + PartialEq
+    N: Node<N, T> + Default,
+    T: Clone + PartialEq + Default
 {
     fn new() -> Self;
     fn from_nodes(nodes: Vec<N>) -> Self;

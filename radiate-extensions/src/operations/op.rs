@@ -1,4 +1,4 @@
-use std::ops::Add;
+use std::ops::{Add, Div, Mul, Sub};
 
 use crate::operations::math_op::MathOp;
 
@@ -31,7 +31,46 @@ impl<T, F> Op<T> for F where F: Fn(&[T]) -> T {
 
 pub fn add<T>() -> impl Op<T> 
 where
-    T: Add<Output = T> + Clone
+    T: Add<Output = T> + Copy
 {
-    MathOp::Add(2, Box::new(|inputs: &[T]| inputs[0].clone() + inputs[1].clone()))
+    MathOp::Add(2, Box::new(|inputs: &[T]| inputs[0] + inputs[1]))
+}
+
+pub fn sub<T>() -> impl Op<T> 
+where
+    T: Sub<Output = T> + Copy
+{
+    MathOp::Subtract(2, Box::new(|inputs: &[T]| inputs[0] - inputs[1]))
+}
+
+pub fn mul<T>() -> impl Op<T> 
+where
+    T: Mul<Output = T> + Copy
+{
+    MathOp::Multiply(2, Box::new(|inputs: &[T]| inputs[0] * inputs[1]))
+}
+
+pub fn div<T>() -> impl Op<T> 
+where
+    T: Div<Output = T> + Copy
+{
+    MathOp::Divide(2, Box::new(|inputs: &[T]| inputs[0] / inputs[1]))
+}
+
+pub fn sum<T>() -> impl Op<T> 
+where
+    T: Add<Output = T> + Copy + Default
+{
+    MathOp::Sum(2, Box::new(|inputs: &[T]| inputs
+        .iter()
+        .fold(T::default(), |acc, &x| acc + x)))
+}
+
+pub fn prod<T>() -> impl Op<T> 
+where
+    T: Mul<Output = T> + Copy + Default
+{
+    MathOp::Prod(2, Box::new(|inputs: &[T]| inputs
+        .iter()
+        .fold(T::default(), |acc, &x| acc * x)))
 }

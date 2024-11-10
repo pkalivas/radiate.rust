@@ -2,13 +2,10 @@ use std::collections::HashSet;
 use uuid::Uuid;
 use crate::architects::node_types::NodeType;
 
-#[derive(Debug, Clone, Copy, Hash, PartialEq, Eq)]
-struct Id(usize);
-
 pub trait Node<N, T> 
 where 
-    N: Node<N, T>,
-    T: Clone + PartialEq
+    N: Node<N, T> + Default,
+    T: Clone + PartialEq + Default
 {
     fn new_node(index: usize, node_type: NodeType, value: T) -> N;
     fn id(&self) -> &Uuid;

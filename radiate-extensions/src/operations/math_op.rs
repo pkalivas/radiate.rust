@@ -5,7 +5,8 @@ pub enum MathOp<T> {
     Subtract(u8, Box<dyn Fn(&[T]) -> T>),
     Multiply(u8, Box<dyn Fn(&[T]) -> T>),
     Divide(u8, Box<dyn Fn(&[T]) -> T>),
-    Sum(u8, Box<dyn Fn(&[T]) -> T>)
+    Sum(u8, Box<dyn Fn(&[T]) -> T>),
+    Prod(u8, Box<dyn Fn(&[T]) -> T>),
 }
 
 
@@ -16,7 +17,8 @@ impl<T> Op<T> for MathOp<T> {
             MathOp::Subtract(_, _) => "-",
             MathOp::Multiply(_, _) => "*",
             MathOp::Divide(_, _) => "/",
-            MathOp::Sum(_, _) => "sum"
+            MathOp::Sum(_, _) => "sum",
+            MathOp::Prod(_, _) => "prod",
         }
     }
 
@@ -26,7 +28,8 @@ impl<T> Op<T> for MathOp<T> {
             MathOp::Subtract(arity, _) => *arity,
             MathOp::Multiply(arity, _) => *arity,
             MathOp::Divide(arity, _) => *arity,
-            MathOp::Sum(arity, _) => *arity
+            MathOp::Sum(arity, _) => *arity,
+            MathOp::Prod(arity, _) => *arity,
         }
     }
 
@@ -36,7 +39,8 @@ impl<T> Op<T> for MathOp<T> {
             MathOp::Subtract(_, op) => op(inputs),
             MathOp::Multiply(_, op) => op(inputs),
             MathOp::Divide(_, op) => op(inputs),
-            MathOp::Sum(_, op) => op(inputs)
+            MathOp::Sum(_, op) => op(inputs),
+            MathOp::Prod(_, op) => op(inputs),
         }
     }
 }

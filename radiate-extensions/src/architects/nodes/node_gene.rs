@@ -6,7 +6,7 @@ use crate::architects::nodes::node::Node;
 
 pub struct NodeGene<T>
 where
-    T: Clone + PartialEq 
+    T: Clone + PartialEq
 {
     pub id: Uuid,
     pub index: usize,
@@ -35,7 +35,7 @@ where
 
 impl<T> Node<NodeGene<T>, T> for NodeGene<T>
 where
-    T: Clone + PartialEq
+    T: Clone + PartialEq + Default
 {
     fn new_node(index: usize, node_type: NodeType, value: T) -> NodeGene<T> {
         NodeGene::new(index, node_type, value)
@@ -69,6 +69,22 @@ where
 impl<T> Valid for NodeGene<T>
 where
     T: Clone + PartialEq  {}
+
+impl<T> Default for NodeGene<T>
+where
+    T: Clone + PartialEq + Default
+{
+    fn default() -> Self {
+        NodeGene {
+            id: Uuid::new_v4(),
+            index: 0,
+            node_type: NodeType::Input,
+            value: Default::default(),
+            incoming: HashSet::new(),
+            outgoing: HashSet::new()
+        }
+    }
+}
 
 impl<T> Gene<NodeGene<T>, T> for NodeGene<T>
 where
