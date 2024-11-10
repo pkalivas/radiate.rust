@@ -1,9 +1,11 @@
 
-use crate::architects::nodes::node::Node;
+use std::collections::HashSet;
+
+use crate::architects::{nodes::node::Node, schema::direction::Direction};
 
 pub trait NodeCollection<C, T>
 where
-    C: NodeCollection<C, T> + Default,
+    C: NodeCollection<C, T> + Default + Clone,
     T: Clone + PartialEq + Default
 {
     fn from_nodes(nodes: Vec<Node<T>>) -> Self;
@@ -30,7 +32,12 @@ where
         let mut new_nodes = self.get_nodes()
             .iter()
             .enumerate()
-            .map(|(i, node)| Node::new(index + i, node.node_type.clone(), node.value.clone()))
+            .map(|(i, node)| Node {
+                index: i,
+                incoming: HashSet::new(),
+                outgoing: HashSet::new(),
+                ..node.clone()
+            })
             .collect::<Vec<Node<T>>>();
 
         let old_nodes = self.get_nodes()
@@ -61,7 +68,63 @@ where
         C::from_nodes(new_nodes)
     }
 
-    fn set_cycles(&mut self) -> C {
-        unimplemented!()
+    fn set_cycles(&mut self, indecies: Vec<usize>) -> &mut Self {
+        if indecies.len() == 0 {
+            let all_indices = self.get_nodes()
+                .iter()
+                .map(|node| node.index)
+                .collect::<Vec<usize>>();
+
+            return self.set_cycles(all_indices)
+        }
+
+        for idx in indecies {
+            let node_cycles = get_cycles(self.get_nodes(), idx);
+
+            if node_cycles.len() == 0 {
+                let node = self.get_node_mut(idx).unwrap();
+                (*node).direction = Direction::Forward;
+            } else {
+                for cycle_idx in node_cycles {
+                    let node = self.get_node_mut(cycle_idx).unwrap();
+                    (*node).direction = Direction::Backward;
+                }
+            }
+        }
+
+        self
     }
+}
+
+pub fn get_cycles<T>(nodes: &[Node<T>], index: usize) -> Vec<usize>
+where
+    T: Clone + PartialEq + Default
+{
+    let mut path = Vec::new();
+    let mut seen = std::collections::HashSet::new();
+    let mut current = nodes[index].incoming().iter().cloned().collect::<std::collections::VecDeque<usize>>();
+
+    while current.len() > 0 {
+        let current_index = current.pop_front().unwrap();
+        let current_node = &nodes[current_index];
+
+        if seen.contains(&current_index) {
+            continue;
+        }
+
+        if current_index == index {
+            return path;
+        }
+
+        seen.insert(current_index);
+
+        if current_node.incoming().len() != 0 {
+            path.push(current_index);
+            for outgoing in current_node.incoming().iter() {
+                current.push_back(*outgoing);
+            }
+        }
+    }
+
+    Vec::new()
 }

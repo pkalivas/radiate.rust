@@ -24,7 +24,7 @@ pub struct NodeRelationship<'a> {
 
 pub struct NodeCollectionBuilder<'a, C, T> 
 where
-    C: NodeCollection<C, T> + Default,
+    C: NodeCollection<C, T> + Clone + Default,
     T: Clone + PartialEq + Default
 {
     pub factory: &'a dyn NodeFactory<T>,
@@ -37,7 +37,7 @@ where
 
 impl<'a, C, T> NodeCollectionBuilder<'a, C, T> 
 where
-    C: NodeCollection<C, T> + Default,
+    C: NodeCollection<C, T> + Clone + Default,
     T: Clone + PartialEq + Default
 {
     pub fn new(factory: &'a dyn NodeFactory<T>) -> NodeCollectionBuilder<'a, C, T> {
@@ -103,8 +103,12 @@ where
             new_collection.attach(*source_idx, *target_idx);
         }
 
-        // TODO: check me out - I'm not sure if this is correct
-        new_collection.reindex(0)
+        new_collection
+            .set_cycles(new_collection.get_nodes()
+                .iter()
+                .map(|node| *node.index())
+                .collect::<Vec<usize>>())
+            .reindex(0)
     }
 
     fn attach(&mut self, connection: ConnectTypes, one: &'a C, two: &'a C) {
