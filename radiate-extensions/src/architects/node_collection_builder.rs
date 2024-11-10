@@ -53,42 +53,6 @@ where
         }
     }
 
-    pub fn input(&self, siez: usize) -> C {
-        self.new_collection(NodeType::Input, siez)
-    }
-
-    pub fn output(&self, siez: usize) -> C {
-        self.new_collection(NodeType::Output, siez)
-    }
-
-    pub fn gate(&self, siez: usize) -> C {
-        self.new_collection(NodeType::Gate, siez)
-    }
-
-    pub fn aggregate(&self, siez: usize) -> C {
-        self.new_collection(NodeType::Aggregate, siez)
-    }
-
-    pub fn weight(&self, siez: usize) -> C {
-        self.new_collection(NodeType::Weight, siez)
-    }
-
-    fn new_collection(&self, node_type: NodeType, size: usize) -> C {
-        let nodes = self.new_nodes(node_type, size);
-
-        C::from_nodes(nodes)
-    }
-
-    fn new_nodes(&self, node_type: NodeType, size: usize) -> Vec<N> {
-        let mut nodes = Vec::new();
-
-        for i in 0..size {
-            nodes.push(self.factory.new_node(i, node_type));
-        }
-
-        nodes
-    }
-
     pub fn one_to_one(mut self, one: &'a C, two: &'a C) -> Self {
         self.attach(ConnectTypes::OneToOne, one, two);
         self
@@ -119,7 +83,7 @@ where
         self
     }
 
-    pub fn build(mut self) -> C {
+    pub fn build(self) -> C {
         let mut new_nodes = Vec::new();
         let mut node_id_index_map = HashMap::new();
         let mut idx = 0;
@@ -146,6 +110,14 @@ where
     }
 
     fn attach(&mut self, connection: ConnectTypes, one: &'a C, two: &'a C) {
+        for node in one.get_nodes() {
+            self.nodes.insert(node.id(), node);
+        }
+
+        for node in two.get_nodes() {
+            self.nodes.insert(node.id(), node);
+        }
+        
         match connection {
             ConnectTypes::OneToOne => self.one_to_one_connect(one, two),
             ConnectTypes::OneToMany => self.one_to_many_connect(one, two),

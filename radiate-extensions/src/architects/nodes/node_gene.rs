@@ -4,6 +4,7 @@ use radiate_rust::engines::genome::genes::gene::{Gene, Valid};
 use crate::architects::node_types::NodeType;
 use crate::architects::nodes::node::Node;
 
+#[derive(Debug)]
 pub struct NodeGene<T>
 where
     T: Clone + PartialEq

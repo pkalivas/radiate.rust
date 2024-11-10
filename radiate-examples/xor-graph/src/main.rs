@@ -3,17 +3,13 @@ use std::vec;
 use radiate_extensions::architects::architect::Architect;
 use radiate_extensions::architects::node_collection_builder::NodeCollectionBuilder;
 use radiate_extensions::architects::node_collections::graph::Graph;
+use radiate_extensions::architects::node_collections::node_collection::NodeCollection;
 use radiate_extensions::architects::node_factory::NodeFactory;
 use radiate_extensions::architects::node_types::NodeType;
 use radiate_extensions::architects::nodes::node_gene::NodeGene;
 use radiate_extensions::operations::op;
 use radiate_extensions::operations::op::Op;
 
-// Input,
-// Output,
-// Gate,
-// Aggregate,
-// Weight
 
 fn main() {
 
@@ -26,14 +22,24 @@ fn main() {
     factory.add_node_values(NodeType::Weight, vec![13, 14, 15]);
 
     let architect = Architect::<Graph<NodeGene<i32>, i32>, NodeGene<i32>, i32>::new(factory);
-    let graph = architect.build(|builder| {
-        let input = builder.input(3);
-        let output = builder.output(3);
 
-        builder.one_to_one(&input, &output).build()
-    });
+    let graph = architect
+        .build(|arc, builder| builder
+            .one_to_one(&arc.input(2), &arc.output(2))
+            .build());
+
+    let nodes = graph.get_nodes();
+
+    for node in nodes {
+        println!("{:?}", node);
+    }
 
     let t = "";
+}
+
+
+
+
     // let graph = architect.build(|builder: NodeCollectionBuilder<Graph<NodeGene<i32>, i32>, NodeGene<i32>, i32>| {
     //     builder.one_to_one(builder.input(3), builder.output(3)).build()
     // });
@@ -47,5 +53,3 @@ fn main() {
     // let result = add_op.apply(&[1, 2]);
 
     // println!("{:?} Result: {}", add_op.name(), result);
-}
-

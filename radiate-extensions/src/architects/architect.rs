@@ -34,10 +34,10 @@ where
 
     pub fn build<F>(&self, build_fn: F) -> C 
     where
-        F: FnOnce(NodeCollectionBuilder<C, N, T>) -> C
+        F: FnOnce(&Architect<C, N, T>, NodeCollectionBuilder<C, N, T>) -> C
     {
         let builder = NodeCollectionBuilder::new(&self.node_factory);
-        build_fn(builder)
+        build_fn(self, builder)
     }
 
     pub fn input(&self, siez: usize) -> C {
