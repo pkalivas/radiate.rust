@@ -6,7 +6,7 @@ use radiate_extensions::architects::node_collections::node_collection::NodeColle
 use radiate_extensions::architects::node_factory::NodeFactory;
 use radiate_extensions::architects::nodes::node_gene::NodeGene;
 use radiate_extensions::operations::op;
-use radiate_extensions::operations::ops::Ops;
+use radiate_extensions::operations::op::Ops;
 
 
 fn main() {
@@ -16,18 +16,16 @@ fn main() {
             op::var(0),
             op::var(1),
         ])
+        .weights(vec![op::weight()])
         .outputs(vec![
-            op::add(),
-            op::sub(),
+            op::add()
         ]);
 
-    // let architect = Architect::<Graph<NodeGene<i32>, i32>, NodeGene<i32>, i32>::new(factory);
     let architect = Architect::<Graph<NodeGene<Ops<f32>>, Ops<f32>>, NodeGene<Ops<f32>>, Ops<f32>>::new(factory);
-
 
     let graph = architect
         .build(|arc, builder| builder
-            .one_to_one(&arc.input(2), &arc.output(2))
+            .all_to_all(&arc.input(2), &arc.output(2))
             .build());
 
     let nodes = graph.get_nodes();
