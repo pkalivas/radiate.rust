@@ -3,10 +3,9 @@ use std::collections::BTreeMap;
 use crate::architects::node_collections::node_collection::NodeCollection;
 use crate::architects::schema::node_types::NodeType;
 use crate::architects::nodes::node::Node;
+use crate::architects::node_factory::NodeFactory;
 
 use uuid::Uuid;
-
-use super::node_factory::NodeFactory;
 
 
 pub enum ConnectTypes {
@@ -111,19 +110,15 @@ where
 
     fn attach(&mut self, connection: ConnectTypes, one: &'a C, two: &'a C) {
         for node in one.get_nodes() {
-            if self.nodes.contains_key(node.id()) {
-                continue;
+            if !self.nodes.contains_key(node.id()) {
+                self.nodes.insert(node.id(), node);
             }
-
-            self.nodes.insert(node.id(), node);
         }
 
         for node in two.get_nodes() {
-            if self.nodes.contains_key(node.id()) {
-                continue;
+            if !self.nodes.contains_key(node.id()) {
+                self.nodes.insert(node.id(), node);
             }
-            
-            self.nodes.insert(node.id(), node);
         }
         
         match connection {
