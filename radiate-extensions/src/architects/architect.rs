@@ -35,8 +35,7 @@ where
     where
         F: FnOnce(&Architect<C, N, T>, NodeCollectionBuilder<C, N, T>) -> C
     {
-        let builder = NodeCollectionBuilder::new(&self.node_factory);
-        build_fn(self, builder)
+        build_fn(self, NodeCollectionBuilder::new(&self.node_factory))
     }
 
     pub fn input(&self, siez: usize) -> C {
