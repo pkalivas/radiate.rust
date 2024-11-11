@@ -18,7 +18,7 @@ where
 
 impl<T> GraphReducer<T>
 where
-    T: Clone + PartialEq + Default + std::fmt::Debug
+    T: Clone + PartialEq + Default
 {
     pub fn new(graph: Graph<T>) -> GraphReducer<T> {
         let tracers = graph

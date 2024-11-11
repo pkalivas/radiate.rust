@@ -1,5 +1,3 @@
-use std::fmt::Debug;
-
 use crate::{architects::schema::node_types::NodeType, operations::op::Ops};
 
 use super::node::Node;
@@ -18,7 +16,7 @@ where
 
 impl<T> Tracer<T> 
 where
-    T: Clone + PartialEq + Debug
+    T: Clone + PartialEq
 {
     pub fn new(input_size: usize) -> Self {
         Tracer {
@@ -66,8 +64,6 @@ where
                 }
             },
         }
-
-        println!("Tracer: {:?}", self);
 
         self.pending_idx = 0;
         self.args.clear();
