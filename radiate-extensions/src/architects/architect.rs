@@ -13,7 +13,7 @@ where
     C: NodeCollection<C, T> + Clone + Default,
     T: Clone + PartialEq + Default
 {
-    pub node_factory: Arc<dyn NodeFactory<T>>,
+    pub node_factory: NodeFactory<T>,
     _phantom: std::marker::PhantomData<C>,
 }
 
@@ -22,7 +22,7 @@ where
     C: NodeCollection<C, T> + Clone + Default,
     T: Clone + PartialEq + Default
 {
-    pub fn new(node_factory: Arc<dyn NodeFactory<T>>) -> Architect<C, T> {
+    pub fn new(node_factory: NodeFactory<T>) -> Architect<C, T> {
         Architect {
             node_factory,
             _phantom: std::marker::PhantomData

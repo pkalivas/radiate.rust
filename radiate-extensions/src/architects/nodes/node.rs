@@ -4,7 +4,7 @@ use radiate_rust::engines::genome::genes::gene::{Gene, Valid};
 
 use crate::architects::{factories::node_factory::NodeFactory, schema::{direction::Direction, node_types::NodeType}};
 
-pub struct Node<T>
+pub struct Node<'a, T>
 where
     T: Clone + PartialEq
 {
@@ -19,7 +19,7 @@ where
     pub outgoing: HashSet<usize>
 }
 
-impl<T> Node<T> 
+impl<'a, T> Node<'a, T> 
 where
     T: Clone + PartialEq 
 {

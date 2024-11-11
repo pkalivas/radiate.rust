@@ -7,8 +7,8 @@ where
     T: Clone
 {
     Fn(&'static str, u8, Arc<dyn Fn(&[T]) -> T>),
-    Math(&'static str, u8, Arc<dyn Fn(&[T]) -> T>),
     Var(String, usize),
+    Value(T),
     Const(&'static str, T),
     MutableConst(&'static str, u8, T, Arc<dyn Fn() -> T>, Arc<dyn Fn(&[T], &T) -> T>),
 }
@@ -20,8 +20,8 @@ where
     pub fn name(&self) -> &str {
         match self {
             Ops::Fn(name, _, _) => name,
-            Ops::Math(name, _, _) => name,
             Ops::Var(name, _) => name,
+            Ops::Value(_) => "value",
             Ops::Const(name, _) => name,
             Ops::MutableConst(name, _, _, _, _) => name,
         }
@@ -30,8 +30,8 @@ where
     pub fn arity(&self) -> u8 {
         match self {
             Ops::Fn(_, arity, _) => *arity,
-            Ops::Math(_, arity, _) => *arity,
             Ops::Var(_, _) => 0,
+            Ops::Value(_) => 0,
             Ops::Const(_, _) => 0,
             Ops::MutableConst(_, arity, _, _, _) => *arity,
         }
@@ -40,8 +40,8 @@ where
     pub fn apply(&self, inputs: &[T]) -> T {
         match self {
             Ops::Fn(_, _, op) => op(inputs),
-            Ops::Math(_, _, op) => op(inputs),
             Ops::Var(_, index) => inputs[*index].clone(),
+            Ops::Value(value) => value.clone(),
             Ops::Const(_, value) => value.clone(),
             Ops::MutableConst(_, _, value, _, operation) => operation(inputs, value),
         }
@@ -50,8 +50,8 @@ where
     pub fn new_instance(&self) -> Ops<T> {
         match self {
             Ops::Fn(name, arity, op) => Ops::Fn(name, *arity, op.clone()),
-            Ops::Math(name, arity, op) => Ops::Math(name, *arity, op.clone()),
             Ops::Var(name, index) => Ops::Var(name.clone(), *index),
+            Ops::Value(value) => Ops::Value(value.clone()),
             Ops::Const(name, value) => Ops::Const(name, value.clone()),
             Ops::MutableConst(name, arity, _, get_value, operation) => Ops::MutableConst(name, *arity, get_value(), get_value.clone(), operation.clone()),
         }
@@ -65,8 +65,8 @@ where
     fn clone(&self) -> Self {
         match self {
             Ops::Fn(name, arity, op) => Ops::Fn(name, *arity, op.clone()),
-            Ops::Math(name, arity, op) => Ops::Math(name, *arity, op.clone()),
             Ops::Var(name, index) => Ops::Var(name.clone(), *index),
+            Ops::Value(value) => Ops::Value(value.clone()),
             Ops::Const(name, value) => Ops::Const(name, value.clone()),
             Ops::MutableConst(name, arity, value, get_value, operation) => Ops::MutableConst(name, *arity, value.clone(), get_value.clone(), operation.clone()),
         }
@@ -107,8 +107,8 @@ where
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Ops::Fn(name, arity, _) => write!(f, "Fn: {}({})", name, arity),
-            Ops::Math(name, arity, _) => write!(f, "Math: {}({})", name, arity),
             Ops::Var(name, index) => write!(f, "Var: {}({})", name, index),
+            Ops::Value(value) => write!(f, "Value: {:?}", value),
             Ops::Const(name, value) => write!(f, "Const: {}({:?})", name, value),
             Ops::MutableConst(name, arity, value, _, _) => write!(f, "MutConst: {}({})({:.2?})", name, arity, value),
         }
@@ -118,39 +118,39 @@ where
 
 
 pub fn add<T: Add<Output = T> + Clone>() -> Ops<T> {
-    Ops::Math("+", 2, Arc::new(|inputs: &[T]| inputs[0].clone() + inputs[1].clone()))
+    Ops::Fn("+", 2, Arc::new(|inputs: &[T]| inputs[0].clone() + inputs[1].clone()))
 }
 
 pub fn sub<T: Sub<Output = T> + Clone>() -> Ops<T> {
-    Ops::Math("-", 2, Arc::new(|inputs: &[T]| inputs[0].clone() - inputs[1].clone()))
+    Ops::Fn("-", 2, Arc::new(|inputs: &[T]| inputs[0].clone() - inputs[1].clone()))
 }
 
 pub fn mul<T: Mul<Output = T> + Clone>() -> Ops<T> {
-    Ops::Math("*", 2, Arc::new(|inputs: &[T]| inputs[0].clone() * inputs[1].clone()))
+    Ops::Fn("*", 2, Arc::new(|inputs: &[T]| inputs[0].clone() * inputs[1].clone()))
 }
 
 pub fn div<T: Div<Output = T> + Clone>() -> Ops<T> {
-    Ops::Math("/", 2, Arc::new(|inputs: &[T]| inputs[0].clone() / inputs[1].clone()))
+    Ops::Fn("/", 2, Arc::new(|inputs: &[T]| inputs[0].clone() / inputs[1].clone()))
 }
 
 pub fn sum<T: Add<Output = T> + Clone + Default>() -> Ops<T> {
-    Ops::Math("sum", 2, Arc::new(|inputs: &[T]| inputs
+    Ops::Fn("sum", 2, Arc::new(|inputs: &[T]| inputs
         .iter()
         .fold(T::default(), |acc, x| acc + x.clone())))
 }
 
 pub fn prod<T: Mul<Output = T> + Clone + Default>() -> Ops<T> {
-    Ops::Math("prod", 2, Arc::new(|inputs: &[T]| inputs
+    Ops::Fn("prod", 2, Arc::new(|inputs: &[T]| inputs
         .iter()
         .fold(T::default(), |acc, x| acc * x.clone())))
 }
 
 pub fn neg<T: Neg<Output = T> + Clone + Default>() -> Ops<T> {
-    Ops::Math("neg", 1, Arc::new(|inputs: &[T]| -inputs[0].clone()))
+    Ops::Fn("neg", 1, Arc::new(|inputs: &[T]| -inputs[0].clone()))
 }
 
 pub fn pow<T: Mul<Output = T> + Clone>() -> Ops<T> {
-    Ops::Math("pow", 2, Arc::new(|inputs: &[T]| inputs[0].clone() * inputs[1].clone()))
+    Ops::Fn("pow", 2, Arc::new(|inputs: &[T]| inputs[0].clone() * inputs[1].clone()))
 }
 
 pub fn weight<T: Sub<Output = T> + Mul<Output = T> + Copy + Default>() -> Ops<T>
