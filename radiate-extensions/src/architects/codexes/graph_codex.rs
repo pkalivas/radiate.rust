@@ -5,6 +5,7 @@ use radiate_rust::engines::genome::chromosome::Chromosome;
 use radiate_rust::engines::codexes::Codex;
 
 use crate::architects::factories::node_factory::NodeFactory;
+use crate::architects::node_collection_builder::NodeCollectionBuilder;
 use crate::architects::node_collections::graph::Graph;
 use crate::architects::node_collections::node_collection::NodeCollection;
 use crate::architects::nodes::node::Node;
@@ -38,6 +39,21 @@ where
                 .map(|node| node.clone())
                 .collect::<Vec<Node<T>>>()
         }
+    }
+
+    pub fn set_nodes<F>(mut self, node_fn: F) -> Self
+    where
+        F: Fn(&Architect<Graph<T>, T>, NodeCollectionBuilder<Graph<T>, T>) -> Graph<T>
+    {
+        let temp_factory = self.factory.clone();
+        let graph = Architect::<Graph<T>, T>::new(temp_factory)
+            .build(|arc, builder| node_fn(arc, builder));
+
+        self.nodes = graph
+            .iter()
+            .map(|node| node.clone())
+            .collect::<Vec<Node<T>>>();
+        self
     }
 }
 
