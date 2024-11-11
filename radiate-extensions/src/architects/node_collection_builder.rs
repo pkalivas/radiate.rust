@@ -1,5 +1,4 @@
 use std::collections::BTreeMap;
-use std::sync::Arc;
 
 use crate::architects::node_collections::node_collection::NodeCollection;
 use crate::architects::schema::node_types::NodeType;
@@ -28,7 +27,7 @@ where
     C: NodeCollection<C, T> + Clone + Default,
     T: Clone + PartialEq + Default
 {
-    pub factory: Arc<dyn NodeFactory<T>>,
+    pub factory: &'a NodeFactory<T>,
     pub nodes: BTreeMap<&'a Uuid, &'a Node<T>>,
     pub relationships: Vec<NodeRelationship<'a>>,
     pub node_order: BTreeMap<usize, &'a Uuid>,
@@ -42,7 +41,7 @@ where
     C: NodeCollection<C, T> + Clone + Default,
     T: Clone + PartialEq + Default
 {
-    pub fn new(factory: Arc<dyn NodeFactory<T>>) -> NodeCollectionBuilder<'a, C, T> {
+    pub fn new(factory: &'a NodeFactory<T>) -> NodeCollectionBuilder<'a, C, T> {
         NodeCollectionBuilder {
             factory,
             nodes: BTreeMap::new(),

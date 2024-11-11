@@ -1,6 +1,4 @@
 
-use std::sync::Arc;
-
 use crate::architects::nodes::node::Node;
 use crate::architects::node_collections::node_collection::NodeCollection;
 use crate::architects::node_collection_builder::NodeCollectionBuilder;
@@ -8,21 +6,21 @@ use crate::architects::schema::node_types::NodeType;
 use crate::architects::factories::node_factory::NodeFactory;
 
 
-pub struct Architect<C, T>
+pub struct Architect<'a, C, T>
 where
     C: NodeCollection<C, T> + Clone + Default,
     T: Clone + PartialEq + Default
 {
-    pub node_factory: Arc<dyn NodeFactory<T>>,
+    pub node_factory: &'a NodeFactory<T>,
     _phantom: std::marker::PhantomData<C>,
 }
 
-impl<C, T> Architect<C, T>
+impl<'a, C, T> Architect<'a, C, T>
 where
     C: NodeCollection<C, T> + Clone + Default,
     T: Clone + PartialEq + Default
 {
-    pub fn new(node_factory: Arc<dyn NodeFactory<T>>) -> Architect<C, T> {
+    pub fn new(node_factory: &'a NodeFactory<T>) -> Architect<C, T> {
         Architect {
             node_factory,
             _phantom: std::marker::PhantomData
@@ -33,8 +31,7 @@ where
     where
         F: FnOnce(&Architect<C, T>, NodeCollectionBuilder<C, T>) -> C
     {
-        let temp_factory = self.node_factory.clone();
-        build_fn(self, NodeCollectionBuilder::new(temp_factory))
+        build_fn(self, NodeCollectionBuilder::new(&self.node_factory))
     }
 
     pub fn acyclic(&self, input_size: usize, output_size: usize) -> C {
