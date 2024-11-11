@@ -31,6 +31,7 @@ where
     pub factory: Arc<dyn NodeFactory<T>>,
     pub nodes: BTreeMap<&'a Uuid, &'a Node<T>>,
     pub relationships: Vec<NodeRelationship<'a>>,
+    pub node_order: BTreeMap<usize, &'a Uuid>,
     _phantom_c: std::marker::PhantomData<C>,
     _phantom_t: std::marker::PhantomData<T>
 }
@@ -46,6 +47,7 @@ where
             factory,
             nodes: BTreeMap::new(),
             relationships: Vec::new(),
+            node_order: BTreeMap::new(),
             _phantom_c: std::marker::PhantomData,
             _phantom_t: std::marker::PhantomData
         }
@@ -84,16 +86,14 @@ where
     pub fn build(self) -> C {
         let mut new_nodes = Vec::new();
         let mut node_id_index_map = BTreeMap::new();
-        let mut idx = 0;
 
-        for (id, node) in self.nodes.iter() {
-            let new_node = Node::new(idx, *node.node_type(), node.value().clone())
+        for (idx, node_id) in self.node_order.iter() {
+            let node = self.nodes.get(node_id).unwrap();
+            let new_node = Node::new(*idx, *node.node_type(), node.value().clone())
                 .set_factory(self.factory.clone());
 
             new_nodes.push(new_node);
-            node_id_index_map.insert(id, idx);
-
-            idx += 1;
+            node_id_index_map.insert(node_id, *idx);
         }
 
         let mut new_collection = C::from_nodes(new_nodes);
@@ -115,7 +115,10 @@ where
     fn attach(&mut self, connection: ConnectTypes, one: &'a C, two: &'a C) {
         for node in one.iter().chain(two.iter()) {
             if !self.nodes.contains_key(node.id()) {
-                self.nodes.insert(node.id(), node);
+                let node_id = node.id();
+
+                self.nodes.insert(&node_id, node);
+                self.node_order.insert(self.node_order.len(), &node_id);
             }
         }
 
