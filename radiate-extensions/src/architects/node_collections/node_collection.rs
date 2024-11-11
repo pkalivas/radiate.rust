@@ -16,17 +16,17 @@ where
     fn get(&self, index: usize) -> Option<&Node<T>>;    
     fn get_mut(&mut self, index: usize) -> Option<&mut Node<T>>;
 
+    fn set(&mut self, index: usize, node: Node<T>) -> &mut Self {
+        self.get_nodes_mut()[index] = node;
+        self
+    }
+
     fn iter(&self) -> std::slice::Iter<Node<T>> {
         self.get_nodes().iter()
     }
 
     fn iter_mut(&mut self) -> std::slice::IterMut<Node<T>> {
         self.get_nodes_mut().iter_mut()
-    }
-
-    fn set(&mut self, index: usize, node: Node<T>) -> &mut Self {
-        self.get_nodes_mut()[index] = node;
-        self
     }
     
     fn len(&self) -> usize {
