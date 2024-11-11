@@ -245,11 +245,12 @@ where
     T: Clone + PartialEq + std::fmt::Debug
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Node {{ id: {}, index: {}, dir: {:>10?}, node_type: {:>10?}, value: {:>50?}, incoming: {:?}, outgoing: {:?} }}", 
+        write!(f, "Node {{ id: {}, index: {}, dir: {:>10?}, node_type: {:>10?}, arity: {:?}, value: {:>50?}, incoming: {:?}, outgoing: {:?} }}", 
             self.id,
             self.index,
             self.direction,
-            self.node_type, 
+            self.node_type,
+            self.arity, 
             self.value, 
             self.incoming, 
             self.outgoing)

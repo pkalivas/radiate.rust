@@ -13,6 +13,11 @@ where
     fn get_nodes(&self) -> &[Node<T>];
     
     fn get_node(&self, index: usize) -> Option<&Node<T>>;
+
+    fn set_node(&mut self, index: usize, node: Node<T>) -> &mut Self {
+        self.get_nodes_mut()[index] = node;
+        self
+    }
     
     fn get_node_mut(&mut self, index: usize) -> Option<&mut Node<T>>;
 

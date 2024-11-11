@@ -8,7 +8,7 @@ use crate::architects::factories::node_factory::NodeFactory;
 
 use uuid::Uuid;
 
-use super::factories::node_factory;
+use super::node_repairer;
 
 
 pub enum ConnectTypes {
@@ -107,12 +107,12 @@ where
             new_collection.attach(*source_idx, *target_idx);
         }
 
-        new_collection
+        node_repairer::arity_node_repairer(&mut new_collection
             .set_cycles(new_collection.get_nodes()
                 .iter()
                 .map(|node| *node.index())
                 .collect::<Vec<usize>>())
-            .reindex(0)
+            .reindex(0))
     }
 
     fn attach(&mut self, connection: ConnectTypes, one: &'a C, two: &'a C) {
