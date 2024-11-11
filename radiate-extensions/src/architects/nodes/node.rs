@@ -4,14 +4,17 @@ use radiate_rust::engines::genome::genes::gene::{Gene, Valid};
 
 use crate::{architects::schema::{direction::Direction, node_types::NodeType}, operations::op::Ops};
 
+use super::tracer::Tracer;
+
 pub struct Node<T>
 where
     T: Clone + PartialEq
 {
     pub id: Uuid,
     pub index: usize,
-    pub arity: Option<u8>,
     pub value: Ops<T>,
+    pub arity: Option<u8>,
+    pub tracer: Option<Tracer<T>>,
     pub node_type: NodeType,
     pub direction: Direction,
     pub incoming: HashSet<usize>,
@@ -26,8 +29,9 @@ where
         Node {
             id: Uuid::new_v4(),
             index,
-            arity: None,
             value,
+            arity: None,
+            tracer: None,
             direction: Direction::Forward,
             node_type,
             incoming: HashSet::new(),
@@ -96,7 +100,8 @@ where
             id: Uuid::new_v4(),
             index: self.index,
             arity: self.arity.clone(),
-            value: self.value.clone(),
+            tracer: self.tracer.clone(),
+            value: self.value.new_instance(),
             direction: self.direction.clone(),
             node_type: self.node_type.clone(),
             incoming: self.incoming.clone(),
@@ -109,6 +114,7 @@ where
             id: Uuid::new_v4(),
             index: self.index,
             arity: self.arity.clone(),
+            tracer: self.tracer.clone(),
             value: allele.clone(),
             direction: self.direction.clone(),
             node_type: self.node_type.clone(),
@@ -145,6 +151,7 @@ where
             id: self.id.clone(),
             index: self.index.clone(),
             arity: self.arity.clone(),
+            tracer: self.tracer.clone(),
             value: self.value.clone(),
             direction: self.direction.clone(),
             node_type: self.node_type.clone(),
@@ -181,6 +188,7 @@ where
             id: Uuid::new_v4(),
             index: 0,
             arity: None,
+            tracer: None,
             value: Ops::default(),
             direction: Direction::Forward,
             node_type: NodeType::Input,
