@@ -1,8 +1,8 @@
-use std::collections::HashSet;
+use std::{collections::HashSet, sync::Arc};
 use uuid::Uuid;
 use radiate_rust::engines::genome::genes::gene::{Gene, Valid};
 
-use crate::architects::schema::{direction::Direction, node_types::NodeType};
+use crate::architects::{factories::node_factory::NodeFactory, schema::{direction::Direction, node_types::NodeType}};
 
 pub struct Node<T>
 where
@@ -10,9 +10,11 @@ where
 {
     pub id: Uuid,
     pub index: usize,
+    pub arity: Option<u8>,
     pub value: T,
     pub node_type: NodeType,
     pub direction: Direction,
+    pub factory: Option<Arc<dyn NodeFactory<T>>>,
     pub incoming: HashSet<usize>,
     pub outgoing: HashSet<usize>
 }
@@ -25,9 +27,11 @@ where
         Node {
             id: Uuid::new_v4(),
             index,
+            arity: None,
             value,
             direction: Direction::Forward,
             node_type,
+            factory: None,
             incoming: HashSet::new(),
             outgoing: HashSet::new()
         }
@@ -39,6 +43,10 @@ where
 
     pub fn index(&self) -> &usize {
         &self.index
+    }
+
+    pub fn arity(&self) -> &Option<u8> {
+        &self.arity
     }
 
     pub fn node_type(&self) -> &NodeType {
@@ -70,23 +78,57 @@ where
     pub fn outgoing_mut(&mut self) -> &mut HashSet<usize> {
         &mut self.outgoing
     }
+
+    pub fn set_arity(mut self, arity: u8) -> Self {
+        self.arity = Some(arity);
+        self
+    }
+
+    pub fn set_factory(mut self, factory: Arc<dyn NodeFactory<T>>) -> Self {
+        self.factory = Some(factory);
+        self
+    }
 }
 
 impl<T> Gene<Node<T>, T> for Node<T>
 where
-    T: Clone + PartialEq
+    T: Clone + PartialEq + Default
 {
     fn allele(&self) -> &T {
         &self.value
     }
 
     fn new_instance(&self) -> Node<T> {
+        if let Some(factory) = &self.factory {
+            let temp_node = factory.new_node(self.index, self.node_type.clone());
+            // TODO: This is a hack to get around the fact that the factory is not being cloned - need to fix this the arity could be off
+            return Node {
+                id: Uuid::new_v4(),
+                index: self.index,
+                arity: self.arity.clone(),
+                value: temp_node.value.clone(),
+                direction: self.direction.clone(),
+                node_type: self.node_type.clone(),
+                factory: match &self.factory {
+                    Some(f) => Some(f.clone()),
+                    None => None
+                },
+                incoming: self.incoming.clone(),
+                outgoing: self.outgoing.clone()
+            }
+        }
+
         Node {
             id: Uuid::new_v4(),
             index: self.index,
+            arity: self.arity.clone(),
             value: self.value.clone(),
             direction: self.direction.clone(),
             node_type: self.node_type.clone(),
+            factory: match &self.factory {
+                Some(f) => Some(f.clone()),
+                None => None
+            },
             incoming: self.incoming.clone(),
             outgoing: self.outgoing.clone()
         }
@@ -96,9 +138,14 @@ where
         Node {
             id: Uuid::new_v4(),
             index: self.index,
+            arity: self.arity.clone(),
             value: allele.clone(),
             direction: self.direction.clone(),
             node_type: self.node_type.clone(),
+            factory: match &self.factory {
+                Some(f) => Some(f.clone()),
+                None => None
+            },
             incoming: self.incoming.clone(),
             outgoing: self.outgoing.clone()
         }
@@ -131,9 +178,14 @@ where
         Node {
             id: self.id.clone(),
             index: self.index.clone(),
+            arity: self.arity.clone(),
             value: self.value.clone(),
             direction: self.direction.clone(),
             node_type: self.node_type.clone(),
+            factory: match &self.factory {
+                Some(f) => Some(f.clone()),
+                None => None
+            },
             incoming: self.incoming.clone(),
             outgoing: self.outgoing.clone()
         }
@@ -147,8 +199,9 @@ where
 {
     fn eq(&self, other: &Self) -> bool {
         self.id == other.id 
-            && self.index == other.index 
-            && self.value == other.value 
+            && self.index == other.index
+            && self.arity == other.arity
+            && self.value == other.value
             && self.direction == other.direction
             && self.node_type == other.node_type 
             && self.incoming == other.incoming 
@@ -165,9 +218,11 @@ where
         Node {
             id: Uuid::new_v4(),
             index: 0,
+            arity: None,
             value: T::default(),
             direction: Direction::Forward,
             node_type: NodeType::Input,
+            factory: None,
             incoming: HashSet::new(),
             outgoing: HashSet::new()
         }
@@ -190,11 +245,12 @@ where
     T: Clone + PartialEq + std::fmt::Debug
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Node {{ id: {}, index: {}, dir: {:>10?}, node_type: {:>10?}, value: {:>50?}, incoming: {:?}, outgoing: {:?} }}", 
+        write!(f, "Node {{ id: {}, index: {}, dir: {:>10?}, node_type: {:>10?}, arity: {:?}, value: {:>50?}, incoming: {:?}, outgoing: {:?} }}", 
             self.id,
             self.index,
             self.direction,
-            self.node_type, 
+            self.node_type,
+            self.arity, 
             self.value, 
             self.incoming, 
             self.outgoing)

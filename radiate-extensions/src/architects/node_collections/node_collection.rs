@@ -18,6 +18,11 @@ where
 
     fn get_nodes_mut(&mut self) -> &mut [Node<T>];
 
+    fn set_node(&mut self, index: usize, node: Node<T>) -> &mut Self {
+        self.get_nodes_mut()[index] = node;
+        self
+    }
+    
     fn len(&self) -> usize {
         self.get_nodes().len()
     }

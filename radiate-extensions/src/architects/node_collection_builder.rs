@@ -1,4 +1,5 @@
 use std::collections::BTreeMap;
+use std::sync::Arc;
 
 use crate::architects::node_collections::node_collection::NodeCollection;
 use crate::architects::schema::node_types::NodeType;
@@ -27,7 +28,7 @@ where
     C: NodeCollection<C, T> + Clone + Default,
     T: Clone + PartialEq + Default
 {
-    pub factory: &'a dyn NodeFactory<T>,
+    pub factory: Arc<dyn NodeFactory<T>>,
     pub nodes: BTreeMap<&'a Uuid, &'a Node<T>>,
     pub relationships: Vec<NodeRelationship<'a>>,
     _phantom_c: std::marker::PhantomData<C>,
@@ -40,7 +41,7 @@ where
     C: NodeCollection<C, T> + Clone + Default,
     T: Clone + PartialEq + Default
 {
-    pub fn new(factory: &'a dyn NodeFactory<T>) -> NodeCollectionBuilder<'a, C, T> {
+    pub fn new(factory: Arc<dyn NodeFactory<T>>) -> NodeCollectionBuilder<'a, C, T> {
         NodeCollectionBuilder {
             factory,
             nodes: BTreeMap::new(),
@@ -86,7 +87,8 @@ where
         let mut idx = 0;
 
         for (id, node) in self.nodes.iter() {
-            let new_node = Node::new(idx, *node.node_type(), node.value().clone());
+            let new_node = Node::new(idx, *node.node_type(), node.value().clone())
+                .set_factory(self.factory.clone());
 
             new_nodes.push(new_node);
             node_id_index_map.insert(id, idx);
@@ -103,12 +105,12 @@ where
             new_collection.attach(*source_idx, *target_idx);
         }
 
-        new_collection
+        NodeCollectionBuilder::<C, T>::repair(&mut new_collection
             .set_cycles(new_collection.get_nodes()
                 .iter()
                 .map(|node| *node.index())
                 .collect::<Vec<usize>>())
-            .reindex(0)
+            .reindex(0))
     }
 
     fn attach(&mut self, connection: ConnectTypes, one: &'a C, two: &'a C) {
@@ -302,5 +304,14 @@ where
             .filter(|(_, node)| node.outgoing().len() == 0)
             .map(|(idx, _)| collection.get_node(idx).unwrap())
             .collect::<Vec<&Node<T>>>()
+    }
+
+    fn repair(collection: &mut C) -> C {
+        for node in collection.get_nodes_mut() {
+            let arity = node.incoming().len();
+            (*node).arity = Some(arity as u8);
+        }
+
+        collection.clone()
     }
 }
