@@ -31,6 +31,7 @@ fn main() {
 
     let result = engine.run(|output| {
         println!("[ {:?} ]: {:?}", output.index, output.best);
+        
         output.score().as_usize() == target.len()
     });
 
