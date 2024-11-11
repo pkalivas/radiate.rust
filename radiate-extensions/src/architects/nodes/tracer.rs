@@ -1,4 +1,4 @@
-use crate::{architects::schema::node_types::NodeType, operations::op::Ops};
+use crate::operations::op::Ops;
 
 use super::node::Node;
 
@@ -42,28 +42,14 @@ where
             panic!("Tracer is not ready to be evaluated.");
         }
 
-        match node.node_type {
-            NodeType::Input => {
-                self.previous_result = self.result.clone();
-                self.result = match &node.value {
-                    Ops::Value(ref value) => Some(value.clone()),
-                    Ops::Const(_, ref value) => Some(value.clone()),
-                    Ops::Fn(_, _, ref fn_ptr) => Some(fn_ptr(&self.args)),
-                    Ops::MutableConst(_, _, ref val, _, fn_ptr) => Some(fn_ptr(&self.args, val)),
-                    Ops::Var(_, _) => Some(self.args[0].clone()),
-                }
-            },
-            NodeType::Gate | NodeType::Output | NodeType::Weight | NodeType::Link | NodeType::Aggregate => {
-                self.previous_result = self.result.clone();
-                self.result = match &node.value {
-                    Ops::Value(ref value) => Some(value.clone()),
-                    Ops::Const(_, ref value) => Some(value.clone()),
-                    Ops::Fn(_, _, ref fn_ptr) => Some(fn_ptr(&self.args)),
-                    Ops::MutableConst(_, _, ref val, _, fn_ptr) => Some(fn_ptr(&self.args, val)),
-                    Ops::Var(_, idx) => Some(self.args[*idx].clone()),
-                }
-            },
-        }
+        self.previous_result = self.result.clone();
+        self.result = match &node.value {
+            Ops::Value(ref value) => Some(value.clone()),
+            Ops::Const(_, ref value) => Some(value.clone()),
+            Ops::Fn(_, _, ref fn_ptr) => Some(fn_ptr(&self.args)),
+            Ops::MutableConst(_, _, ref val, _, fn_ptr) => Some(fn_ptr(&self.args, val)),
+            Ops::Var(_, _) => Some(self.args[0].clone()),
+        };
 
         self.pending_idx = 0;
         self.args.clear();

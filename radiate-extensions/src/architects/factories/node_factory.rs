@@ -5,13 +5,6 @@ use rand::seq::SliceRandom;
 use crate::{architects::{nodes::node::Node, schema::node_types::NodeType}, operations::op::{self, Ops}};
 
 
-// pub trait NodeFactory<T> {
-//     fn new_node(&self, index: usize, node_type: NodeType) -> Node<T> 
-//     where
-//         T: Clone + PartialEq + Default;
-// }
-
-
 pub struct NodeFactory<T> 
 where
     T: Clone + PartialEq + Default
@@ -120,11 +113,11 @@ where
             ])
             .aggregates(vec![
                 op::sigmoid(),
-                // op::tanh(),
-                // op::relu(),
-                // op::linear(),
-                // op::sum(),
-                // op::prod(),
+                op::tanh(),
+                op::relu(),
+                op::linear(),
+                op::sum(),
+                op::prod(),
             ])
             .weights(vec![op::weight()])
             .outputs(vec![op::linear()])
