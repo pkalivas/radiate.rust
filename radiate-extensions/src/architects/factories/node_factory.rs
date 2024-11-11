@@ -120,11 +120,11 @@ where
             ])
             .aggregates(vec![
                 op::sigmoid(),
-                op::tanh(),
-                op::relu(),
-                op::linear(),
-                op::sum(),
-                op::prod(),
+                // op::tanh(),
+                // op::relu(),
+                // op::linear(),
+                // op::sum(),
+                // op::prod(),
             ])
             .weights(vec![op::weight()])
             .outputs(vec![op::linear()])

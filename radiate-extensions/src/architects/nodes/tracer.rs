@@ -1,3 +1,9 @@
+use std::fmt::Debug;
+
+use crate::{architects::schema::node_types::NodeType, operations::op::Ops};
+
+use super::node::Node;
+
 
 pub struct Tracer<T>
 where
@@ -12,7 +18,7 @@ where
 
 impl<T> Tracer<T> 
 where
-    T: Clone
+    T: Clone + PartialEq + Debug
 {
     pub fn new(input_size: usize) -> Self {
         Tracer {
@@ -22,6 +28,49 @@ where
             result: None,
             previous_result: None,
         }
+    }
+
+    pub fn add_input(&mut self, value: T) {
+        if self.pending_idx == self.input_size {
+            panic!("Tracer is not ready to accept more inputs.");
+        }
+
+        self.args.push(value);
+        self.pending_idx += 1;
+    }
+
+    pub fn activate(&mut self, node: &Node<T>) {
+        if self.pending_idx != self.input_size {
+            panic!("Tracer is not ready to be evaluated.");
+        }
+
+        match node.node_type {
+            NodeType::Input => {
+                self.previous_result = self.result.clone();
+                self.result = match &node.value {
+                    Ops::Value(ref value) => Some(value.clone()),
+                    Ops::Const(_, ref value) => Some(value.clone()),
+                    Ops::Fn(_, _, ref fn_ptr) => Some(fn_ptr(&self.args)),
+                    Ops::MutableConst(_, _, ref val, _, fn_ptr) => Some(fn_ptr(&self.args, val)),
+                    Ops::Var(_, _) => Some(self.args[0].clone()),
+                }
+            },
+            NodeType::Gate | NodeType::Output | NodeType::Weight | NodeType::Link | NodeType::Aggregate => {
+                self.previous_result = self.result.clone();
+                self.result = match &node.value {
+                    Ops::Value(ref value) => Some(value.clone()),
+                    Ops::Const(_, ref value) => Some(value.clone()),
+                    Ops::Fn(_, _, ref fn_ptr) => Some(fn_ptr(&self.args)),
+                    Ops::MutableConst(_, _, ref val, _, fn_ptr) => Some(fn_ptr(&self.args, val)),
+                    Ops::Var(_, idx) => Some(self.args[*idx].clone()),
+                }
+            },
+        }
+
+        println!("Tracer: {:?}", self);
+
+        self.pending_idx = 0;
+        self.args.clear();
     }
 }
 
@@ -37,5 +86,14 @@ where
             result: self.result.clone(),
             previous_result: self.previous_result.clone(),
         }
+    }
+}
+
+impl<T> std::fmt::Debug for Tracer<T>
+where
+    T: Clone + std::fmt::Debug
+{
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Tracer: {{ in_size: {:?}, pending_idx: {:?},  args: {:?}, result: {:?} }}", self.input_size, self.pending_idx, self.args, self.result)
     }
 }

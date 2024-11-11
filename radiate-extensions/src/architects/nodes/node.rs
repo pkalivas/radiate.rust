@@ -56,9 +56,10 @@ where
     }
 
     pub fn is_recurrent(&self) -> bool {
+        self.direction == Direction::Backward 
+            ||
         self.incoming.contains(&self.index) 
-            || self.outgoing.contains(&self.index) 
-            || self.direction == Direction::Backward
+            || self.outgoing.contains(&self.index)
     }
 
     pub fn incoming(&self) -> &HashSet<usize> {
@@ -80,6 +81,15 @@ where
     pub fn set_arity(mut self, arity: u8) -> Self {
         self.arity = Some(arity);
         self
+    }
+
+    pub fn input_size(&self) -> usize {
+        match self.node_type {
+            NodeType::Input | NodeType::Link => 1,
+            NodeType::Gate => self.value.arity() as usize,
+            NodeType::Aggregate => if self.outgoing.len() > 0 { self.outgoing.len() } else { self.incoming.len() },
+            _ => if self.outgoing.len() > 0 { self.outgoing.len() } else { self.incoming.len() }
+        }
     }
 }
 
