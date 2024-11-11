@@ -33,8 +33,8 @@ fn main() {
         ])
         .fitness_fn(move |genotype: &Graph<f32>| {
             let mut reducer = GraphReducer::new(genotype.clone());
-            
             let mut sum = 0.0;
+
             for sample in arc_sample.get_samples().iter() {
                 let output = reducer.reduce(&sample.1);
                 sum += regression.get_loss_function().calculate(&output, &sample.2);

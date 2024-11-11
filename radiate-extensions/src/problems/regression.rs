@@ -1,5 +1,7 @@
 use super::{error_functions::ErrorFunction, sample_set::SampleSet};
-
+use std::ops::{Add, Div, Mul, Sub, AddAssign, DivAssign, SubAssign};
+use num_traits::cast::FromPrimitive;
+use num_traits::float::Float;
 
 pub struct Regression<T>{
     pub sample_set: SampleSet<T>,
@@ -17,6 +19,30 @@ impl<T> Regression<T> {
             sample_set.add_sample(input, output);
         }
         Regression { sample_set, loss_function }
+    }
+
+    pub fn calculate<F>(&self, calc_func: F) -> T
+    where
+        T: Clone + PartialEq + Default
+            + Add<Output = T>
+            + Div<Output = T>
+            + Sub<Output = T>
+            + Mul<Output = T>
+            + Div<Output = T>
+            + AddAssign
+            + SubAssign
+            + DivAssign
+            + Float
+            + FromPrimitive
+            + DivAssign,
+        F: Fn(&Vec<T>) -> &[T]
+    {
+        let mut sum = T::default();
+        for sample in self.sample_set.get_samples().iter() {
+            let output = calc_func(&sample.1);
+            sum += self.loss_function.calculate(&output, &sample.2);
+        }
+        sum
     }
 
     pub fn get_sample_set(&self) -> &SampleSet<T> {
