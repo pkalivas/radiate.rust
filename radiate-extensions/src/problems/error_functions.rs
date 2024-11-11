@@ -2,14 +2,14 @@ use std::ops::{Add, Div, Mul, Sub, AddAssign, DivAssign, SubAssign};
 use num_traits::cast::FromPrimitive;
 use num_traits::float::Float;
 
-pub enum LossFunction {
+pub enum ErrorFunction {
     MSE,
     MAE,
     CrossEntropy,
     Diff
 }
 
-impl LossFunction {
+impl ErrorFunction {
     pub fn calculate<T>(&self, expected: &[T], actual: &[T]) -> T
     where
         T: Clone + PartialEq + Default
@@ -26,7 +26,7 @@ impl LossFunction {
             + DivAssign
     {
         match self {
-            LossFunction::MSE => {
+            ErrorFunction::MSE => {
                 let mut sum = T::default();
                 for i in 0..expected.len() {
                     let diff = expected[i].clone() - actual[i].clone();
@@ -35,7 +35,7 @@ impl LossFunction {
                 sum /= T::from_usize(expected.len()).unwrap();
                 sum
             }
-            LossFunction::MAE => {
+            ErrorFunction::MAE => {
                 let mut sum = T::default();
                 for i in 0..expected.len() {
                     let diff = expected[i].clone() - actual[i].clone();
@@ -44,14 +44,14 @@ impl LossFunction {
                 sum /= T::from_usize(expected.len()).unwrap();
                 sum
             },
-            LossFunction::CrossEntropy => {
+            ErrorFunction::CrossEntropy => {
                 let mut sum = T::default();
                 for i in 0..expected.len() {
                     sum += expected[i].clone() * actual[i].clone().ln();
                 }
                 sum
             },
-            LossFunction::Diff => {
+            ErrorFunction::Diff => {
                 let mut sum = T::default();
                 for i in 0..expected.len() {
                     sum += (expected[i].clone() - actual[i].clone()).abs();

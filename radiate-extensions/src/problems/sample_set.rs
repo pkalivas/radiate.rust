@@ -14,6 +14,14 @@ impl<T> SampleSet<T> {
         SampleSet { samples }
     }
 
+    pub fn from_vecs(inputs: Vec<Vec<T>>, outputs: Vec<Vec<T>>) -> Self {
+        let mut samples = Vec::new();
+        for (input, output) in inputs.into_iter().zip(outputs.into_iter()) {
+            samples.push(Sample(samples.len(), input, output));
+        }
+        SampleSet { samples }
+    }
+
     pub fn add_sample(&mut self, input: Vec<T>, output: Vec<T>) {
         let index = self.samples.len();
         self.samples.push(Sample(index, input, output));
