@@ -25,6 +25,7 @@ fn main() {
     let regression = Regression::new(sample_set, ErrorFunction::MSE);
 
     let arc_sample = Arc::new(get_sample_set());
+    let cloned_arc_sample = arc_sample.clone();
 
     let engine = GeneticEngine::from_codex(&graph_codex)
         .minimizing()
@@ -44,10 +45,16 @@ fn main() {
         })
         .build();
 
-    let _ = engine.run(|output| {
+    let result = engine.run(|output| {
         println!("[ {:?} ]: {:?}", output.index, output.score().as_float());
         output.index == 100
     });
+
+    let mut reducer = GraphReducer::new(result.best.clone());
+    for sample in cloned_arc_sample.get_samples().iter() {
+        let output = reducer.reduce(&sample.1);
+        println!("{:?} -> {:?}", sample.1, output);
+    }
 }
 
 pub fn get_sample_set() -> SampleSet<f32> {

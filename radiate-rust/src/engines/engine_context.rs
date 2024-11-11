@@ -12,6 +12,7 @@ where
     pub best: T,
     pub index: i32,
     pub timer: Timer,
+    pub score: Option<Score>
 }
 
 impl<G, A, T> EngineContext<G, A, T> 
@@ -19,9 +20,7 @@ where
     G: Gene<G, A>
 {
     pub fn score(&self) -> &Score {
-        self.population.get(0).score
-            .as_ref()
-            .expect("Phenotype has no score")
+        self.score.as_ref().unwrap()
     }
 }
 
@@ -35,6 +34,7 @@ where
             best: self.best.clone(),
             index: self.index,
             timer: self.timer.clone(),
+            score: self.score.clone()
         }
     }
 }
