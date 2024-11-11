@@ -89,8 +89,7 @@ where
 
         for (idx, node_id) in self.node_order.iter() {
             let node = self.nodes.get(node_id).unwrap();
-            let new_node = Node::new(*idx, *node.node_type(), node.value().clone())
-                .set_factory(self.factory.clone());
+            let new_node = Node::new(*idx, *node.node_type(), node.value().clone());
 
             new_nodes.push(new_node);
             node_id_index_map.insert(node_id, *idx);
