@@ -1,8 +1,9 @@
-use crate::engines::codexes::codex::Codex;
 use crate::engines::genome::chromosome::Chromosome;
 use crate::engines::genome::genes::char_gene::CharGene;
 use crate::engines::genome::genes::gene::Gene;
 use crate::engines::genome::genotype::Genotype;
+
+use super::Codex;
 
 pub struct CharCodex {
     pub num_chromosomes: usize,

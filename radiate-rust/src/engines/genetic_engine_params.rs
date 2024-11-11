@@ -1,7 +1,6 @@
 use std::sync::Arc;
 
 use crate::engines::alterers::composite_alterer::CompositeAlterer;
-use crate::engines::codexes::codex::Codex;
 use crate::engines::genetic_engine::GeneticEngine;
 use crate::engines::genome::genes::gene::Gene;
 use crate::engines::genome::phenotype::Phenotype;
@@ -11,6 +10,7 @@ use crate::engines::score::Score;
 use crate::engines::selectors::selector::Selector;
 
 use super::alterers::alter::Alterer;
+use super::codexes::Codex;
 
 pub struct GeneticEngineParams<'a, G, A, T>
 where
