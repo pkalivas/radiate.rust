@@ -7,3 +7,4 @@ edition = "2021"
 radiate-rust = { path = "../radiate-rust" }
 uuid = { version = "1.10.0", features = ["v4"] }
 rand = "0.8.5"
+num-traits = "0.2.19"
