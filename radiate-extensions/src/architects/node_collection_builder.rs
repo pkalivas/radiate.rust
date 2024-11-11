@@ -8,8 +8,6 @@ use crate::architects::factories::node_factory::NodeFactory;
 
 use uuid::Uuid;
 
-use super::node_repairer;
-
 
 pub enum ConnectTypes {
     OneToOne,
@@ -107,7 +105,7 @@ where
             new_collection.attach(*source_idx, *target_idx);
         }
 
-        node_repairer::arity_node_repairer(&mut new_collection
+        NodeCollectionBuilder::<C, T>::repair(&mut new_collection
             .set_cycles(new_collection.get_nodes()
                 .iter()
                 .map(|node| *node.index())
@@ -306,5 +304,14 @@ where
             .filter(|(_, node)| node.outgoing().len() == 0)
             .map(|(idx, _)| collection.get_node(idx).unwrap())
             .collect::<Vec<&Node<T>>>()
+    }
+
+    fn repair(collection: &mut C) -> C {
+        for node in collection.get_nodes_mut() {
+            let arity = node.incoming().len();
+            (*node).arity = Some(arity as u8);
+        }
+
+        collection.clone()
     }
 }
