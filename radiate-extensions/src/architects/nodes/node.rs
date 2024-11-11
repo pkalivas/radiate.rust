@@ -81,6 +81,15 @@ where
         self.arity = Some(arity);
         self
     }
+
+    pub fn input_size(&self) -> usize {
+        match self.node_type {
+            NodeType::Input | NodeType::Link => 1,
+            NodeType::Gate => self.value.arity() as usize,
+            NodeType::Aggregate => if self.outgoing.len() > 0 { self.outgoing.len() } else { self.incoming.len() },
+            _ => if self.outgoing.len() > 0 { self.outgoing.len() } else { self.incoming.len() }
+        }
+    }
 }
 
 impl<T> Gene<Node<T>, Ops<T>> for Node<T>
