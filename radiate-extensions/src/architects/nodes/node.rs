@@ -1,8 +1,8 @@
-use std::{collections::HashSet, sync::Arc};
+use std::collections::HashSet;
 use uuid::Uuid;
 use radiate_rust::engines::genome::genes::gene::{Gene, Valid};
 
-use crate::architects::{factories::node_factory::NodeFactory, schema::{direction::Direction, node_types::NodeType}};
+use crate::architects::schema::{direction::Direction, node_types::NodeType};
 
 pub struct Node<T>
 where
@@ -14,7 +14,6 @@ where
     pub value: T,
     pub node_type: NodeType,
     pub direction: Direction,
-    pub factory: Option<Arc<dyn NodeFactory<T>>>,
     pub incoming: HashSet<usize>,
     pub outgoing: HashSet<usize>
 }
@@ -31,7 +30,6 @@ where
             value,
             direction: Direction::Forward,
             node_type,
-            factory: None,
             incoming: HashSet::new(),
             outgoing: HashSet::new()
         }
@@ -83,11 +81,6 @@ where
         self.arity = Some(arity);
         self
     }
-
-    pub fn set_factory(mut self, factory: Arc<dyn NodeFactory<T>>) -> Self {
-        self.factory = Some(factory);
-        self
-    }
 }
 
 impl<T> Gene<Node<T>, T> for Node<T>
@@ -99,25 +92,6 @@ where
     }
 
     fn new_instance(&self) -> Node<T> {
-        if let Some(factory) = &self.factory {
-            let temp_node = factory.new_node(self.index, self.node_type.clone());
-            // TODO: need to fix this the arity could be off. Can't think of a clean solution right now.
-            return Node {
-                id: Uuid::new_v4(),
-                index: self.index,
-                arity: self.arity.clone(),
-                value: temp_node.value.clone(),
-                direction: self.direction.clone(),
-                node_type: self.node_type.clone(),
-                factory: match &self.factory {
-                    Some(f) => Some(f.clone()),
-                    None => None
-                },
-                incoming: self.incoming.clone(),
-                outgoing: self.outgoing.clone()
-            }
-        }
-
         Node {
             id: Uuid::new_v4(),
             index: self.index,
@@ -125,10 +99,6 @@ where
             value: self.value.clone(),
             direction: self.direction.clone(),
             node_type: self.node_type.clone(),
-            factory: match &self.factory {
-                Some(f) => Some(f.clone()),
-                None => None
-            },
             incoming: self.incoming.clone(),
             outgoing: self.outgoing.clone()
         }
@@ -142,10 +112,6 @@ where
             value: allele.clone(),
             direction: self.direction.clone(),
             node_type: self.node_type.clone(),
-            factory: match &self.factory {
-                Some(f) => Some(f.clone()),
-                None => None
-            },
             incoming: self.incoming.clone(),
             outgoing: self.outgoing.clone()
         }
@@ -182,10 +148,6 @@ where
             value: self.value.clone(),
             direction: self.direction.clone(),
             node_type: self.node_type.clone(),
-            factory: match &self.factory {
-                Some(f) => Some(f.clone()),
-                None => None
-            },
             incoming: self.incoming.clone(),
             outgoing: self.outgoing.clone()
         }
@@ -222,7 +184,6 @@ where
             value: T::default(),
             direction: Direction::Forward,
             node_type: NodeType::Input,
-            factory: None,
             incoming: HashSet::new(),
             outgoing: HashSet::new()
         }
