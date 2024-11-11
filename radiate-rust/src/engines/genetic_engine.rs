@@ -1,7 +1,6 @@
 use std::sync::Arc;
 
 use crate::engines::alterers::alter::Alter;
-use crate::engines::codexes::codex::Codex;
 use crate::engines::genetic_engine_params::GeneticEngineParams;
 use crate::engines::genome::genes::gene::Gene;
 use crate::engines::genome::population::Population;
@@ -12,6 +11,7 @@ use crate::engines::score::Score;
 use super::engine_context::EngineContext;
 use super::genome::phenotype::Phenotype;
 use super::selectors::selector::Select;
+use super::codexes::Codex;
 
 pub struct GeneticEngine<'a, G, A, T>
 where

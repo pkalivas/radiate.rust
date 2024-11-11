@@ -97,7 +97,6 @@ where
         }
 
         let mut new_collection = C::from_nodes(new_nodes);
-
         for rel in self.relationships {
             let source_idx = node_id_index_map.get(&rel.source_id).unwrap();
             let target_idx = node_id_index_map.get(&rel.target_id).unwrap();

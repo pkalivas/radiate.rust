@@ -1,8 +1,9 @@
-use crate::engines::codexes::codex::Codex;
 use crate::engines::genome::chromosome::Chromosome;
 use crate::engines::genome::genes::bit_gene::BitGene;
 use crate::engines::genome::genes::gene::Gene;
 use crate::engines::genome::genotype::Genotype;
+
+use super::Codex;
 
 pub struct BitCodex {
     pub num_chromosomes: usize,
