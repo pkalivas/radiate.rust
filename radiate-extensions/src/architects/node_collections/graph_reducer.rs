@@ -49,8 +49,10 @@ where
 
                     let mut degree = node.incoming.len();
                     for incoming in &node.incoming {
-                        if completed[*incoming] || self.graph.get(*incoming).unwrap().is_recurrent() {
-                            degree -= 1;
+                        if let Some(incoming_node) = self.graph.get(*incoming) {
+                            if completed[incoming_node.index] || incoming_node.is_recurrent() {
+                                degree -= 1;
+                            }
                         }
                     }
 
