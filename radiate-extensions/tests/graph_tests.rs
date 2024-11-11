@@ -2,25 +2,21 @@
 #[cfg(test)]
 mod tests {
 
-    use std::sync::Arc;
-
     use radiate_extensions::architects::architect::Architect;
-    use radiate_extensions::architects::factories::op_factory::OpFactory;
+    use radiate_extensions::architects::factories::node_factory::NodeFactory;
     use radiate_extensions::architects::node_collections::graph::Graph;
     use radiate_extensions::architects::node_collections::node_collection::NodeCollection;
-    use radiate_extensions::architects::factories::value_factory::ValueFactory;
-    use radiate_extensions::operations::op::Ops;
 
     #[test]
     fn test_graph() {
-        let factory = Arc::new(ValueFactory::new()
-            .inputs(vec![1, 2, 3])
-            .outputs(vec![4, 5, 6])
-            .gates(vec![7, 8, 9])
-            .aggregates(vec![10, 11, 12])
-            .weights(vec![13, 14, 15]));
+        let factory = NodeFactory::new()
+            .input_values(vec![1, 2, 3])
+            .output_values(vec![4, 5, 6])
+            .gate_values(vec![7, 8, 9])
+            .aggregate_values(vec![10, 11, 12])
+            .weight_values(vec![13, 14, 15]);
 
-        let architect = Architect::<Graph<i32>, i32>::new(factory);
+        let architect = Architect::<Graph<i32>, i32>::new(&factory);
 
         let graph = architect
             .build(|arc, builder| builder
@@ -36,8 +32,8 @@ mod tests {
 
     #[test]
     fn test_acyclic_graph() {
-        let factory = Arc::new(OpFactory::<f32>::regression(2));
-        let architect = Architect::<Graph<Ops<f32>>, Ops<f32>>::new(factory);
+        let factory = NodeFactory::<f32>::regression(2);
+        let architect = Architect::<Graph<f32>, f32>::new(&factory);
 
         let graph = architect.weighted_cyclic(2, 2, 2);
 

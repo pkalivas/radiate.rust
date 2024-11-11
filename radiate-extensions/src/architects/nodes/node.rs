@@ -2,7 +2,7 @@ use std::collections::HashSet;
 use uuid::Uuid;
 use radiate_rust::engines::genome::genes::gene::{Gene, Valid};
 
-use crate::architects::schema::{direction::Direction, node_types::NodeType};
+use crate::{architects::schema::{direction::Direction, node_types::NodeType}, operations::op::Ops};
 
 pub struct Node<T>
 where
@@ -10,8 +10,8 @@ where
 {
     pub id: Uuid,
     pub index: usize,
+    pub value: Ops<T>,
     pub arity: Option<u8>,
-    pub value: T,
     pub node_type: NodeType,
     pub direction: Direction,
     pub incoming: HashSet<usize>,
@@ -22,12 +22,12 @@ impl<T> Node<T>
 where
     T: Clone + PartialEq 
 {
-    pub fn new(index: usize, node_type: NodeType, value: T) -> Node<T> {
+    pub fn new(index: usize, node_type: NodeType, value: Ops<T>) -> Node<T> {
         Node {
             id: Uuid::new_v4(),
             index,
-            arity: None,
             value,
+            arity: None,
             direction: Direction::Forward,
             node_type,
             incoming: HashSet::new(),
@@ -51,7 +51,7 @@ where
         &self.node_type
     }
 
-    pub fn value(&self) -> &T {
+    pub fn value(&self) -> &Ops<T> {
         &self.value
     }
 
@@ -83,11 +83,11 @@ where
     }
 }
 
-impl<T> Gene<Node<T>, T> for Node<T>
+impl<T> Gene<Node<T>, Ops<T>> for Node<T>
 where
     T: Clone + PartialEq + Default
 {
-    fn allele(&self) -> &T {
+    fn allele(&self) -> &Ops<T> {
         &self.value
     }
 
@@ -96,7 +96,7 @@ where
             id: Uuid::new_v4(),
             index: self.index,
             arity: self.arity.clone(),
-            value: self.value.clone(),
+            value: self.value.new_instance(),
             direction: self.direction.clone(),
             node_type: self.node_type.clone(),
             incoming: self.incoming.clone(),
@@ -104,7 +104,7 @@ where
         }
     }
 
-    fn from_allele(&self, allele: &T) -> Node<T> {
+    fn from_allele(&self, allele: &Ops<T>) -> Node<T> {
         Node {
             id: Uuid::new_v4(),
             index: self.index,
@@ -181,7 +181,7 @@ where
             id: Uuid::new_v4(),
             index: 0,
             arity: None,
-            value: T::default(),
+            value: Ops::default(),
             direction: Direction::Forward,
             node_type: NodeType::Input,
             incoming: HashSet::new(),
