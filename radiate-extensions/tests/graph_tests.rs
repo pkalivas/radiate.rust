@@ -2,10 +2,14 @@
 #[cfg(test)]
 mod tests {
 
+    use radiate_rust::engines::codexes::Codex;
+
     use radiate_extensions::architects::architect::Architect;
+    use radiate_extensions::architects::codexes::graph_codex::GraphCodex;
     use radiate_extensions::architects::factories::node_factory::NodeFactory;
     use radiate_extensions::architects::node_collections::graph::Graph;
     use radiate_extensions::architects::node_collections::node_collection::NodeCollection;
+    use radiate_extensions::architects::node_collections::graph_reducer::GraphReducer;
 
     #[test]
     fn test_graph() {
@@ -40,5 +44,32 @@ mod tests {
         for node in graph.get_nodes() {
             println!("{:?}", node);
         }
+    }
+
+    #[test]
+    fn test_reducer() {
+        let factory = NodeFactory::<f32>::regression(2);
+        let graph_codex = GraphCodex::new(2, 2, factory)
+            .set_nodes(|arc, _| arc.weighted_acyclic(2, 2));
+    
+        let genotype = graph_codex.encode();
+        let decoded = graph_codex.decode(&genotype);
+    
+        for chromosome in genotype.iter() {
+            for gene in chromosome.iter() {
+                println!("{:?}", gene);
+            }
+        }
+    
+        let inputs = vec![1.0, 2.0];
+        let input_two = vec![3.0, 4.0];
+        let mut reducer = GraphReducer::new(decoded);
+        let outputs = reducer.reduce(&inputs);
+    
+        println!("{:?}", outputs);
+    
+        let output_two = reducer.reduce(&input_two);
+    
+        println!("{:?}", output_two);
     }
 }

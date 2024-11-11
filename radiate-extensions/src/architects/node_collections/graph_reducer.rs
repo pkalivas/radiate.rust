@@ -18,7 +18,7 @@ where
 
 impl<T> GraphReducer<T>
 where
-    T: Clone + PartialEq + Default + std::fmt::Debug
+    T: Clone + PartialEq + Default
 {
     pub fn new(graph: Graph<T>) -> GraphReducer<T> {
         let tracers = graph
@@ -65,7 +65,7 @@ where
                         }
             
                         completed[node.index] = true;
-                        self.tracers[node.index].activate(&node);
+                        self.tracers[node.index].eval(&node);
 
                         if node.node_type == NodeType::Output {
                             result.push(self.tracers[node.index].result.clone().unwrap());

@@ -72,7 +72,7 @@ where
         self
     }
 
-    pub fn all_to_all_self(mut self, one: &'a C, two: &'a C) -> Self {
+    pub fn one_to_one_self(mut self, one: &'a C, two: &'a C) -> Self {
         self.attach(ConnectTypes::AllToAllSelf, one, two);
         self
     }
