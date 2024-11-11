@@ -53,32 +53,32 @@ where
     }
 
     pub fn one_to_one(mut self, one: &'a C, two: &'a C) -> Self {
-        self.attach(ConnectTypes::OneToOne, one, two);
+        self.connect(ConnectTypes::OneToOne, one, two);
         self
     }
 
     pub fn one_to_many(mut self, one: &'a C, two: &'a C) -> Self {
-        self.attach(ConnectTypes::OneToMany, one, two);
+        self.connect(ConnectTypes::OneToMany, one, two);
         self
     }
 
     pub fn many_to_one(mut self, one: &'a C, two: &'a C) -> Self {
-        self.attach(ConnectTypes::ManyToOne, one, two);
+        self.connect(ConnectTypes::ManyToOne, one, two);
         self
     }
 
     pub fn all_to_all(mut self, one: &'a C, two: &'a C) -> Self {
-        self.attach(ConnectTypes::AllToAll, one, two);
+        self.connect(ConnectTypes::AllToAll, one, two);
         self
     }
 
     pub fn one_to_one_self(mut self, one: &'a C, two: &'a C) -> Self {
-        self.attach(ConnectTypes::AllToAllSelf, one, two);
+        self.connect(ConnectTypes::AllToAllSelf, one, two);
         self
     }
 
     pub fn parent_to_child(mut self, one: &'a C, two: &'a C) -> Self {
-        self.attach(ConnectTypes::ParentToChild, one, two);
+        self.connect(ConnectTypes::ParentToChild, one, two);
         self
     }
 
@@ -110,11 +110,36 @@ where
             .reindex(0))
     }
 
-    pub fn layer(&mut self, _: Vec<&'a C>) {
-        unimplemented!()
+    pub fn layer(&mut self, collections: Vec<&'a C>) -> C {
+        let mut conn = NodeCollectionBuilder::new(self.factory);
+        let mut previous = collections[0];
+
+        for i in 1..collections.len() {
+            conn = conn.one_to_one(previous, collections[i]);
+            previous = collections[i];
+        }
+
+        conn.build()
     }
 
-    fn attach(&mut self, connection: ConnectTypes, one: &'a C, two: &'a C) {
+    // public NodeCollectionBuilder<TCollection, TNode, T> Layer(TCollection[] groups)
+    // {
+    //     var conn = new NodeCollectionBuilder<TCollection, TNode, T>(_factory);
+        
+    //     if (groups.Length == 1)
+    //     {
+    //         return conn.Attach(groups[0]);
+    //     }
+        
+    //     for (var i = 1; i < groups.Length; i++)
+    //     {
+    //         conn.OneToOne(groups[i - 1], groups[i]);
+    //     }
+
+    //     return conn;
+    // }
+
+    fn connect(&mut self, connection: ConnectTypes, one: &'a C, two: &'a C) {
         for node in one.iter().chain(two.iter()) {
             if !self.nodes.contains_key(node.id()) {
                 let node_id = node.id();

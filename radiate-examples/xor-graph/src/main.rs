@@ -45,9 +45,7 @@ fn main() {
         .build();
 
     let _ = engine.run(|output| {
-
         println!("[ {:?} ]: {:?}", output.index, output.score().as_float());
-        
         output.index == 100
     });
 }
