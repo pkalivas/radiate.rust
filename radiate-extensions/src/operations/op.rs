@@ -8,6 +8,7 @@ where
 {
     Fn(&'static str, u8, Arc<dyn Fn(&[T]) -> T>),
     Math(&'static str, u8, Arc<dyn Fn(&[T]) -> T>),
+    Value(T),
     Var(String, usize),
     Const(&'static str, T),
     MutableConst(&'static str, u8, T, Arc<dyn Fn() -> T>, Arc<dyn Fn(&[T], &T) -> T>),
@@ -21,6 +22,7 @@ where
         match self {
             Ops::Fn(name, _, _) => name,
             Ops::Math(name, _, _) => name,
+            Ops::Value(_) => "value",
             Ops::Var(name, _) => name,
             Ops::Const(name, _) => name,
             Ops::MutableConst(name, _, _, _, _) => name,
@@ -31,6 +33,7 @@ where
         match self {
             Ops::Fn(_, arity, _) => *arity,
             Ops::Math(_, arity, _) => *arity,
+            Ops::Value(_) => 0,
             Ops::Var(_, _) => 0,
             Ops::Const(_, _) => 0,
             Ops::MutableConst(_, arity, _, _, _) => *arity,
@@ -41,6 +44,7 @@ where
         match self {
             Ops::Fn(_, _, op) => op(inputs),
             Ops::Math(_, _, op) => op(inputs),
+            Ops::Value(value) => value.clone(),
             Ops::Var(_, index) => inputs[*index].clone(),
             Ops::Const(_, value) => value.clone(),
             Ops::MutableConst(_, _, value, _, operation) => operation(inputs, value),
@@ -51,6 +55,7 @@ where
         match self {
             Ops::Fn(name, arity, op) => Ops::Fn(name, *arity, op.clone()),
             Ops::Math(name, arity, op) => Ops::Math(name, *arity, op.clone()),
+            Ops::Value(value) => Ops::Value(value.clone()),
             Ops::Var(name, index) => Ops::Var(name.clone(), *index),
             Ops::Const(name, value) => Ops::Const(name, value.clone()),
             Ops::MutableConst(name, arity, _, get_value, operation) => Ops::MutableConst(name, *arity, get_value(), get_value.clone(), operation.clone()),
@@ -66,6 +71,7 @@ where
         match self {
             Ops::Fn(name, arity, op) => Ops::Fn(name, *arity, op.clone()),
             Ops::Math(name, arity, op) => Ops::Math(name, *arity, op.clone()),
+            Ops::Value(value) => Ops::Value(value.clone()),
             Ops::Var(name, index) => Ops::Var(name.clone(), *index),
             Ops::Const(name, value) => Ops::Const(name, value.clone()),
             Ops::MutableConst(name, arity, value, get_value, operation) => Ops::MutableConst(name, *arity, value.clone(), get_value.clone(), operation.clone()),
@@ -108,6 +114,7 @@ where
         match self {
             Ops::Fn(name, arity, _) => write!(f, "Fn: {}({})", name, arity),
             Ops::Math(name, arity, _) => write!(f, "Math: {}({})", name, arity),
+            Ops::Value(value) => write!(f, "Value: {:?}", value),
             Ops::Var(name, index) => write!(f, "Var: {}({})", name, index),
             Ops::Const(name, value) => write!(f, "Const: {}({:?})", name, value),
             Ops::MutableConst(name, arity, value, _, _) => write!(f, "MutConst: {}({})({:.2?})", name, arity, value),
@@ -116,6 +123,9 @@ where
 }
 
 
+pub fn value<T: Clone>(value: T) -> Ops<T> {
+    Ops::Value(value)
+}
 
 pub fn add<T: Add<Output = T> + Clone>() -> Ops<T> {
     Ops::Math("+", 2, Arc::new(|inputs: &[T]| inputs[0].clone() + inputs[1].clone()))

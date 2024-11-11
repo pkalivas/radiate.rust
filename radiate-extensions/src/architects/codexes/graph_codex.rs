@@ -1,4 +1,3 @@
-use std::sync::Arc;
 
 use radiate_rust::engines::genome::genotype::Genotype;
 use radiate_rust::engines::genome::chromosome::Chromosome;
@@ -10,6 +9,7 @@ use crate::architects::node_collections::graph::Graph;
 use crate::architects::node_collections::node_collection::NodeCollection;
 use crate::architects::nodes::node::Node;
 use crate::architects::architect::Architect;
+use crate::operations::op::Ops;
 
 
 pub struct GraphCodex<T> 
@@ -18,7 +18,7 @@ where
 {
     pub input_size: usize,
     pub output_size: usize,
-    pub factory: Arc<dyn NodeFactory<T>>,
+    pub factory: NodeFactory<T>,
     pub nodes: Vec<Node<T>>,
 }
 
@@ -26,8 +26,8 @@ impl<T> GraphCodex<T>
 where
     T: Clone + PartialEq + Default
 {
-    pub fn new(input_size: usize, output_size: usize, factory: Arc<dyn NodeFactory<T>>) -> GraphCodex<T> {
-        let graph = Architect::<Graph<T>, T>::new(factory.clone())
+    pub fn new(input_size: usize, output_size: usize, factory: NodeFactory<T>) -> GraphCodex<T> {
+        let graph = Architect::<Graph<T>, T>::new(&factory)
             .acyclic(input_size, output_size);
 
         GraphCodex { 
@@ -45,8 +45,7 @@ where
     where
         F: Fn(&Architect<Graph<T>, T>, NodeCollectionBuilder<Graph<T>, T>) -> Graph<T>
     {
-        let temp_factory = self.factory.clone();
-        let graph = Architect::<Graph<T>, T>::new(temp_factory)
+        let graph = Architect::<Graph<T>, T>::new(&self.factory)
             .build(|arc, builder| node_fn(arc, builder));
 
         self.nodes = graph
@@ -57,11 +56,11 @@ where
     }
 }
 
-impl<T> Codex<Node<T>, T, Graph<T>> for GraphCodex<T>
+impl<T> Codex<Node<T>, Ops<T>, Graph<T>> for GraphCodex<T>
 where
     T: Clone + PartialEq + Default
 {
-    fn encode(&self) -> Genotype<Node<T>, T> {
+    fn encode(&self) -> Genotype<Node<T>, Ops<T>> {
         Genotype {
             chromosomes: vec![Chromosome::from_genes(self.nodes
                 .iter()
@@ -70,7 +69,7 @@ where
         }
     }
 
-    fn decode(&self, genotype: &Genotype<Node<T>, T>) -> Graph<T> {
+    fn decode(&self, genotype: &Genotype<Node<T>, Ops<T>>) -> Graph<T> {
         Graph::from_nodes(genotype
             .iter()
             .next()
