@@ -18,16 +18,16 @@ where
         Graph { nodes }
     }
 
+    fn get_nodes(&self) -> &[Node<T>] {
+        &self.nodes
+    }
+
     fn get_node(&self, index: usize) -> Option<&Node<T>> {
         self.nodes.get(index)
     }
 
     fn get_node_mut(&mut self, index: usize) -> Option<&mut Node<T>> {
         self.nodes.get_mut(index)
-    }
-
-    fn get_nodes(&self) -> &[Node<T>] {
-        &self.nodes
     }
 
     fn get_nodes_mut(&mut self) -> &mut [Node<T>] {
