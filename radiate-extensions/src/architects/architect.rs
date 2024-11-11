@@ -33,7 +33,8 @@ where
     where
         F: FnOnce(&Architect<C, T>, NodeCollectionBuilder<C, T>) -> C
     {
-        build_fn(self, NodeCollectionBuilder::new(&*self.node_factory))
+        let temp_factory = self.node_factory.clone();
+        build_fn(self, NodeCollectionBuilder::new(temp_factory))
     }
 
     pub fn acyclic(&self, input_size: usize, output_size: usize) -> C {
