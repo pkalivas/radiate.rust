@@ -187,14 +187,17 @@ pub fn relu() -> Ops<f32> {
 
 pub fn tanh() -> Ops<f32> {
     Ops::Fn("tanh", 1, Arc::new(|inputs: &[f32]| {
-        let sum = inputs.iter().fold(0_f32, |acc, x| acc + x);
-        sum.tanh()
+        inputs
+            .iter()
+            .fold(0_f32, |acc, x| acc + x)
+            .tanh()
     }))
 }
 
 pub fn linear() -> Ops<f32> {
     Ops::Fn("linear", 1, Arc::new(|inputs: &[f32]| {
-        let sum = inputs.iter().fold(0_f32, |acc, x| acc + x);
-        sum
+        inputs
+            .iter()
+            .fold(0_f32, |acc, x| acc + x)
     }))
 }
