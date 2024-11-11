@@ -1,5 +1,3 @@
-use std::sync::LazyLock;
-
 use rand::random;
 
 use radiate_rust::engines::codexes::subset_codex::SubSetCodex;
@@ -7,13 +5,13 @@ use radiate_rust::engines::genetic_engine::GeneticEngine;
 use radiate_rust::engines::score::Score;
 
 
-static KNAPSACK: LazyLock<Knapsack> = LazyLock::new(|| Knapsack::new(15));
-
-
 fn main() {    
-    let codex = SubSetCodex::new(&KNAPSACK.items);
+    let knapsack = Knapsack::new(15);
+
+    let codex = SubSetCodex::new(&knapsack.items);
+
     let engine = GeneticEngine::from_codex(&codex)
-        .fitness_fn(|genotype: &Vec<&Item>| KNAPSACK.fitness(genotype))
+        .fitness_fn(move |genotype: &Vec<&Item>| Knapsack::fitness(&knapsack.capacity, genotype))
         .build();
 
     let result = engine.run(|output| {
@@ -27,7 +25,7 @@ fn main() {
 
     println!("Result Value Total=[ {:?} ]", Knapsack::value_total(&result.best));
     println!("Result Weigh Total=[ {:?} ]", Knapsack::weight_total(&result.best));
-    println!("Max Weight=[{:?}]", KNAPSACK.capacity);
+    println!("Max Weight=[{:?}]", knapsack.capacity);
 }
 
 pub struct Knapsack {
@@ -42,7 +40,7 @@ impl Knapsack {
         Knapsack { capacity: size as f32 * 100_f32 / 3_f32, size, items }
     }
 
-    pub fn fitness(&self, genotype: &Vec<&Item>) -> Score {
+    pub fn fitness(capacity: &f32, genotype: &Vec<&Item>) -> Score {
         let mut sum = 0_f32;
         let mut weight = 0_f32;
         for item in genotype {
@@ -50,7 +48,7 @@ impl Knapsack {
             weight += item.weight;
         }
 
-        if weight > self.capacity {
+        if weight > *capacity {
             Score::from_f32(0_f32)
         } else {
             Score::from_f32(sum)
