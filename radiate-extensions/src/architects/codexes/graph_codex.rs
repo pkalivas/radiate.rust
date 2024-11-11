@@ -11,22 +11,22 @@ use crate::architects::nodes::node::Node;
 use crate::architects::architect::Architect;
 
 
-pub struct GraphCodex<T> 
+pub struct GraphCodex<'a, T> 
 where
     T: Clone + PartialEq + Default
 {
     pub input_size: usize,
     pub output_size: usize,
-    pub factory: Arc<dyn NodeFactory<T>>,
-    pub nodes: Vec<Node<T>>,
+    pub factory: &'a NodeFactory<T>,
+    pub nodes: Vec<Node<'a, T>>,
 }
 
-impl<T> GraphCodex<T>
+impl<'a, T> GraphCodex<'a, T>
 where
     T: Clone + PartialEq + Default
 {
-    pub fn new(input_size: usize, output_size: usize, factory: Arc<dyn NodeFactory<T>>) -> GraphCodex<T> {
-        let graph = Architect::<Graph<T>, T>::new(factory.clone())
+    pub fn new(input_size: usize, output_size: usize, factory: &'a NodeFactory<T>) -> GraphCodex<T> {
+        let graph = Architect::<Graph<T>, T>::new(factory)
             .acyclic(input_size, output_size);
 
         GraphCodex { 

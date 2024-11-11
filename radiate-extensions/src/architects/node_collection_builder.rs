@@ -29,7 +29,7 @@ where
     T: Clone + PartialEq + Default
 {
     pub factory: &'a NodeFactory<T>,
-    pub nodes: BTreeMap<&'a Uuid, &'a Node<T>>,
+    pub nodes: BTreeMap<&'a Uuid, &'a Node<'a, T>>,
     pub relationships: Vec<NodeRelationship<'a>>,
     pub node_order: BTreeMap<usize, &'a Uuid>,
     _phantom_c: std::marker::PhantomData<C>,

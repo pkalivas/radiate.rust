@@ -3,14 +3,14 @@ use crate::architects::nodes::node::Node;
 use super::node_collection::NodeCollection;
 
 
-pub struct Graph<T>
+pub struct Graph<'a, T>
 where
     T: Clone + PartialEq
 {
-    pub nodes: Vec<Node<T>>,
+    pub nodes: Vec<Node<'a, T>>,
 }
 
-impl<T> NodeCollection<Graph<T>, T> for Graph<T>
+impl<'a, T> NodeCollection<Graph<'a, T>, T> for Graph<'a, T>
 where
     T: Clone + PartialEq + Default
 {
@@ -35,7 +35,7 @@ where
     }
 }
 
-impl<T> Clone for Graph<T> 
+impl<'a, T> Clone for Graph<'a, T> 
 where
     T: Clone + PartialEq + Default
 {
@@ -47,7 +47,7 @@ where
     }
 }
 
-impl<T> Default for Graph<T> 
+impl<'a, T> Default for Graph<'a, T> 
 where
     T: Clone + PartialEq + Default
 {

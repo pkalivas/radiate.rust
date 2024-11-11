@@ -6,6 +6,7 @@ use crate::architects::node_collections::node_collection::NodeCollection;
 use crate::architects::node_collection_builder::NodeCollectionBuilder;
 use crate::architects::schema::node_types::NodeType;
 use crate::architects::factories::node_factory::NodeFactory;
+use crate::operations::op::Ops;
 
 
 pub struct Architect<C, T>
@@ -33,8 +34,7 @@ where
     where
         F: FnOnce(&Architect<C, T>, NodeCollectionBuilder<C, T>) -> C
     {
-        let temp_factory = self.node_factory.clone();
-        build_fn(self, NodeCollectionBuilder::new(temp_factory))
+        build_fn(self, NodeCollectionBuilder::new(&self.node_factory))
     }
 
     pub fn acyclic(&self, input_size: usize, output_size: usize) -> C {
@@ -113,9 +113,9 @@ where
         C::from_nodes(nodes)
     }
 
-    fn new_nodes(&self, node_type: NodeType, size: usize) -> Vec<Node<T>> {
+    fn new_nodes(&self, node_type: NodeType, size: usize) -> Vec<Node<'_, Ops<T>>> {
         (0..size)
             .map(|i| self.node_factory.new_node(i, node_type))
-            .collect::<Vec<Node<T>>>()
+            .collect::<Vec<Node<'_, Ops<T>>>>()
     }
 }
