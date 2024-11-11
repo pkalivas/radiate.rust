@@ -101,7 +101,7 @@ where
     fn new_instance(&self) -> Node<T> {
         if let Some(factory) = &self.factory {
             let temp_node = factory.new_node(self.index, self.node_type.clone());
-            // TODO: This is a hack to get around the fact that the factory is not being cloned - need to fix this the arity could be off
+            // TODO: need to fix this the arity could be off. Can't think of a clean solution right now.
             return Node {
                 id: Uuid::new_v4(),
                 index: self.index,

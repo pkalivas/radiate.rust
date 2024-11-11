@@ -8,7 +8,6 @@ where
     T: Clone + PartialEq
 {
     pub nodes: Vec<Node<T>>,
-    _phantom: std::marker::PhantomData<T>,
 }
 
 impl<T> NodeCollection<Graph<T>, T> for Graph<T>
@@ -16,10 +15,7 @@ where
     T: Clone + PartialEq + Default
 {
     fn from_nodes(nodes: Vec<Node<T>>) -> Self {
-        Graph {
-            nodes,
-            _phantom: std::marker::PhantomData,
-        }
+        Graph { nodes }
     }
 
     fn get_node(&self, index: usize) -> Option<&Node<T>> {
@@ -58,7 +54,6 @@ where
     fn default() -> Self {
         Graph {
             nodes: Vec::new(),
-            _phantom: std::marker::PhantomData,
         }
     }
 }
