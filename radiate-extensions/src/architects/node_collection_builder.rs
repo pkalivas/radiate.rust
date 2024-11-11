@@ -110,6 +110,10 @@ where
             .reindex(0))
     }
 
+    pub fn layer(&mut self, _: Vec<&'a C>) {
+        unimplemented!()
+    }
+
     fn attach(&mut self, connection: ConnectTypes, one: &'a C, two: &'a C) {
         for node in one.iter().chain(two.iter()) {
             if !self.nodes.contains_key(node.id()) {

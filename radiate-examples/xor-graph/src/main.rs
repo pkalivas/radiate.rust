@@ -8,7 +8,6 @@ use radiate_extensions::problems::error_functions::ErrorFunction;
 use radiate_extensions::problems::regression::Regression;
 use radiate_extensions::problems::sample_set::SampleSet;
 use radiate_rust::engines::alterers::alter::Alterer;
-use radiate_rust::engines::codexes::Codex;
 
 use radiate_extensions::architects::codexes::graph_codex::GraphCodex;
 use radiate_extensions::architects::factories::node_factory::NodeFactory;
@@ -45,7 +44,7 @@ fn main() {
         })
         .build();
 
-    let result = engine.run(|output| {
+    let _ = engine.run(|output| {
 
         println!("[ {:?} ]: {:?}", output.index, output.score().as_float());
         
