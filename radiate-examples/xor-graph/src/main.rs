@@ -8,7 +8,6 @@ use radiate_extensions::problems::error_functions::ErrorFunction;
 use radiate_extensions::problems::regression::Regression;
 use radiate_extensions::problems::sample_set::SampleSet;
 use radiate_rust::engines::alterers::alter::Alterer;
-use radiate_rust::engines::codexes::Codex;
 
 use radiate_extensions::architects::codexes::graph_codex::GraphCodex;
 use radiate_extensions::architects::factories::node_factory::NodeFactory;
@@ -34,8 +33,8 @@ fn main() {
         ])
         .fitness_fn(move |genotype: &Graph<f32>| {
             let mut reducer = GraphReducer::new(genotype.clone());
-            
             let mut sum = 0.0;
+
             for sample in arc_sample.get_samples().iter() {
                 let output = reducer.reduce(&sample.1);
                 sum += regression.get_loss_function().calculate(&output, &sample.2);
@@ -45,10 +44,8 @@ fn main() {
         })
         .build();
 
-    let result = engine.run(|output| {
-
+    let _ = engine.run(|output| {
         println!("[ {:?} ]: {:?}", output.index, output.score().as_float());
-        
         output.index == 100
     });
 }
