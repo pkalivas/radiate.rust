@@ -18,6 +18,14 @@ where
 
     fn get_nodes_mut(&mut self) -> &mut [Node<T>];
 
+    fn iter(&self) -> std::slice::Iter<Node<T>> {
+        self.get_nodes().iter()
+    }
+
+    fn iter_mut(&mut self) -> std::slice::IterMut<Node<T>> {
+        self.get_nodes_mut().iter_mut()
+    }
+
     fn set_node(&mut self, index: usize, node: Node<T>) -> &mut Self {
         self.get_nodes_mut()[index] = node;
         self
