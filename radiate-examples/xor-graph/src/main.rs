@@ -20,13 +20,8 @@ fn main() {
     }
 
     let inputs = vec![1.0, 2.0];
-    let input_two = vec![3.0, 4.0];
     let mut reducer = GraphReducer::new(decoded);
     let outputs = reducer.reduce(&inputs);
 
     println!("{:?}", outputs);
-
-    let output_two = reducer.reduce(&input_two);
-
-    println!("{:?}", output_two);
 }

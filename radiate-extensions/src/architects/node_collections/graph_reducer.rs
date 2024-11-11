@@ -65,7 +65,7 @@ where
                         }
             
                         completed[node.index] = true;
-                        self.tracers[node.index].activate(&node);
+                        self.tracers[node.index].eval(&node);
 
                         if node.node_type == NodeType::Output {
                             result.push(self.tracers[node.index].result.clone().unwrap());

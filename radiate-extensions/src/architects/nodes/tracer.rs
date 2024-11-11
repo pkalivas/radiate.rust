@@ -37,7 +37,7 @@ where
         self.pending_idx += 1;
     }
 
-    pub fn activate(&mut self, node: &Node<T>) {
+    pub fn eval(&mut self, node: &Node<T>) {
         if self.pending_idx != self.input_size {
             panic!("Tracer is not ready to be evaluated.");
         }
