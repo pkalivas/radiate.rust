@@ -1,4 +1,5 @@
 
+#[allow(dead_code)]
 pub struct Sample<T>(usize, Vec<T>, Vec<T>);
 
 pub struct SampleSet<T> {

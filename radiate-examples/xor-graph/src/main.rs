@@ -1,7 +1,7 @@
 use radiate_extensions::architects::node_collections::graph_reducer::GraphReducer;
 use radiate_extensions::problems::error_functions::ErrorFunction;
 use radiate_extensions::problems::regression::Regression;
-use radiate_extensions::problems::sample_set::{self, SampleSet};
+use radiate_extensions::problems::sample_set::SampleSet;
 use radiate_rust::engines::codexes::Codex;
 
 use radiate_extensions::architects::codexes::graph_codex::GraphCodex;
@@ -14,7 +14,7 @@ fn main() {
         .set_nodes(|arc, _| arc.weighted_acyclic(2, 2));
 
     let sample_set = get_sample_set();
-    let regression = Regression::new(sample_set, ErrorFunction::MSE);
+    let _ = Regression::new(sample_set, ErrorFunction::MSE);
 
     let genotype = graph_codex.encode();
     let decoded = graph_codex.decode(&genotype);
