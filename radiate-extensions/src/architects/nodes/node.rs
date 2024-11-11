@@ -4,8 +4,6 @@ use radiate_rust::engines::genome::genes::gene::{Gene, Valid};
 
 use crate::{architects::schema::{direction::Direction, node_types::NodeType}, operations::op::Ops};
 
-use super::tracer::Tracer;
-
 pub struct Node<T>
 where
     T: Clone + PartialEq
