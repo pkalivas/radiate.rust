@@ -33,7 +33,7 @@ where
             input_size,
             output_size,
             factory, 
-            nodes: graph.get_nodes()
+            nodes: graph
                 .iter()
                 .map(|node| node.clone())
                 .collect::<Vec<Node<T>>>()

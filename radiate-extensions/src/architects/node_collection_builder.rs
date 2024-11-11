@@ -105,7 +105,7 @@ where
         }
 
         NodeCollectionBuilder::<C, T>::repair(&mut new_collection
-            .set_cycles(new_collection.get_nodes()
+            .set_cycles(new_collection
                 .iter()
                 .map(|node| *node.index())
                 .collect::<Vec<usize>>())
@@ -113,7 +113,7 @@ where
     }
 
     fn attach(&mut self, connection: ConnectTypes, one: &'a C, two: &'a C) {
-        for node in one.get_nodes().iter().chain(two.get_nodes()) {
+        for node in one.iter().chain(two.iter()) {
             if !self.nodes.contains_key(node.id()) {
                 self.nodes.insert(node.id(), node);
             }
@@ -234,7 +234,6 @@ where
 
     fn get_outputs(&self, collection: &'a C) -> Vec<&'a Node<T>> {
         let outputs = collection
-            .get_nodes()
             .iter()
             .enumerate()
             .skip_while(|(_, node)| node.outgoing().len() > 0)
@@ -246,7 +245,6 @@ where
         }
 
         let recurrent_outputs = collection
-            .get_nodes()
             .iter()
             .enumerate()
             .filter(|(_, node)| node.outgoing().len() == 1 
@@ -260,7 +258,6 @@ where
         }
 
         collection
-            .get_nodes()
             .iter()
             .enumerate()
             .filter(|(_, node)| node.incoming().len() == 0)
@@ -271,7 +268,6 @@ where
 
     fn get_inputs(&self, collection: &'a C) -> Vec<&'a Node<T>> {
         let inputs = collection
-            .get_nodes()
             .iter()
             .enumerate()
             .skip_while(|(_, node)| node.incoming().len() > 0)
@@ -283,7 +279,6 @@ where
         }
 
         let recurrent_inputs = collection
-            .get_nodes()
             .iter()
             .enumerate()
             .filter(|(_, node)| node.outgoing().len() == 1 
@@ -297,7 +292,6 @@ where
         }
 
         collection
-            .get_nodes()
             .iter()
             .enumerate()
             .filter(|(_, node)| node.outgoing().len() == 0)
@@ -306,7 +300,7 @@ where
     }
 
     fn repair(collection: &mut C) -> C {
-        for node in collection.get_nodes_mut() {
+        for node in collection.iter_mut() {
             let arity = node.incoming().len();
             (*node).arity = Some(arity as u8);
         }
