@@ -40,33 +40,47 @@ where
                 panic!("Failed to reduce graph.");
             }
 
-            if let Some(node) = self.graph.get(pending_index) {
-                if completed[node.index] {
-                    continue;
-                }
+            let mut min_pending_index = self.graph.len();
+            for index in pending_index..self.graph.len() {
+                if let Some(node) = self.graph.get(index) {
+                    if completed[node.index] {
+                        continue;
+                    }
 
-                if node.node_type == NodeType::Input {
-                    self.tracers[node.index].args[node.index] = inputs[node.index].clone();
-                } else {
                     let mut degree = node.incoming.len();
                     for incoming in &node.incoming {
                         if completed[*incoming] || self.graph.get(*incoming).unwrap().is_recurrent() {
                             degree -= 1;
-                            self.tracers[node.index].args[degree] = self.tracers[*incoming].result.clone().unwrap();
                         }
                     }
-    
+
                     if degree == 0 {
+                        if node.node_type == NodeType::Input {
+                            self.tracers[node.index].add_input(inputs[node.index].clone());
+                        } else {
+                            for incoming in &node.incoming {
+                                let arg = match self.tracers[*incoming].result.clone() {
+                                    Some(value) => value,
+                                    None => T::default()
+                                };
+                                self.tracers[node.index].add_input(arg);
+                            }
+                        }
+            
                         completed[node.index] = true;
                         self.tracers[node.index].activate(&node);
+
                         if node.node_type == NodeType::Output {
                             result.push(self.tracers[node.index].result.clone().unwrap());
                         }
                     } else {
-                        pending_index = self.graph.len();
+                        min_pending_index = std::cmp::min(min_pending_index, node.index);
                     }
                 }
             }
+
+            pending_index = min_pending_index;
+            checks = if min_pending_index == pending_index { checks + 1 } else { 0 };
         }
 
         result

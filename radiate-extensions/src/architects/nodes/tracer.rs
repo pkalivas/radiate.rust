@@ -28,10 +28,19 @@ where
         }
     }
 
-    pub fn activate(&mut self, node: &Node<T>) {
-        if self.pending_idx != self.input_size {
-            panic!("Tracer is not ready to be evaluated.");
+    pub fn add_input(&mut self, value: T) {
+        if self.pending_idx == self.input_size {
+            panic!("Tracer is not ready to accept more inputs.");
         }
+
+        self.args.push(value);
+        self.pending_idx += 1;
+    }
+
+    pub fn activate(&mut self, node: &Node<T>) {
+        // if self.pending_idx != self.input_size {
+        //     panic!("Tracer is not ready to be evaluated.");
+        // }
 
         match node.node_type {
             NodeType::Input => {
@@ -49,6 +58,8 @@ where
                 }
             },
         }
+
+        self.pending_idx = 0;
 
         // if !node.is_enabled {
         //     self.result = None;
