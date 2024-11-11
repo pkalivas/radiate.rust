@@ -98,7 +98,7 @@ where
             match node_type {
                 NodeType::Input => {
                     let value = values[index % values.len()].clone();
-                    return Node::new(index, node_type, value);
+                    return Node::new(index, node_type, value.new_instance());
                 },
                 _ => {
                     let value = values.choose(&mut rng).unwrap();
