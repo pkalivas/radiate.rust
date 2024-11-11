@@ -71,7 +71,7 @@ where
         self
     }
 
-    pub fn self_connt(mut self, one: &'a C, two: &'a C) -> Self {
+    pub fn all_to_all_self(mut self, one: &'a C, two: &'a C) -> Self {
         self.attach(ConnectTypes::AllToAllSelf, one, two);
         self
     }

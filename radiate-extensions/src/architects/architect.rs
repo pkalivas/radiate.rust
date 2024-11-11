@@ -52,7 +52,7 @@ where
 
             builder
                 .one_to_one(&input, &aggregate)
-                .self_connt(&aggregate, &link)
+                .all_to_all_self(&aggregate, &link)
                 .all_to_all(&aggregate, &output)
                 .build()
         })
@@ -82,7 +82,7 @@ where
             builder
                 .one_to_many(&input, &weights)
                 .many_to_one(&weights, &aggregate)
-                .self_connt(&aggregate, &aggregate_weights)
+                .all_to_all_self(&aggregate, &aggregate_weights)
                 .all_to_all(&aggregate, &output)
                 .build()
         })
