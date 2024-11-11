@@ -26,8 +26,8 @@ where
     T: Clone + PartialEq + Default
 {
     pub fn new(input_size: usize, output_size: usize, factory: Arc<dyn NodeFactory<T>>) -> GraphCodex<T> {
-        let architect = Architect::<Graph<T>, T>::new(factory.clone());
-        let graph = architect.acyclic(input_size, output_size);
+        let graph = Architect::<Graph<T>, T>::new(factory.clone())
+            .acyclic(input_size, output_size);
 
         GraphCodex { 
             input_size,
