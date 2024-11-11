@@ -1,8 +1,8 @@
-use std::{collections::HashSet, sync::Arc};
+use std::collections::HashSet;
 use uuid::Uuid;
 use radiate_rust::engines::genome::genes::gene::{Gene, Valid};
 
-use crate::architects::{factories::node_factory::NodeFactory, schema::{direction::Direction, node_types::NodeType}};
+use crate::architects::schema::{direction::Direction, node_types::NodeType};
 
 pub struct Node<T>
 where
