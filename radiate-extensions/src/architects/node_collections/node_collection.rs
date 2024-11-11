@@ -9,12 +9,12 @@ where
     T: Clone + PartialEq + Default
 {
     fn from_nodes(nodes: Vec<Node<T>>) -> Self;
+
+    fn get(&self, index: usize) -> Option<&Node<T>>;
+    fn get_mut(&mut self, index: usize) -> Option<&mut Node<T>>;
     
     fn get_nodes(&self) -> &[Node<T>];
     fn get_nodes_mut(&mut self) -> &mut [Node<T>];
-
-    fn get(&self, index: usize) -> Option<&Node<T>>;    
-    fn get_mut(&mut self, index: usize) -> Option<&mut Node<T>>;
 
     fn set(&mut self, index: usize, node: Node<T>) -> &mut Self {
         self.get_nodes_mut()[index] = node;
