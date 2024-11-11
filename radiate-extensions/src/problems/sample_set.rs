@@ -1,6 +1,6 @@
 
 #[allow(dead_code)]
-pub struct Sample<T>(usize, Vec<T>, Vec<T>);
+pub struct Sample<T>(pub usize, pub Vec<T>, pub Vec<T>);
 
 pub struct SampleSet<T> {
     samples: Vec<Sample<T>>,
