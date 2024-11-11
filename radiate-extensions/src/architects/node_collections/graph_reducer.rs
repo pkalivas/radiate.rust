@@ -18,7 +18,7 @@ where
 
 impl<T> GraphReducer<T>
 where
-    T: Clone + PartialEq + Default
+    T: Clone + PartialEq + Default + std::fmt::Debug
 {
     pub fn new(graph: Graph<T>) -> GraphReducer<T> {
         let tracers = graph
@@ -59,10 +59,7 @@ where
                             self.tracers[node.index].add_input(inputs[node.index].clone());
                         } else {
                             for incoming in &node.incoming {
-                                let arg = match self.tracers[*incoming].result.clone() {
-                                    Some(value) => value,
-                                    None => T::default()
-                                };
+                                let arg = self.tracers[*incoming].result.clone().unwrap_or_else(|| T::default());
                                 self.tracers[node.index].add_input(arg);
                             }
                         }
@@ -86,59 +83,3 @@ where
         result
     }
 }
-
-// public static IEnumerable<TNode> Iterate<TCollection, TNode, T>(INodeCollection<TCollection, TNode, T> collection)
-//         where TCollection : INodeCollection<TCollection, TNode, T>
-//         where TNode : INode<TNode, T>
-//     {
-//         if (collection.CollectionType is not CollectionTypes.Graph)
-//         {
-//             throw new InvalidOperationException($"{nameof(GraphIterator)} Collection is not a graph.");
-//         }
-        
-//         var checksWithoutProgress = 0;
-//         var size = collection.Count();
-//         var completed = new HashSet<int>(size);
-
-//         var pendingIndex = 0;
-//         while (pendingIndex < size)
-//         {
-//             if (checksWithoutProgress > MaxChecksWithoutProgress)
-//             {
-//                 throw new InvalidOperationException("Failed to iterate graph.");
-//             }
-
-//             var minPendingIndex = size;
-//             for (var i = pendingIndex; i < size; i++)
-//             {
-//                 var node = collection[i];
-                
-//                 if (completed.Contains(node.Index))
-//                 {
-//                     continue;
-//                 }
-                
-//                 var degree = node.Incoming.Count;
-//                 foreach (var incoming in node.Incoming)
-//                 {
-//                     if (completed.Contains(incoming) || collection[incoming].IsRecurrent())
-//                     {
-//                         degree--;
-//                     }
-//                 }
-
-//                 if (degree == 0)
-//                 {
-//                     completed.Add(node.Index);
-//                     yield return node;
-//                 }
-//                 else
-//                 {
-//                     minPendingIndex = Math.Min(minPendingIndex, node.Index);
-//                 }
-//             }
-            
-//             checksWithoutProgress = minPendingIndex == pendingIndex ? checksWithoutProgress + 1 : 0;
-//             pendingIndex = minPendingIndex;
-//         }
-//     }

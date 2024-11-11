@@ -56,9 +56,10 @@ where
     }
 
     pub fn is_recurrent(&self) -> bool {
+        self.direction == Direction::Backward 
+            ||
         self.incoming.contains(&self.index) 
-            || self.outgoing.contains(&self.index) 
-            || self.direction == Direction::Backward
+            || self.outgoing.contains(&self.index)
     }
 
     pub fn incoming(&self) -> &HashSet<usize> {
