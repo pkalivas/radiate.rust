@@ -22,30 +22,6 @@ impl<T> Regression<T> {
         Regression { sample_set, loss_function }
     }
 
-    pub fn calculate<F>(&self, calc_func: F) -> T
-    where
-        T: Clone + PartialEq + Default
-            + Add<Output = T>
-            + Div<Output = T>
-            + Sub<Output = T>
-            + Mul<Output = T>
-            + Div<Output = T>
-            + AddAssign
-            + SubAssign
-            + DivAssign
-            + Float
-            + FromPrimitive
-            + DivAssign,
-        F: Fn(&Vec<T>) -> &[T]
-    {
-        let mut sum = T::default();
-        for sample in self.sample_set.get_samples().iter() {
-            let output = calc_func(&sample.1);
-            sum += self.loss_function.calculate(&output, &sample.2);
-        }
-        sum
-    }
-
     pub fn error<F>(&self, mut error_fn: F) -> T 
     where
         T: Clone + PartialEq + Default
