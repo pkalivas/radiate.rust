@@ -2,7 +2,10 @@ use std::{ops::{Add, Div, Mul, Sub, Neg}, sync::Arc};
 
 use rand::{prelude::Distribution, distributions::Standard, random};
 
-use num_traits::Float;
+use num_traits::{Float, NumCast};
+
+const MAX_VALUE: f32 = 1e+6_f32;
+const MIN_VALUE: f32 = -1e+6_f32;
 
 
 pub enum Ops<T> 
@@ -119,81 +122,107 @@ where
 }
 
 
+pub fn clamp<T>(value: T) -> T
+where
+    T: Clone + Float
+{
+    if value.is_nan() {
+        return T::from(0_f32).unwrap();
+    }
+
+    let min_value = T::from(MIN_VALUE).unwrap();
+    let max_value = T::from(MAX_VALUE).unwrap();
+
+    if value < min_value {
+        min_value
+    } else if value > max_value {
+        max_value
+    } else {
+        value
+    }
+}
+
+
 pub fn value<T: Clone>(value: T) -> Ops<T> {
     Ops::Value(value)
 }
 
-pub fn add<T: Add<Output = T> + Clone>() -> Ops<T> {
-    Ops::Fn("+", 2, Arc::new(|inputs: &[T]| inputs[0].clone() + inputs[1].clone()))
+pub fn add<T: Add<Output = T> + Clone + Float>() -> Ops<T> {
+    Ops::Fn("+", 2, Arc::new(|inputs: &[T]| clamp(inputs[0].clone() + inputs[1].clone())))
 }
 
-pub fn sub<T: Sub<Output = T> + Clone>() -> Ops<T> {
-    Ops::Fn("-", 2, Arc::new(|inputs: &[T]| inputs[0].clone() - inputs[1].clone()))
+pub fn sub<T: Sub<Output = T> + Clone + Float>() -> Ops<T> {
+    Ops::Fn("-", 2, Arc::new(|inputs: &[T]| clamp(inputs[0].clone() - inputs[1].clone())))
 }
 
-pub fn mul<T: Mul<Output = T> + Clone>() -> Ops<T> {
-    Ops::Fn("*", 2, Arc::new(|inputs: &[T]| inputs[0].clone() * inputs[1].clone()))
+pub fn mul<T: Mul<Output = T> + Clone + Float>() -> Ops<T> {
+    Ops::Fn("*", 2, Arc::new(|inputs: &[T]| clamp(inputs[0].clone() * inputs[1].clone())))
 }
 
-pub fn div<T: Div<Output = T> + Clone>() -> Ops<T> {
-    Ops::Fn("/", 2, Arc::new(|inputs: &[T]| inputs[0].clone() / inputs[1].clone()))
+pub fn div<T: Div<Output = T> + Clone + Float>() -> Ops<T> {
+    Ops::Fn("/", 2, Arc::new(|inputs: &[T]| clamp(inputs[0].clone() / inputs[1].clone())))
 }
 
-pub fn sum<T: Add<Output = T> + Clone + Default>() -> Ops<T> {
-    Ops::Fn("sum", 2, Arc::new(|inputs: &[T]| inputs
+pub fn sum<T: Add<Output = T> + Clone + Default + Float>() -> Ops<T> {
+    Ops::Fn("sum", 2, Arc::new(|inputs: &[T]| clamp(inputs
         .iter()
-        .fold(T::default(), |acc, x| acc + x.clone())))
+        .fold(T::default(), |acc, x| acc + x.clone()))))
 }
 
-pub fn prod<T: Mul<Output = T> + Clone + Default>() -> Ops<T> {
-    Ops::Fn("prod", 2, Arc::new(|inputs: &[T]| inputs
-        .iter()
-        .fold(T::default(), |acc, x| acc * x.clone())))
+pub fn prod<T: Mul<Output = T> + Clone + Default + Float>() -> Ops<T> {
+    Ops::Fn("prod", 2, Arc::new(|inputs: &[T]| {
+        let result = inputs
+            .iter()
+            .fold(T::default(), |acc, x| acc * x.clone());
+
+        clamp(result)
+    }))
 }
 
-pub fn neg<T: Neg<Output = T> + Clone + Default>() -> Ops<T> {
-    Ops::Fn("neg", 1, Arc::new(|inputs: &[T]| -inputs[0].clone()))
+pub fn neg<T: Neg<Output = T> + Clone + Default + Float>() -> Ops<T> {
+    Ops::Fn("neg", 1, Arc::new(|inputs: &[T]| clamp(-inputs[0].clone())))
 }
 
-pub fn pow<T: Mul<Output = T> + Clone>() -> Ops<T> {
-    Ops::Fn("pow", 2, Arc::new(|inputs: &[T]| inputs[0].clone() * inputs[1].clone()))
+pub fn pow<T: Mul<Output = T> + Clone + Float>() -> Ops<T> {
+    Ops::Fn("pow", 2, Arc::new(|inputs: &[T]| clamp(inputs[0].clone() * inputs[1].clone())))
 }
 
 pub fn sqrt<T: Mul<Output = T> + Clone + Float>() -> Ops<T> {
-    Ops::Fn("sqrt", 1, Arc::new(|inputs: &[T]| inputs[0].clone().sqrt()))
+    Ops::Fn("sqrt", 1, Arc::new(|inputs: &[T]| clamp(inputs[0].clone().sqrt())))
 }
 
 pub fn abs<T: Clone + Float>() -> Ops<T> {
-    Ops::Fn("abs", 1, Arc::new(|inputs: &[T]| inputs[0].clone().abs()))
+    Ops::Fn("abs", 1, Arc::new(|inputs: &[T]| clamp(inputs[0].clone().abs())))
 }
 
 pub fn exp<T: Clone + Float>() -> Ops<T> {
-    Ops::Fn("exp", 1, Arc::new(|inputs: &[T]| inputs[0].clone().exp()))
+    Ops::Fn("exp", 1, Arc::new(|inputs: &[T]| clamp(inputs[0].clone().exp())))
 }
 
 pub fn log<T: Clone + Float>() -> Ops<T> {
-    Ops::Fn("log", 1, Arc::new(|inputs: &[T]| inputs[0].clone().ln()))
+    Ops::Fn("log", 1, Arc::new(|inputs: &[T]| clamp(inputs[0].clone().ln())))
 }
 
 pub fn sin<T: Clone + Float>() -> Ops<T> {
-    Ops::Fn("sin", 1, Arc::new(|inputs: &[T]| inputs[0].clone().sin()))
+    Ops::Fn("sin", 1, Arc::new(|inputs: &[T]| clamp(inputs[0].clone().sin())))
 }
 
 pub fn cos<T: Clone + Float>() -> Ops<T> {
-    Ops::Fn("cos", 1, Arc::new(|inputs: &[T]| inputs[0].clone().cos()))
+    Ops::Fn("cos", 1, Arc::new(|inputs: &[T]| clamp(inputs[0].clone().cos())))
 }
 
 pub fn tan<T: Clone + Float>() -> Ops<T> {
-    Ops::Fn("tan", 1, Arc::new(|inputs: &[T]| inputs[0].clone().tan()))
+    Ops::Fn("tan", 1, Arc::new(|inputs: &[T]| clamp(inputs[0].clone().tan())))
 }
 
 
-pub fn weight<T: Sub<Output = T> + Mul<Output = T> + Copy + Default>() -> Ops<T>
+pub fn weight<T: Sub<Output = T> + Mul<Output = T> + Copy + Default + Float>() -> Ops<T>
 where
     Standard: Distribution<T>,
+    T: PartialOrd + NumCast
 {
     let supplier = || random::<T>() - random::<T>();
-    let operation = |inputs: &[T], weight: &T| inputs[0] * *weight;
+    let operation = |inputs: &[T], weight: &T| clamp(inputs[0] * *weight);
     Ops::MutableConst("w", 1, supplier(), Arc::new(supplier), Arc::new(operation))
 }
 
@@ -205,15 +234,17 @@ pub fn var<T: Clone>(index: usize) -> Ops<T> {
 pub fn sigmoid() -> Ops<f32> {
     Ops::Fn("sigmoid", 1, Arc::new(|inputs: &[f32]| {
         let sum = inputs.iter().fold(0_f32, |acc, x| acc + x);
-        1_f32 / (1_f32 + (-sum).exp())
+        let result = 1_f32 / (1_f32 + (-sum).exp());
+        clamp(result)
     }))
 }
 
 pub fn relu() -> Ops<f32> {
     Ops::Fn("relu", 1, Arc::new(|inputs: &[f32]| {
         let sum = inputs.iter().fold(0_f32, |acc, x| acc + x);
-        if sum > 0_f32 {
-            sum
+        let result = clamp(sum);
+        if result > 0_f32 {
+            result
         } else {
             0_f32
         }
@@ -222,17 +253,21 @@ pub fn relu() -> Ops<f32> {
 
 pub fn tanh() -> Ops<f32> {
     Ops::Fn("tanh", 1, Arc::new(|inputs: &[f32]| {
-        inputs
+        let result = inputs
             .iter()
             .fold(0_f32, |acc, x| acc + x)
-            .tanh()
+            .tanh();
+
+        clamp(result)
     }))
 }
 
 pub fn linear() -> Ops<f32> {
     Ops::Fn("linear", 1, Arc::new(|inputs: &[f32]| {
-        inputs
+        let result = inputs
             .iter()
-            .fold(0_f32, |acc, x| acc + x)
+            .fold(0_f32, |acc, x| acc + x);
+
+        clamp(result)
     }))
 }

@@ -1,10 +1,13 @@
 
 use std::collections::{HashSet, VecDeque};
 
+use radiate_rust::engines::genome::genes::gene::Valid;
+
 use crate::architects::schema::direction::Direction;
 use crate::architects::node_collections::node::Node;
 
-pub trait NodeCollection<C, T>
+
+pub trait NodeCollection<C, T>: Valid
 where
     C: NodeCollection<C, T> + Default + Clone,
     T: Clone + PartialEq + Default
@@ -49,14 +52,16 @@ where
         self.get_nodes().len()
     }
 
-    fn attach(&mut self, incoming: usize, outgoing: usize) {
+    fn attach(&mut self, incoming: usize, outgoing: usize) -> &mut Self {
         self.get_nodes_mut()[incoming].outgoing_mut().insert(outgoing);
         self.get_nodes_mut()[outgoing].incoming_mut().insert(incoming);
+        self
     }
 
-    fn detach(&mut self, incoming: usize, outgoing: usize) {
+    fn detach(&mut self, incoming: usize, outgoing: usize) -> &mut Self {
         self.get_nodes_mut()[incoming].outgoing_mut().remove(&outgoing);
         self.get_nodes_mut()[outgoing].incoming_mut().remove(&incoming);
+        self
     }
 
     fn reindex(&self, index: usize) -> C {
@@ -164,3 +169,34 @@ where
     Vec::new()
 }
 
+
+
+// impl<T> NodeCollection<Chromosome<Node<T>, Ops<T>>, T> for Chromosome<Node<T>, Ops<T>>
+// where
+//     T: Clone + PartialEq + Default
+// {
+//     fn from_nodes(nodes: Vec<Node<T>>) -> Self {
+//         Chromosome::from_genes(nodes)
+//     }
+
+//     fn get(&self, index: usize) -> Option<&Node<T>> {
+//         Some(self.get_gene(index))
+//     }
+
+//     fn get_mut(&mut self, _: usize) -> Option<&mut Node<T>> {
+//         panic!()
+//     }
+
+//     fn get_nodes(&self) -> &[Node<T>] {
+//         &self.genes
+//     }
+
+//     fn get_nodes_mut(&mut self) -> &mut [Node<T>] {
+//         panic!()
+//     }
+
+//     fn add(&mut self, node: Node<T>) -> &mut Self {
+//         self.genes.push(node);
+//         self
+//     }
+// }

@@ -135,7 +135,7 @@ where
         match self.node_type {
             NodeType::Input => self.incoming.is_empty() && !self.outgoing.is_empty(),
             NodeType::Output => self.incoming.len() > 0,
-            NodeType::Gate => !self.incoming.is_empty() && !self.outgoing.is_empty(),
+            NodeType::Gate => self.incoming.len() == self.arity().unwrap() as usize,
             NodeType::Aggregate => !self.incoming.is_empty() && !self.outgoing.is_empty(),
             NodeType::Weight => self.incoming.len() == 1 && self.outgoing.len() == 1,
             NodeType::Link => self.incoming.len() == 1 && self.outgoing.len() > 0

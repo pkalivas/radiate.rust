@@ -12,13 +12,12 @@ where
     C: NodeCollection<C, T> + Default + Clone,
     T: Clone + PartialEq + Default
 {
-    fn modify(&self, collection: &mut C) -> C;
+    fn modify(&self, collection: &C) -> C;
 }
 
 
-pub fn can_connect<C, T>(collection: &C, source: usize, target: usize) -> bool
+pub fn can_connect<T>(collection: &[Node<T>], source: usize, target: usize) -> bool
 where
-    C: NodeCollection<C, T> + Clone + Default,
     T: Clone + PartialEq + Default
 {
     let source_node = &collection.get(source).unwrap();
@@ -34,9 +33,8 @@ where
     return !would_create_cycle && !nodes_are_weights && source != target;
 }
 
-pub fn would_create_cycle<C, T>(collection: &C, source: usize, target: usize) -> bool
+pub fn would_create_cycle<T>(collection: &[Node<T>], source: usize, target: usize) -> bool
 where
-    C: NodeCollection<C, T> + Clone + Default,
     T: Clone + PartialEq + Default
 {
     let mut seen = HashSet::new();
@@ -73,9 +71,8 @@ where
     }   
 }
 
-pub fn random_source_node<C, T>(collection: &C) -> &Node<T>
+pub fn random_source_node<T>(collection: &[Node<T>]) -> &Node<T>
 where
-    C: NodeCollection<C, T> + Clone + Default,
     T: Clone + PartialEq + Default
 {
     random_node_of_type(collection, vec![
@@ -86,9 +83,8 @@ where
     ])
 }
 
-pub fn random_target_node<C, T>(collection: &C) -> &Node<T>
+pub fn random_target_node<T>(collection: &[Node<T>]) -> &Node<T>
 where
-    C: NodeCollection<C, T> + Clone + Default,
     T: Clone + PartialEq + Default
 {
     random_node_of_type(collection, vec![
@@ -97,9 +93,8 @@ where
     ])
 }
 
-fn random_node_of_type<C, T>(collection: &C, node_types: Vec<NodeType>) -> &Node<T>
+fn random_node_of_type<T>(collection: &[Node<T>], node_types: Vec<NodeType>) -> &Node<T>
 where
-    C: NodeCollection<C, T> + Clone + Default,
     T: Clone + PartialEq + Default
 {
     if node_types.len() == 0 {

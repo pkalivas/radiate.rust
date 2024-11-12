@@ -1,3 +1,5 @@
+use radiate_rust::engines::genome::genes::gene::Valid;
+
 use crate::architects::node_collections::node::Node;
 
 use super::super::node_collection::NodeCollection;
@@ -37,6 +39,15 @@ where
     fn add(&mut self, node: Node<T>) -> &mut Self {
         self.nodes.push(node);
         self
+    }
+}
+
+impl<T> Valid for Graph<T>
+where
+    T: Clone + PartialEq + Default
+{
+    fn is_valid(&self) -> bool {
+        self.nodes.iter().all(|node| node.is_valid())
     }
 }
 
