@@ -1,15 +1,15 @@
 use radiate_extensions::alterers::node_crossover::NodeCrossover;
 use radiate_extensions::alterers::node_mutator::NodeMutator;
-use radiate_extensions::architects::node_collections::graph::Graph;
-use radiate_extensions::architects::node_collections::graph_reducer::GraphReducer;
+use radiate_extensions::architects::node_collections::graphs::graph::Graph;
+use radiate_extensions::architects::node_collections::graphs::graph_reducer::GraphReducer;
 use radiate_extensions::operations::op;
 use radiate_extensions::problems::error_functions::ErrorFunction;
 use radiate_extensions::problems::regression::Regression;
 use radiate_extensions::problems::sample_set::SampleSet;
 use radiate_rust::engines::alterers::alter::Alterer;
 
-use radiate_extensions::architects::codexes::graph_codex::GraphCodex;
-use radiate_extensions::architects::factories::node_factory::NodeFactory;
+use radiate_extensions::architects::node_collections::graphs::graph_codex::GraphCodex;
+use radiate_extensions::architects::node_collections::node_factory::NodeFactory;
 use radiate_rust::engines::genetic_engine::GeneticEngine;
 use radiate_rust::engines::score::Score;
 

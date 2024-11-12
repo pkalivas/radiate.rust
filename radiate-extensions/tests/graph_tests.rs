@@ -5,11 +5,11 @@ mod tests {
     use radiate_rust::engines::codexes::Codex;
 
     use radiate_extensions::architects::architect::Architect;
-    use radiate_extensions::architects::codexes::graph_codex::GraphCodex;
-    use radiate_extensions::architects::factories::node_factory::NodeFactory;
-    use radiate_extensions::architects::node_collections::graph::Graph;
+    use radiate_extensions::architects::node_collections::graphs::graph_codex::GraphCodex;
+    use radiate_extensions::architects::node_collections::node_factory::NodeFactory;
+    use radiate_extensions::architects::node_collections::graphs::graph::Graph;
     use radiate_extensions::architects::node_collections::node_collection::NodeCollection;
-    use radiate_extensions::architects::node_collections::graph_reducer::GraphReducer;
+    use radiate_extensions::architects::node_collections::graphs::graph_reducer::GraphReducer;
 
     #[test]
     fn test_graph() {

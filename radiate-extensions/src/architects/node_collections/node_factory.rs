@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use rand::seq::SliceRandom;
 
-use crate::{architects::{nodes::node::Node, schema::node_types::NodeType}, operations::op::{self, Ops}};
+use crate::{architects::{node_collections::node::Node, schema::node_types::NodeType}, operations::op::{self, Ops}};
 
 
 pub struct NodeFactory<T> 

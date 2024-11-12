@@ -1,6 +1,6 @@
-use crate::architects::nodes::node::Node;
+use crate::architects::node_collections::node::Node;
 
-use super::node_collection::NodeCollection;
+use super::super::node_collection::NodeCollection;
 
 
 pub struct Graph<T>

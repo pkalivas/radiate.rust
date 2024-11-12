@@ -1,3 +1,5 @@
 pub mod node_collection;
-pub mod graph;
-pub mod graph_reducer;
+pub mod graphs;
+pub mod node;
+pub mod tracer;
+pub mod node_factory;
