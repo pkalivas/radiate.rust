@@ -8,19 +8,19 @@ use super::node_collection::NodeCollection;
 const CHECKS_WITHOUT_PROGRESS: i32 = 5000;
 
 
-pub struct GraphReducer<T>
+pub struct GraphReducer<'a, T>
 where
     T: Clone + PartialEq + Default
 {
-    pub graph: Graph<T>,
+    pub graph: &'a Graph<T>,
     pub tracers: Vec<Tracer<T>>,
 }
 
-impl<T> GraphReducer<T>
+impl<'a, T> GraphReducer<'a, T>
 where
     T: Clone + PartialEq + Default
 {
-    pub fn new(graph: Graph<T>) -> GraphReducer<T> {
+    pub fn new(graph: &'a Graph<T>) -> GraphReducer<'a, T> {
         let tracers = graph
             .iter()
             .map(|node| Tracer::new(node.input_size()))

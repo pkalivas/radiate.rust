@@ -10,6 +10,7 @@ use crate::architects::node_collections::graph::Graph;
 use crate::architects::node_collections::node_collection::NodeCollection;
 use crate::architects::nodes::node::Node;
 use crate::architects::architect::Architect;
+use crate::architects::schema::node_types::NodeType;
 use crate::operations::op::Ops;
 
 
@@ -27,18 +28,32 @@ impl<T> GraphCodex<T>
 where
     T: Clone + PartialEq + Default
 {
-    pub fn new(input_size: usize, output_size: usize, factory: NodeFactory<T>) -> GraphCodex<T> {
-        let graph = Architect::<Graph<T>, T>::new(&factory)
-            .acyclic(input_size, output_size);
+    pub fn from_factory(factory: NodeFactory<T>) -> GraphCodex<T> {
+        GraphCodex::from_shape(1, 1, factory)
+    }
 
-        GraphCodex { 
-            input_size,
-            output_size,
-            factory, 
-            nodes: graph
+    pub fn from_shape(input_size: usize, output_size: usize, factory: NodeFactory<T>) -> GraphCodex<T> {
+        let nodes = Architect::<Graph<T>, T>::new(&factory)
+            .acyclic(input_size, output_size)
+            .iter()
+            .map(|node| node.clone())
+            .collect::<Vec<Node<T>>>();
+
+        GraphCodex::from_nodes(nodes, factory)
+    }
+
+    pub fn from_nodes(nodes: Vec<Node<T>>, factory: NodeFactory<T>) -> GraphCodex<T> {
+        GraphCodex {
+            input_size: nodes
                 .iter()
-                .map(|node| node.clone())
-                .collect::<Vec<Node<T>>>()
+                .filter(|node| node.node_type == NodeType::Input)
+                .count(),
+            output_size: nodes
+                .iter()
+                .filter(|node| node.node_type == NodeType::Output)
+                .count(),
+            factory,
+            nodes
         }
     }
 
@@ -53,6 +68,14 @@ where
             .iter()
             .map(|node| node.clone())
             .collect::<Vec<Node<T>>>();
+        self.input_size = graph
+            .iter()
+            .filter(|node| node.node_type == NodeType::Input)
+            .count();
+        self.output_size = graph
+            .iter()
+            .filter(|node| node.node_type == NodeType::Output)
+            .count();
         self
     }
 }
