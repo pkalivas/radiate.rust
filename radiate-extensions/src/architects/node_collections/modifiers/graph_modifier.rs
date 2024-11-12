@@ -1,5 +1,7 @@
 
-use crate::architects::{node_collections::{graphs::graph::Graph, modifiers::modifier, node_collection::NodeCollection, node_factory::NodeFactory}, schema::node_types::NodeType};
+use radiate_rust::engines::genome::genes::gene::Valid;
+
+use crate::architects::{node_collections::{graphs::graph::Graph, modifiers::modifier, node::Node, node_collection::NodeCollection, node_factory::NodeFactory}, schema::node_types::NodeType};
 
 use super::modifier::Modifier;
 
@@ -20,19 +22,35 @@ where
         Graphmodifier { factory, node_type }
     }
 
-    // pub fn repair_insert(&self, original: Graph<T>, collection: Graph<T>, source_node: usize, target_node: usize) -> Graph<T> {
-    //     let source_node = collection.get(source_node).unwrap();
-    //     let target_node = collection.get(target_node).unwrap();
+    pub fn repair_insert(&self, 
+        original: &Graph<T>,
+        collection: &mut Graph<T>, 
+        new_node: &Node<T>,
+        // source_node: &Node<T>,
+        // target_node: &Node<T>
+    ) -> Graph<T> {
+        
+        for _ in 0..new_node.arity().unwrap() - 1 {
+            let other_source_node = modifier::random_source_node(collection);
 
-    //    unimplemented!()
-    // }
+            if modifier::can_connect(collection, other_source_node.index, new_node.index) {
+                collection.attach(other_source_node.index, new_node.index);
+            }
+        }
+
+        if !collection.is_valid() {
+            return original.clone();
+        }
+
+        collection.clone()
+    }
 }
 
 impl<'a, T> Modifier<Graph<T>, T> for Graphmodifier<'a, T>
 where
     T: Clone + PartialEq + Default
 {
-    fn modify(&self, collection: &mut Graph<T>) -> Graph<T> {
+    fn modify(&self, collection: &Graph<T>) -> Graph<T> {
         let source_node = modifier::random_source_node(collection);
         let target_node = modifier::random_target_node(collection);
 
