@@ -51,7 +51,7 @@ where
                     gene.from_allele(&Ops::MutableConst(&name, *arity, new_value, supplier.clone(), operation.clone()))
                 }
             },
-            _ => gene.from_allele(&gene.allele().new_instance())
+            _ => gene.from_allele(&gene.allele())
         }
     }
 }

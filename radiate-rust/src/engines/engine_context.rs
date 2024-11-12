@@ -24,9 +24,10 @@ where
     }
 }
 
-impl<G, A, T: Clone> Clone for EngineContext<G, A, T> 
+impl<G, A, T> Clone for EngineContext<G, A, T> 
 where
-    G: Gene<G, A>
+    G: Gene<G, A>,
+    T: Clone
 {
     fn clone(&self) -> Self {
         EngineContext {
