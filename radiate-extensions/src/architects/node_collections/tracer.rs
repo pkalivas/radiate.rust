@@ -56,21 +56,6 @@ where
     }
 }
 
-impl<T> Clone for Tracer<T>
-where
-    T: Clone
-{
-    fn clone(&self) -> Self {
-        Tracer {
-            input_size: self.input_size,
-            pending_idx: self.pending_idx,
-            args: self.args.clone(),
-            result: self.result.clone(),
-            previous_result: self.previous_result.clone(),
-        }
-    }
-}
-
 impl<T> std::fmt::Debug for Tracer<T>
 where
     T: Clone + std::fmt::Debug

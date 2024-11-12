@@ -22,14 +22,12 @@ where
     T: Clone + PartialEq + Default
 {
     pub fn new(graph: &'a Graph<T>) -> GraphReducer<'a, T> {
-        let tracers = graph
-            .iter()
-            .map(|node| Tracer::new(node.input_size()))
-            .collect::<Vec<Tracer<T>>>();
-
         GraphReducer { 
             graph, 
-            tracers, 
+            tracers: graph
+                .iter()
+                .map(|node| Tracer::new(node.input_size()))
+                .collect::<Vec<Tracer<T>>>(), 
             order: Vec::new()
         }
     }

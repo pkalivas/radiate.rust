@@ -12,7 +12,7 @@ where
     C: NodeCollection<C, T> + Default + Clone,
     T: Clone + PartialEq + Default
 {
-    fn modify(&self, collection: &mut C) -> &mut C;
+    fn modify(&self, collection: &mut C) -> C;
 }
 
 
