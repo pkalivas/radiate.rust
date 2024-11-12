@@ -6,6 +6,7 @@ use radiate_rust::engines::genome::genes::gene::Valid;
 use crate::architects::schema::direction::Direction;
 use crate::architects::node_collections::node::Node;
 
+
 pub trait NodeCollection<C, T>: Valid
 where
     C: NodeCollection<C, T> + Default + Clone,
@@ -168,3 +169,34 @@ where
     Vec::new()
 }
 
+
+
+// impl<T> NodeCollection<Chromosome<Node<T>, Ops<T>>, T> for Chromosome<Node<T>, Ops<T>>
+// where
+//     T: Clone + PartialEq + Default
+// {
+//     fn from_nodes(nodes: Vec<Node<T>>) -> Self {
+//         Chromosome::from_genes(nodes)
+//     }
+
+//     fn get(&self, index: usize) -> Option<&Node<T>> {
+//         Some(self.get_gene(index))
+//     }
+
+//     fn get_mut(&mut self, _: usize) -> Option<&mut Node<T>> {
+//         panic!()
+//     }
+
+//     fn get_nodes(&self) -> &[Node<T>] {
+//         &self.genes
+//     }
+
+//     fn get_nodes_mut(&mut self) -> &mut [Node<T>] {
+//         panic!()
+//     }
+
+//     fn add(&mut self, node: Node<T>) -> &mut Self {
+//         self.genes.push(node);
+//         self
+//     }
+// }

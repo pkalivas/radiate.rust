@@ -49,7 +49,6 @@ fn main() {
             Alterer::Mutation(Box::new(
                 NodeMutator::new(0.01, 0.05)
             )),
-
             Alterer::Mutation(Box::new(
                 GraphMutator::new(0.05, factory2, NodeType::Weight)
             )),
@@ -59,7 +58,6 @@ fn main() {
             Alterer::Mutation(Box::new(
                 GraphMutator::new(0.03, factory4, NodeType::Gate)
             )),
-
             Alterer::Crossover(Box::new(
                 NodeCrossover::new(0.5)
             ))
