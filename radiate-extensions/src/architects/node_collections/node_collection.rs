@@ -17,6 +17,21 @@ where
     fn get_nodes(&self) -> &[Node<T>];
     fn get_nodes_mut(&mut self) -> &mut [Node<T>];
 
+    fn add(&mut self, node: Node<T>) -> &mut Self;
+
+    fn insert(&self, nodes: Vec<Node<T>>) -> C {
+        let mut new_nodes = self.get_nodes()
+            .iter()
+            .cloned()
+            .collect::<Vec<Node<T>>>();
+
+        for node in nodes {
+            new_nodes.push(node);
+        }
+
+        C::from_nodes(new_nodes)
+    }
+
     fn set(&mut self, index: usize, node: Node<T>) -> &mut Self {
         self.get_nodes_mut()[index] = node;
         self

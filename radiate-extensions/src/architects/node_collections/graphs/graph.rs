@@ -33,6 +33,11 @@ where
     fn get_nodes_mut(&mut self) -> &mut [Node<T>] {
         &mut self.nodes
     }
+
+    fn add(&mut self, node: Node<T>) -> &mut Self {
+        self.nodes.push(node);
+        self
+    }
 }
 
 impl<T> Clone for Graph<T> 
