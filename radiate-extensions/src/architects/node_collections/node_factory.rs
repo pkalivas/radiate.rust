@@ -87,11 +87,13 @@ where
             match node_type {
                 NodeType::Input => {
                     let value = values[index % values.len()].clone();
-                    return Node::new(index, node_type, value);
+                    let arity = value.arity();
+                    return Node::new(index, node_type, value).set_arity(arity);
                 },
                 _ => {
                     let value = values.choose(&mut rng).unwrap();
-                    return Node::new(index, node_type, value.new_instance());
+                    let arity = value.arity();
+                    return Node::new(index, node_type, value.new_instance()).set_arity(arity);
                 }
             }
         }

@@ -14,25 +14,25 @@ use crate::architects::schema::node_types::NodeType;
 use crate::operations::op::Ops;
 
 
-pub struct GraphCodex<T> 
+pub struct GraphCodex<'a, T> 
 where
     T: Clone + PartialEq + Default
 {
     pub input_size: usize,
     pub output_size: usize,
-    pub factory: NodeFactory<T>,
+    pub factory: &'a NodeFactory<T>,
     pub nodes: Vec<Node<T>>,
 }
 
-impl<T> GraphCodex<T>
+impl<'a, T> GraphCodex<'a, T>
 where
     T: Clone + PartialEq + Default
 {
-    pub fn from_factory(factory: NodeFactory<T>) -> GraphCodex<T> {
+    pub fn from_factory(factory: &'a NodeFactory<T>) -> GraphCodex<T> {
         GraphCodex::from_shape(1, 1, factory)
     }
 
-    pub fn from_shape(input_size: usize, output_size: usize, factory: NodeFactory<T>) -> GraphCodex<T> {
+    pub fn from_shape(input_size: usize, output_size: usize, factory: &'a  NodeFactory<T>) -> GraphCodex<T> {
         let nodes = Architect::<Graph<T>, T>::new(&factory)
             .acyclic(input_size, output_size)
             .iter()
@@ -42,7 +42,7 @@ where
         GraphCodex::from_nodes(nodes, factory)
     }
 
-    pub fn from_nodes(nodes: Vec<Node<T>>, factory: NodeFactory<T>) -> GraphCodex<T> {
+    pub fn from_nodes(nodes: Vec<Node<T>>, factory: &'a NodeFactory<T>) -> GraphCodex<T> {
         GraphCodex {
             input_size: nodes
                 .iter()
@@ -80,7 +80,7 @@ where
     }
 }
 
-impl<T> Codex<Node<T>, Ops<T>, Graph<T>> for GraphCodex<T>
+impl<'a, T> Codex<Node<T>, Ops<T>, Graph<T>> for GraphCodex<'a, T>
 where
     T: Clone + PartialEq + Default
 {
