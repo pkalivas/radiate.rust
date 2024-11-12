@@ -110,6 +110,13 @@ where
                 op::mul(),
                 op::div(),
                 op::pow(),
+                op::sqrt(),
+                op::exp(),
+                op::abs(),
+                op::log(),
+                op::sin(),
+                op::cos(),
+                op::tan(),
             ])
             .aggregates(vec![
                 op::sigmoid(),

@@ -2,6 +2,9 @@ use std::{ops::{Add, Div, Mul, Sub, Neg}, sync::Arc};
 
 use rand::{prelude::Distribution, distributions::Standard, random};
 
+use num_traits::Float;
+
+
 pub enum Ops<T> 
 where
     T: Clone
@@ -155,6 +158,35 @@ pub fn neg<T: Neg<Output = T> + Clone + Default>() -> Ops<T> {
 pub fn pow<T: Mul<Output = T> + Clone>() -> Ops<T> {
     Ops::Fn("pow", 2, Arc::new(|inputs: &[T]| inputs[0].clone() * inputs[1].clone()))
 }
+
+pub fn sqrt<T: Mul<Output = T> + Clone + Float>() -> Ops<T> {
+    Ops::Fn("sqrt", 1, Arc::new(|inputs: &[T]| inputs[0].clone().sqrt()))
+}
+
+pub fn abs<T: Clone + Float>() -> Ops<T> {
+    Ops::Fn("abs", 1, Arc::new(|inputs: &[T]| inputs[0].clone().abs()))
+}
+
+pub fn exp<T: Clone + Float>() -> Ops<T> {
+    Ops::Fn("exp", 1, Arc::new(|inputs: &[T]| inputs[0].clone().exp()))
+}
+
+pub fn log<T: Clone + Float>() -> Ops<T> {
+    Ops::Fn("log", 1, Arc::new(|inputs: &[T]| inputs[0].clone().ln()))
+}
+
+pub fn sin<T: Clone + Float>() -> Ops<T> {
+    Ops::Fn("sin", 1, Arc::new(|inputs: &[T]| inputs[0].clone().sin()))
+}
+
+pub fn cos<T: Clone + Float>() -> Ops<T> {
+    Ops::Fn("cos", 1, Arc::new(|inputs: &[T]| inputs[0].clone().cos()))
+}
+
+pub fn tan<T: Clone + Float>() -> Ops<T> {
+    Ops::Fn("tan", 1, Arc::new(|inputs: &[T]| inputs[0].clone().tan()))
+}
+
 
 pub fn weight<T: Sub<Output = T> + Mul<Output = T> + Copy + Default>() -> Ops<T>
 where
