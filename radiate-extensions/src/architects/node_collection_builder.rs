@@ -102,7 +102,7 @@ where
             new_collection.attach(*source_idx, *target_idx);
         }
 
-        NodeCollectionBuilder::<C, T>::repair(&mut new_collection
+        NodeCollectionBuilder::<C, T>::repair(&self.factory, &mut new_collection
             .set_cycles(new_collection
                 .iter()
                 .map(|node| *node.index())
@@ -110,34 +110,35 @@ where
             .reindex(0))
     }
 
-    pub fn layer(&mut self, collections: Vec<&'a C>) -> C {
-        let mut conn = NodeCollectionBuilder::new(self.factory);
+    pub fn layer(&self, collections: Vec<&'a C>) -> NodeCollectionBuilder<'a, C, T> {
+        let mut conn = NodeCollectionBuilder::new(&self.factory);
         let mut previous = collections[0];
+
+        for collection in collections.iter() {
+            for node in collection.iter() {
+                if !conn.nodes.contains_key(node.id()) {
+                    let node_id = node.id();
+
+                    conn.nodes.insert(&node_id, node);
+                    conn.node_order.insert(conn.node_order.len(), &node_id);
+
+                    for outgoing in collection.iter().filter(|item| node.outgoing().contains(item.index())) {
+                        conn.relationships.push(NodeRelationship {
+                            source_id: node.id(),
+                            target_id: outgoing.id(),
+                        });
+                    }
+                }
+            }
+        }
 
         for i in 1..collections.len() {
             conn = conn.one_to_one(previous, collections[i]);
             previous = collections[i];
         }
 
-        conn.build()
+        conn
     }
-
-    // public NodeCollectionBuilder<TCollection, TNode, T> Layer(TCollection[] groups)
-    // {
-    //     var conn = new NodeCollectionBuilder<TCollection, TNode, T>(_factory);
-        
-    //     if (groups.Length == 1)
-    //     {
-    //         return conn.Attach(groups[0]);
-    //     }
-        
-    //     for (var i = 1; i < groups.Length; i++)
-    //     {
-    //         conn.OneToOne(groups[i - 1], groups[i]);
-    //     }
-
-    //     return conn;
-    // }
 
     fn connect(&mut self, connection: ConnectTypes, one: &'a C, two: &'a C) {
         for node in one.iter().chain(two.iter()) {
@@ -300,7 +301,7 @@ where
         let inputs = collection
             .iter()
             .enumerate()
-            .skip_while(|(_, node)| node.incoming().len() > 0)
+            .take_while(|(_, node)| node.incoming().len() == 0)
             .map(|(idx, _)| collection.get(idx).unwrap())
             .collect::<Vec<&Node<T>>>();
 
@@ -329,10 +330,19 @@ where
             .collect::<Vec<&Node<T>>>()
     }
 
-    fn repair(collection: &mut C) -> C {
+    fn repair(factory: &NodeFactory<T>, collection: &mut C) -> C {
         for node in collection.iter_mut() {
             let arity = node.incoming().len();
             (*node).arity = Some(arity as u8);
+
+            if node.node_type() == &NodeType::Output && node.outgoing().len() > 0 {
+                node.node_type = NodeType::Aggregate;
+            } else if node.node_type() == &NodeType::Input && node.incoming().len() > 0 {
+                let temp_node = factory.new_node(*node.index(), NodeType::Aggregate);
+
+                node.node_type = NodeType::Aggregate;
+                node.value = temp_node.value.clone();
+            }
         }
 
         collection.clone()

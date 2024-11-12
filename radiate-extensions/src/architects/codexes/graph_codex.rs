@@ -1,4 +1,5 @@
 
+use radiate_rust::engines::genome::genes::gene::Gene;
 use radiate_rust::engines::genome::genotype::Genotype;
 use radiate_rust::engines::genome::chromosome::Chromosome;
 use radiate_rust::engines::codexes::Codex;
@@ -64,7 +65,7 @@ where
         Genotype {
             chromosomes: vec![Chromosome::from_genes(self.nodes
                 .iter()
-                .map(|node| node.clone())
+                .map(|node| node.new_instance())
                 .collect::<Vec<Node<T>>>())]
         }
     }
