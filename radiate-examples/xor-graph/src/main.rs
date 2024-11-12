@@ -20,7 +20,7 @@ fn main() {
             op::sigmoid()
         ]);
 
-    let graph_codex = GraphCodex::new(2, 1, factory)
+    let graph_codex = GraphCodex::from_factory(factory)
         .set_nodes(|arc, conn| {
             conn.layer(vec![
                 &arc.weighted_acyclic(2, 3),
@@ -31,34 +31,36 @@ fn main() {
             .build()
         });
 
-    let sample_set = get_sample_set();
-    let regression = Regression::new(sample_set, ErrorFunction::MSE);
+    let regression = Regression::new(get_sample_set(), ErrorFunction::MSE);
 
     let engine = GeneticEngine::from_codex(&graph_codex)
         .minimizing()
         .alterer(vec![
-            Alterer::Mutation(Box::new(NodeMutator::new(0.01, 0.05))),
-            Alterer::Crossover(Box::new(NodeCrossover::new(0.5)))
+            Alterer::Mutation(Box::new(
+                NodeMutator::new(0.01, 0.05)
+            )),
+            Alterer::Crossover(Box::new(
+                NodeCrossover::new(0.5)
+            ))
         ])
         .fitness_fn(move |genotype: &Graph<f32>| {
-            let mut reducer = GraphReducer::new(genotype.clone());
-            let mut sum = 0.0;
-
-            for sample in regression.get_sample_set().get_samples().iter() {
-                let output = reducer.reduce(&sample.1);
-                sum += regression.get_loss_function().calculate(&output, &sample.2);
-            }
-
-            Score::from_f32(sum)
+            let mut reducer = GraphReducer::new(genotype);
+            Score::from_f32(regression.error(|sample| {
+                reducer.reduce(&sample)
+            }))
         })
         .build();
 
     let result = engine.run(|output| {
         println!("[ {:?} ]: {:?}", output.index, output.score().as_float());
-        output.index == 500
+        output.index == 500 || output.score().as_float() < 0.01
     });
 
-    let mut reducer = GraphReducer::new(result.best.clone());
+    for node in result.best.nodes.iter() {
+        println!("{:?}", node);
+    }
+    println!("{:?}", result.timer.elapsed());
+    let mut reducer = GraphReducer::new(&result.best);
     for sample in get_sample_set().get_samples().iter() {
         let output = reducer.reduce(&sample.1);
         println!("{:?} -> epected: {:?}, actual: {:?}", sample.1, sample.2, output);

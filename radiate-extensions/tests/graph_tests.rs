@@ -49,7 +49,7 @@ mod tests {
     #[test]
     fn test_reducer() {
         let factory = NodeFactory::<f32>::regression(2);
-        let graph_codex = GraphCodex::new(2, 2, factory)
+        let graph_codex = GraphCodex::from_factory(factory)
             .set_nodes(|arc, _| arc.weighted_acyclic(2, 2));
     
         let genotype = graph_codex.encode();
@@ -63,7 +63,7 @@ mod tests {
     
         let inputs = vec![1.0, 2.0];
         let input_two = vec![3.0, 4.0];
-        let mut reducer = GraphReducer::new(decoded);
+        let mut reducer = GraphReducer::new(&decoded);
         let outputs = reducer.reduce(&inputs);
     
         println!("{:?}", outputs);

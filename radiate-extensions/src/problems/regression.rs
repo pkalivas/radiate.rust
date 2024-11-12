@@ -1,3 +1,4 @@
+use super::sample_set::Sample;
 use super::{error_functions::ErrorFunction, sample_set::SampleSet};
 use std::ops::{Add, Div, Mul, Sub, AddAssign, DivAssign, SubAssign};
 use num_traits::cast::FromPrimitive;
@@ -13,7 +14,7 @@ impl<T> Regression<T> {
         Regression { sample_set, loss_function }
     }
 
-    pub fn from(samples: Vec<(Vec<T>, Vec<T>)>, loss_function: ErrorFunction) -> Self {
+    pub fn from(loss_function: ErrorFunction, samples: Vec<(Vec<T>, Vec<T>)>, ) -> Self {
         let mut sample_set = SampleSet::new();
         for (input, output) in samples {
             sample_set.add_sample(input, output);
@@ -21,7 +22,7 @@ impl<T> Regression<T> {
         Regression { sample_set, loss_function }
     }
 
-    pub fn calculate<F>(&self, calc_func: F) -> T
+    pub fn error<F>(&self, mut error_fn: F) -> T 
     where
         T: Clone + PartialEq + Default
             + Add<Output = T>
@@ -35,18 +36,19 @@ impl<T> Regression<T> {
             + Float
             + FromPrimitive
             + DivAssign,
-        F: Fn(&Vec<T>) -> &[T]
+        F: FnMut(&Vec<T>) -> Vec<T>
     {
         let mut sum = T::default();
         for sample in self.sample_set.get_samples().iter() {
-            let output = calc_func(&sample.1);
+            let output = error_fn(&sample.1);
             sum += self.loss_function.calculate(&output, &sample.2);
         }
+
         sum
     }
 
-    pub fn get_sample_set(&self) -> &SampleSet<T> {
-        &self.sample_set
+    pub fn get_samples(&self) -> &[Sample<T>] {
+        self.sample_set.get_samples()
     }
 
     pub fn get_loss_function(&self) -> &ErrorFunction {
