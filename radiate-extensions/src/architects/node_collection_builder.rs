@@ -41,7 +41,7 @@ where
     C: NodeCollection<C, T> + Clone + Default,
     T: Clone + PartialEq + Default
 {
-    pub fn new(factory: &'a NodeFactory<T>) -> NodeCollectionBuilder<'a, C, T> {
+    pub fn new(factory: &'a NodeFactory<T>) -> Self {
         NodeCollectionBuilder {
             factory,
             nodes: BTreeMap::new(),
@@ -110,7 +110,7 @@ where
             .reindex(0))
     }
 
-    pub fn layer(&self, collections: Vec<&'a C>) -> NodeCollectionBuilder<'a, C, T> {
+    pub fn layer(&self, collections: Vec<&'a C>) -> Self {
         let mut conn = NodeCollectionBuilder::new(&self.factory);
         let mut previous = collections[0];
 
