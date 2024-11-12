@@ -24,21 +24,6 @@ fn main() {
             op::sigmoid()
         ]);
 
-    let factory2 = NodeFactory::<f32>::regression(2)
-        .outputs(vec![
-            op::sigmoid()
-        ]);
-
-    let factory3 = NodeFactory::<f32>::regression(2)
-        .outputs(vec![
-            op::sigmoid()
-        ]);
-
-    let factory4 = NodeFactory::<f32>::regression(2)
-        .outputs(vec![
-            op::sigmoid()
-        ]);
-
     let graph_codex = GraphCodex::from_shape(2, 1, &factory);
 
     let regression = Regression::new(get_sample_set(), ErrorFunction::MSE);
@@ -50,13 +35,10 @@ fn main() {
                 NodeMutator::new(0.01, 0.05)
             )),
             Alterer::Mutation(Box::new(
-                GraphMutator::new(0.05, factory2, NodeType::Weight)
-            )),
-            Alterer::Mutation(Box::new(
-                GraphMutator::new(0.03, factory3, NodeType::Aggregate)
-            )),
-            Alterer::Mutation(Box::new(
-                GraphMutator::new(0.03, factory4, NodeType::Gate)
+                GraphMutator::new(factory.clone())
+                    .add_mutation(NodeType::Weight, 0.05)
+                    .add_mutation(NodeType::Aggregate, 0.03)
+                    .add_mutation(NodeType::Gate, 0.03)
             )),
             Alterer::Crossover(Box::new(
                 NodeCrossover::new(0.5)

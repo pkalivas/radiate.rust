@@ -133,3 +133,14 @@ where
 
     }
 }
+
+impl<T> Clone for NodeFactory<T> 
+where
+    T: Clone + PartialEq + Default
+{
+    fn clone(&self) -> Self {
+        NodeFactory {
+            node_values: self.node_values.clone()
+        }
+    }
+}
