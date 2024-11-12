@@ -124,12 +124,24 @@ where
 
     fn audit(&self, output: &mut EngineContext<G, A, T>) {
         let codex = self.codex();
+        let optimize = self.optimize();
 
         if !output.population.is_sorted {
             self.optimize().sort(&mut output.population);
         }
-        
-        output.best = codex.decode(&output.population.get(0).genotype());
+
+        if let Some(current_score) = &output.score {
+            if let Some(best_score) = output.population.get(0).score() {
+                if optimize.is_better(best_score, &current_score) {
+                    output.score = Some(best_score.clone());
+                    output.best = codex.decode(&output.population.get(0).genotype());
+                }
+            }
+        } else {
+            output.score = output.population.get(0).score().clone();
+            output.best = codex.decode(&output.population.get(0).genotype());
+        }
+
         output.index += 1;
     }
 
@@ -177,6 +189,7 @@ where
             best: self.codex().decode(&population.get(0).genotype()),
             index: 0,
             timer: Timer::new(),
+            score: None
         }
     }
 
