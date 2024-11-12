@@ -1,6 +1,6 @@
 use rand::Rng;
 
-use crate::engines::genome::chromosome::Chromosome;
+use crate::engines::genome::chromosomes::chromosome::Chromosome;
 use crate::engines::genome::genes::gene::Gene;
 
 use super::mutate::Mutate;

@@ -1,4 +1,5 @@
-use super::{chromosome::Chromosome, genes::gene::Gene};
+use super::{chromosomes::chromosome::Chromosome, genes::gene::Gene};
+
 
 pub struct Genotype<G, A> 
 where

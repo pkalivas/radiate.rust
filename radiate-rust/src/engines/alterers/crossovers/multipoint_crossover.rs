@@ -1,5 +1,5 @@
 use crate::engines::alterers::crossovers::crossover::Crossover;
-use crate::engines::genome::chromosome::Chromosome;
+use crate::engines::genome::chromosomes::chromosome::Chromosome;
 use crate::engines::genome::genes::gene::Gene;
 use crate::engines::schema::subset;
 

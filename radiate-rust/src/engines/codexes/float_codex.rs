@@ -1,4 +1,4 @@
-use crate::engines::genome::chromosome::Chromosome;
+use crate::engines::genome::chromosomes::chromosome::Chromosome;
 use crate::engines::genome::genes::float_gene::FloatGene;
 use crate::engines::genome::genes::gene::{BoundGene, Gene};
 use crate::engines::genome::genotype::Genotype;

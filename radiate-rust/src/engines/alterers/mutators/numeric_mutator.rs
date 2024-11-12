@@ -1,7 +1,7 @@
 use rand::Rng;
 
 use crate::engines::alterers::mutators::mutate::Mutate;
-use crate::engines::genome::chromosome::Chromosome;
+use crate::engines::genome::chromosomes::chromosome::Chromosome;
 use crate::engines::genome::genes::gene::NumericGene;
 
 pub struct NumericMutator {

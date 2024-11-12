@@ -1,4 +1,4 @@
-use super::genes::gene::Gene;
+use super::super::genes::gene::Gene;
 
 pub struct Chromosome<G, A>
 where

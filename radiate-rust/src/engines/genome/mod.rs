@@ -1,4 +1,4 @@
-pub mod chromosome;
+pub mod chromosomes;
 pub mod genes;
 pub mod genotype;
 pub mod phenotype;
