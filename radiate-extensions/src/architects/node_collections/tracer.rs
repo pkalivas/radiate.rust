@@ -37,7 +37,14 @@ where
         self.pending_idx += 1;
     }
 
+    pub fn can_eval(&self, node: &Node<T>) -> bool {
+        self.pending_idx == node.input_size()
+    }
+
     pub fn eval(&mut self, node: &Node<T>) {
+        if !self.can_eval(node) {
+            panic!("Tracer is not ready to be evaluated.");
+        }
         if self.pending_idx != self.input_size {
             panic!("Tracer is not ready to be evaluated.");
         }

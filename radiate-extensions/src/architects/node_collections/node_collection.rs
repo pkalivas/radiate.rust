@@ -51,14 +51,16 @@ where
         self.get_nodes().len()
     }
 
-    fn attach(&mut self, incoming: usize, outgoing: usize) {
+    fn attach(&mut self, incoming: usize, outgoing: usize) -> &mut Self {
         self.get_nodes_mut()[incoming].outgoing_mut().insert(outgoing);
         self.get_nodes_mut()[outgoing].incoming_mut().insert(incoming);
+        self
     }
 
-    fn detach(&mut self, incoming: usize, outgoing: usize) {
+    fn detach(&mut self, incoming: usize, outgoing: usize) -> &mut Self {
         self.get_nodes_mut()[incoming].outgoing_mut().remove(&outgoing);
         self.get_nodes_mut()[outgoing].incoming_mut().remove(&incoming);
+        self
     }
 
     fn reindex(&self, index: usize) -> C {

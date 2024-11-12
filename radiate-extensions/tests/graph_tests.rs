@@ -2,6 +2,9 @@
 #[cfg(test)]
 mod tests {
 
+    use radiate_extensions::architects::node_collections::modifiers::graph_modifier::GraphModifier;
+    use radiate_extensions::architects::node_collections::modifiers::modifier::Modifier;
+    use radiate_extensions::architects::schema::node_types::NodeType;
     use radiate_rust::engines::codexes::Codex;
 
     use radiate_extensions::architects::architect::Architect;
@@ -49,7 +52,7 @@ mod tests {
     #[test]
     fn test_reducer() {
         let factory = NodeFactory::<f32>::regression(2);
-        let graph_codex = GraphCodex::from_factory(factory)
+        let graph_codex = GraphCodex::from_factory(&factory)
             .set_nodes(|arc, _| arc.weighted_acyclic(2, 2));
     
         let genotype = graph_codex.encode();
@@ -71,5 +74,30 @@ mod tests {
         let output_two = reducer.reduce(&input_two);
     
         println!("{:?}", output_two);
+    }
+
+    #[test]
+    fn graph_can_modify() {
+        let factory = NodeFactory::<f32>::regression(2);
+        let graph_codex = GraphCodex::from_factory(&factory)
+            .set_nodes(|arc, _| arc.weighted_acyclic(2, 2));
+
+        let factory2 = NodeFactory::<f32>::regression(2);
+        let modifier = GraphModifier::<f32>::new(&factory2, NodeType::Gate);
+    
+        let genotype = graph_codex.encode();
+        let decoded = graph_codex.decode(&genotype);
+    
+        for node in decoded.iter() {
+            println!("{:?}", node);
+        }
+
+        println!("\nModifing graph...\n");
+
+        let modified = modifier.modify(&decoded);
+
+        for node in modified.iter() {
+            println!("{:?}", node);
+        }
     }
 }

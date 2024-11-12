@@ -4,6 +4,10 @@ pub struct Score {
 
 impl Score {
     pub fn from_f32(value: f32) -> Self {
+        if value.is_nan() {
+            panic!("Score value cannot be NaN")
+        }
+
         Score { values: vec![value] }
     }
 
