@@ -1,9 +1,9 @@
 
-use crate::architects::nodes::node::Node;
+use crate::architects::node_collections::node::Node;
 use crate::architects::node_collections::node_collection::NodeCollection;
 use crate::architects::node_collection_builder::NodeCollectionBuilder;
 use crate::architects::schema::node_types::NodeType;
-use crate::architects::factories::node_factory::NodeFactory;
+use crate::architects::node_collections::node_factory::NodeFactory;
 
 
 pub struct Architect<'a, C, T>

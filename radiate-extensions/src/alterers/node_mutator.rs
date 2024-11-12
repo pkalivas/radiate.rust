@@ -4,7 +4,7 @@ use num_traits::Float;
 use rand::{prelude::Distribution, distributions::Standard, random};
 use radiate_rust::engines::{alterers::mutators::mutate::Mutate, genome::genes::gene::Gene};
 
-use crate::architects::nodes::node::Node;
+use crate::architects::node_collections::node::Node;
 use crate::operations::op::Ops;
 
 

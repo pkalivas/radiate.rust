@@ -1,15 +1,18 @@
 use radiate_extensions::alterers::node_crossover::NodeCrossover;
 use radiate_extensions::alterers::node_mutator::NodeMutator;
-use radiate_extensions::architects::node_collections::graph::Graph;
-use radiate_extensions::architects::node_collections::graph_reducer::GraphReducer;
+use radiate_extensions::architects::node_collections::graphs::graph::Graph;
+use radiate_extensions::architects::node_collections::graphs::graph_reducer::GraphReducer;
 use radiate_extensions::operations::op;
 use radiate_extensions::problems::error_functions::ErrorFunction;
 use radiate_extensions::problems::regression::Regression;
 use radiate_extensions::problems::sample_set::SampleSet;
 use radiate_rust::engines::alterers::alter::Alterer;
 
-use radiate_extensions::architects::codexes::graph_codex::GraphCodex;
-use radiate_extensions::architects::factories::node_factory::NodeFactory;
+use radiate_extensions::architects::node_collections::graphs::graph_codex::GraphCodex;
+use radiate_extensions::architects::node_collections::node::Node;
+use radiate_extensions::architects::node_collections::node_factory::NodeFactory;
+use radiate_extensions::operations::op::Ops;
+use radiate_rust::engines::engine_context::EngineContext;
 use radiate_rust::engines::genetic_engine::GeneticEngine;
 use radiate_rust::engines::score::Score;
 
@@ -45,8 +48,8 @@ fn main() {
         ])
         .fitness_fn(move |genotype: &Graph<f32>| {
             let mut reducer = GraphReducer::new(genotype);
-            Score::from_f32(regression.error(|sample| {
-                reducer.reduce(&sample)
+            Score::from_f32(regression.error(|input| {
+                reducer.reduce(&input)
             }))
         })
         .build();
@@ -56,6 +59,10 @@ fn main() {
         output.index == 500 || output.score().as_float() < 0.01
     });
 
+    display(&result);
+}
+
+fn display(result: &EngineContext<Node<f32>, Ops<f32>, Graph<f32>>) {
     for node in result.best.nodes.iter() {
         println!("{:?}", node);
     }
@@ -67,7 +74,7 @@ fn main() {
     }
 }
 
-pub fn get_sample_set() -> SampleSet<f32> {
+fn get_sample_set() -> SampleSet<f32> {
     let inputs = vec![
         vec![0.0, 0.0],
         vec![1.0, 1.0],

@@ -1,7 +1,8 @@
 
 use std::collections::{HashSet, VecDeque};
 
-use crate::architects::{nodes::node::Node, schema::direction::Direction};
+use crate::architects::schema::direction::Direction;
+use crate::architects::node_collections::node::Node;
 
 pub trait NodeCollection<C, T>
 where

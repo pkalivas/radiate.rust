@@ -1,7 +1,7 @@
 use radiate_rust::engines::alterers::crossovers::crossover::Crossover;
 use radiate_rust::engines::genome::{chromosome::Chromosome, genes::gene::Gene};
 
-use crate::{architects::nodes::node::Node, operations::op::Ops};
+use crate::{architects::node_collections::node::Node, operations::op::Ops};
 
 
 pub struct NodeCrossover<T> {

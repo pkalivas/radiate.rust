@@ -1,8 +1,8 @@
-use crate::architects::nodes::tracer::Tracer;
+use crate::architects::node_collections::tracer::Tracer;
 use crate::architects::schema::node_types::NodeType;
 
 use super::graph::Graph;
-use super::node_collection::NodeCollection;
+use super::super::node_collection::NodeCollection;
 
 
 const CHECKS_WITHOUT_PROGRESS: i32 = 5000;

@@ -2,8 +2,8 @@ use std::collections::BTreeMap;
 
 use crate::architects::node_collections::node_collection::NodeCollection;
 use crate::architects::schema::node_types::NodeType;
-use crate::architects::nodes::node::Node;
-use crate::architects::factories::node_factory::NodeFactory;
+use crate::architects::node_collections::node::Node;
+use crate::architects::node_collections::node_factory::NodeFactory;
 
 use uuid::Uuid;
 
@@ -29,8 +29,8 @@ where
 {
     pub factory: &'a NodeFactory<T>,
     pub nodes: BTreeMap<&'a Uuid, &'a Node<T>>,
-    pub relationships: Vec<NodeRelationship<'a>>,
     pub node_order: BTreeMap<usize, &'a Uuid>,
+    pub relationships: Vec<NodeRelationship<'a>>,
     _phantom_c: std::marker::PhantomData<C>,
     _phantom_t: std::marker::PhantomData<T>
 }
@@ -45,8 +45,8 @@ where
         NodeCollectionBuilder {
             factory,
             nodes: BTreeMap::new(),
-            relationships: Vec::new(),
             node_order: BTreeMap::new(),
+            relationships: Vec::new(),
             _phantom_c: std::marker::PhantomData,
             _phantom_t: std::marker::PhantomData
         }
