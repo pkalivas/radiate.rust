@@ -29,8 +29,8 @@ where
 {
     pub factory: &'a NodeFactory<T>,
     pub nodes: BTreeMap<&'a Uuid, &'a Node<T>>,
-    pub relationships: Vec<NodeRelationship<'a>>,
     pub node_order: BTreeMap<usize, &'a Uuid>,
+    pub relationships: Vec<NodeRelationship<'a>>,
     _phantom_c: std::marker::PhantomData<C>,
     _phantom_t: std::marker::PhantomData<T>
 }
@@ -45,8 +45,8 @@ where
         NodeCollectionBuilder {
             factory,
             nodes: BTreeMap::new(),
-            relationships: Vec::new(),
             node_order: BTreeMap::new(),
+            relationships: Vec::new(),
             _phantom_c: std::marker::PhantomData,
             _phantom_t: std::marker::PhantomData
         }

@@ -9,7 +9,10 @@ use radiate_extensions::problems::sample_set::SampleSet;
 use radiate_rust::engines::alterers::alter::Alterer;
 
 use radiate_extensions::architects::node_collections::graphs::graph_codex::GraphCodex;
+use radiate_extensions::architects::node_collections::node::Node;
 use radiate_extensions::architects::node_collections::node_factory::NodeFactory;
+use radiate_extensions::operations::op::Ops;
+use radiate_rust::engines::engine_context::EngineContext;
 use radiate_rust::engines::genetic_engine::GeneticEngine;
 use radiate_rust::engines::score::Score;
 
@@ -56,6 +59,10 @@ fn main() {
         output.index == 500 || output.score().as_float() < 0.01
     });
 
+    display(&result);
+}
+
+fn display(result: &EngineContext<Node<f32>, Ops<f32>, Graph<f32>>) {
     for node in result.best.nodes.iter() {
         println!("{:?}", node);
     }
@@ -67,7 +74,7 @@ fn main() {
     }
 }
 
-pub fn get_sample_set() -> SampleSet<f32> {
+fn get_sample_set() -> SampleSet<f32> {
     let inputs = vec![
         vec![0.0, 0.0],
         vec![1.0, 1.0],
