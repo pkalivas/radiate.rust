@@ -14,6 +14,7 @@ where
 {
     pub graph: &'a Graph<T>,
     pub tracers: Vec<Tracer<T>>,
+    pub order: Vec<usize>,
 }
 
 impl<'a, T> GraphReducer<'a, T>
@@ -26,10 +27,18 @@ where
             .map(|node| Tracer::new(node.input_size()))
             .collect::<Vec<Tracer<T>>>();
 
-        GraphReducer { graph, tracers }
+        GraphReducer { 
+            graph, 
+            tracers, 
+            order: Vec::new()
+        }
     }
 
     pub fn reduce(&mut self, inputs: &[T]) -> Vec<T> {
+        if !self.order.is_empty() {
+            return self.reduce_with_order(inputs);
+        } 
+
         let mut checks = 0;
         let mut completed = vec![false; self.graph.len()];
         let mut result = Vec::new();
@@ -57,6 +66,7 @@ where
                     }
 
                     if degree == 0 {
+                        self.order.push(node.index);
                         if node.node_type == NodeType::Input {
                             self.tracers[node.index].add_input(inputs[node.index].clone());
                         } else {
@@ -80,6 +90,29 @@ where
 
             pending_index = min_pending_index;
             checks = if min_pending_index == pending_index { checks + 1 } else { 0 };
+        }
+
+        result
+    }
+
+    fn reduce_with_order(&mut self, inputs: &[T]) -> Vec<T> {
+        let mut result = Vec::new();
+        for index in &self.order {
+            let node = self.graph.get(*index).unwrap();
+            if node.node_type == NodeType::Input {
+                self.tracers[node.index].add_input(inputs[node.index].clone());
+            } else {
+                for incoming in &node.incoming {
+                    let arg = self.tracers[*incoming].result.clone().unwrap_or_else(|| T::default());
+                    self.tracers[node.index].add_input(arg);
+                }
+            }
+
+            self.tracers[node.index].eval(&node);
+
+            if node.node_type == NodeType::Output {
+                result.push(self.tracers[node.index].result.clone().unwrap());
+            }
         }
 
         result

@@ -59,7 +59,7 @@ fn main() {
     for node in result.best.nodes.iter() {
         println!("{:?}", node);
     }
-
+    println!("{:?}", result.timer.elapsed());
     let mut reducer = GraphReducer::new(&result.best);
     for sample in get_sample_set().get_samples().iter() {
         let output = reducer.reduce(&sample.1);
