@@ -37,7 +37,7 @@ fn main() {
     let engine = GeneticEngine::from_codex(&graph_codex)
         .minimizing()
         .alterer(vec![
-            Alterer::Mutation(Box::new(NodeMutator::new(0.001, 0.01))),
+            Alterer::Mutation(Box::new(NodeMutator::new(0.01, 0.05))),
             Alterer::Crossover(Box::new(NodeCrossover::new(0.5)))
         ])
         .fitness_fn(move |genotype: &Graph<f32>| {
@@ -55,7 +55,7 @@ fn main() {
 
     let result = engine.run(|output| {
         println!("[ {:?} ]: {:?}", output.index, output.score().as_float());
-        output.index == 1500
+        output.index == 500
     });
 
     let mut reducer = GraphReducer::new(result.best.clone());
