@@ -53,8 +53,12 @@ fn main() {
 
     let result = engine.run(|output| {
         println!("[ {:?} ]: {:?}", output.index, output.score().as_float());
-        output.index == 500
+        output.index == 500 || output.score().as_float() < 0.01
     });
+
+    for node in result.best.nodes.iter() {
+        println!("{:?}", node);
+    }
 
     let mut reducer = GraphReducer::new(&result.best);
     for sample in get_sample_set().get_samples().iter() {
