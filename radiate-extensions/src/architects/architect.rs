@@ -20,7 +20,7 @@ where
     C: NodeCollection<C, T> + Clone + Default,
     T: Clone + PartialEq + Default
 {
-    pub fn new(node_factory: &'a NodeFactory<T>) -> Architect<C, T> {
+    pub fn new(node_factory: &'a NodeFactory<T>) -> Self {
         Architect {
             node_factory,
             _phantom: std::marker::PhantomData
