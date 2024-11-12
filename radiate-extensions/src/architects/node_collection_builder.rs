@@ -335,11 +335,12 @@ where
             let arity = node.incoming().len();
             (*node).arity = Some(arity as u8);
 
+            let temp_node = factory.new_node(*node.index(), NodeType::Aggregate);
+
             if node.node_type() == &NodeType::Output && node.outgoing().len() > 0 {
                 node.node_type = NodeType::Aggregate;
+                node.value = temp_node.value.clone();
             } else if node.node_type() == &NodeType::Input && node.incoming().len() > 0 {
-                let temp_node = factory.new_node(*node.index(), NodeType::Aggregate);
-
                 node.node_type = NodeType::Aggregate;
                 node.value = temp_node.value.clone();
             }

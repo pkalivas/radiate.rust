@@ -1,5 +1,3 @@
-use std::sync::Arc;
-
 use radiate_extensions::alterers::node_crossover::NodeCrossover;
 use radiate_extensions::alterers::node_mutator::NodeMutator;
 use radiate_extensions::architects::node_collections::graph::Graph;
@@ -9,7 +7,6 @@ use radiate_extensions::problems::error_functions::ErrorFunction;
 use radiate_extensions::problems::regression::Regression;
 use radiate_extensions::problems::sample_set::SampleSet;
 use radiate_rust::engines::alterers::alter::Alterer;
-// use radiate_rust::engines::codexes::Codex;
 
 use radiate_extensions::architects::codexes::graph_codex::GraphCodex;
 use radiate_extensions::architects::factories::node_factory::NodeFactory;
@@ -37,9 +34,6 @@ fn main() {
     let sample_set = get_sample_set();
     let regression = Regression::new(sample_set, ErrorFunction::MSE);
 
-    let arc_sample = Arc::new(get_sample_set());
-    let cloned_arc_sample = arc_sample.clone();
-
     let engine = GeneticEngine::from_codex(&graph_codex)
         .minimizing()
         .alterer(vec![
@@ -50,7 +44,7 @@ fn main() {
             let mut reducer = GraphReducer::new(genotype.clone());
             let mut sum = 0.0;
 
-            for sample in arc_sample.get_samples().iter() {
+            for sample in regression.get_sample_set().get_samples().iter() {
                 let output = reducer.reduce(&sample.1);
                 sum += regression.get_loss_function().calculate(&output, &sample.2);
             }
@@ -65,7 +59,7 @@ fn main() {
     });
 
     let mut reducer = GraphReducer::new(result.best.clone());
-    for sample in cloned_arc_sample.get_samples().iter() {
+    for sample in get_sample_set().get_samples().iter() {
         let output = reducer.reduce(&sample.1);
         println!("{:?} -> epected: {:?}, actual: {:?}", sample.1, sample.2, output);
     }
