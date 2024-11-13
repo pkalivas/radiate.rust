@@ -16,7 +16,7 @@ fn main() {
         .offspring_selector(Selector::Elitism)
         .survivor_selector(Selector::Tournament(4))
         .alterer(vec![
-            Alterer::Mutation(Box::new(NumericMutator::new(0.001))),
+            Alterer::Mutation(Box::new(NumericMutator::new(0.01))),
             Alterer::UniformCrossover(0.5)
         ])
         .fitness_fn(|genotype: &Vec<Vec<i32>>| {

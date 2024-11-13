@@ -114,7 +114,7 @@ impl<G: Gene<G, A>, A> Alter<G, A> for CompositeAlterer<G, A> {
                         if rand::random::<i32>() > range {
                             let mut genotype = phenotype.genotype().clone();
             
-                            let mutation_count = mutator.mutate_genotype(&mut genotype, range, probability);
+                            let mutation_count = mutator.mutate_genotype(&mut genotype, range);
 
                             if mutation_count > 0 {
                                 *phenotype = Phenotype::from_genotype(genotype, generation);

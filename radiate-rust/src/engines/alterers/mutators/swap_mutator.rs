@@ -21,12 +21,12 @@ impl<G: Gene<G, A>, A> Mutate<G, A> for SwapMutator {
         self.rate
     }
     
-    fn mutate_chromosome(&self, chromosome: &mut Chromosome<G, A>, probability: f32) -> i32 {
+    fn mutate_chromosome(&self, chromosome: &mut Chromosome<G, A>, range: i32) -> i32 {
         let mut random = rand::thread_rng();
         let mut mutations = 0;
 
         for i in 0..chromosome.len() {
-            if random.gen::<f32>() < probability {
+            if rand::random::<i32>() > range {
                 let swap_index = random.gen_range(0..chromosome.len());
 
                 if swap_index == i {

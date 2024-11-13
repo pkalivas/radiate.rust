@@ -115,7 +115,7 @@ where
         0.0
     }
 
-    fn mutate_genotype(&self, genotype: &mut Genotype<Node<T>, Ops<T>>, _: i32, _: f32) -> i32 {
+    fn mutate_genotype(&self, genotype: &mut Genotype<Node<T>, Ops<T>>, _: i32) -> i32 {
         let mut rng = rand::thread_rng();
         let mutation = self.mutations.choose(&mut rng).unwrap();
 
