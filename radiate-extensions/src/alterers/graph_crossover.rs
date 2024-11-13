@@ -1,6 +1,4 @@
 
-
-
 use std::collections::HashMap;
 
 use radiate_rust::{engines::alterers::alter::Alter, genome::{genes::gene::Gene, genotype::Genotype, phenotype::Phenotype, population::Population}, optimize::Optimize};
