@@ -2,7 +2,8 @@
 use radiate_rust::engines::{alterers::mutators::mutate::Mutate, genome::{chromosome::Chromosome, genes::gene::Valid, genotype::Genotype}};
 use rand::{random, seq::SliceRandom};
 
-use crate::{architects::{node_collections::{graphs::graph::Graph, modifiers::modifier, node::Node, node_collection::NodeCollection, node_factory::NodeFactory}, schema::node_types::NodeType}, operations::op::Ops};
+use crate::{architects::{node_collections::{self, graphs::graph::Graph, node::Node, node_collection::NodeCollection, node_factory::NodeFactory}, schema::node_types::NodeType}, operations::op::Ops};
+
 
 pub struct NodeMutate {
     pub rate: f32,
@@ -35,8 +36,8 @@ where
 
     pub fn mutate(&self, collection: Graph<T>, node_type: &NodeType) -> Option<Graph<T>> {
         let nodes = collection.get_nodes();
-        let source_node = modifier::random_source_node(nodes);
-        let target_node = modifier::random_target_node(nodes);
+        let source_node = node_collections::random_source_node(nodes);
+        let target_node = node_collections::random_target_node(nodes);
 
         if source_node.node_type == NodeType::Weight && node_type != &NodeType::Weight {
             let incoming_node = collection.get(*source_node.incoming.iter().next().unwrap()).unwrap();
@@ -46,7 +47,7 @@ where
             let new_node = self.factory.new_node(collection.len() + 1, *node_type);
             let new_target_edge = self.factory.new_node(collection.len() + 2, source_node.node_type);
 
-            if modifier::is_locked(outgoing_node) {
+            if node_collections::is_locked(outgoing_node) {
                 let mut temp = collection.insert(vec![new_source_edge.clone(), new_node.clone()]);
 
                 temp.attach(source_node.index, new_node.index);
@@ -69,7 +70,7 @@ where
 
                 return self.repair_insert(&mut temp, &new_node, incoming_node, outgoing_node);
             }
-        } else if !modifier::can_connect(collection.get_nodes(), source_node.index, target_node.index) {
+        } else if !node_collections::can_connect(collection.get_nodes(), source_node.index, target_node.index) {
             return None;
         } 
 
@@ -93,9 +94,9 @@ where
     ) -> Option<Graph<T>>
     {
         for _ in 0..new_node.arity().unwrap() - 1 {
-            let other_source_node = modifier::random_source_node(collection.get_nodes());
+            let other_source_node = node_collections::random_source_node(collection.get_nodes());
 
-            if modifier::can_connect(collection.get_nodes(), other_source_node.index, new_node.index) {
+            if node_collections::can_connect(collection.get_nodes(), other_source_node.index, new_node.index) {
                 collection.attach(other_source_node.index, new_node.index);
             }
         }
