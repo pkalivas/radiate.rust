@@ -1,23 +1,6 @@
-use radiate_extensions::alterers::graph_crossover::GraphCrossover;
-use radiate_extensions::alterers::graph_mutator::GraphMutator;
-use radiate_extensions::alterers::op_mutator::OpMutator;
-use radiate_extensions::architects::node_collections::graphs::graph::Graph;
-use radiate_extensions::architects::node_collections::graphs::graph_reducer::GraphReducer;
-use radiate_extensions::architects::schema::node_types::NodeType;
-use radiate_extensions::operations::op;
-use radiate_extensions::problems::error_functions::ErrorFunction;
-use radiate_extensions::problems::regression::Regression;
-use radiate_extensions::problems::sample_set::SampleSet;
-use radiate_rust::engines::alterers::alter::Alterer;
 
-use radiate_extensions::architects::node_collections::graphs::graph_codex::GraphCodex;
-use radiate_extensions::architects::node_collections::node::Node;
-use radiate_extensions::architects::node_collections::node_factory::NodeFactory;
-use radiate_extensions::operations::op::Ops;
-use radiate_rust::engines::engine_context::EngineContext;
-use radiate_rust::engines::genetic_engine::GeneticEngine;
-use radiate_rust::engines::score::Score;
-use radiate_rust::engines::selectors::selector::Selector;
+use radiate_extensions::*;
+use radiate_rust::*;
 
 fn main() {
     let factory = NodeFactory::<f32>::regression(1)
@@ -35,19 +18,12 @@ fn main() {
         .minimizing()
         .offspring_selector(Selector::Boltzmann(4_f32))
         .alterer(vec![
-            Alterer::Alterer(Box::new(
-                GraphCrossover::new(0.5, 0.5, 0.2)
-            )),
-            Alterer::Mutation(Box::new(
-                OpMutator::new(factory.clone(), 0.01, 0.05)
-            )),
-            Alterer::Mutation(Box::new(
-                GraphMutator::new(factory.clone())
-                    .add_mutation(NodeType::Weight, 0.03)
-                    .add_mutation(NodeType::Aggregate, 0.01)
-                    .add_mutation(NodeType::Gate, 0.05)
-            )),
-        ])
+            Alterer::alterer(GraphCrossover::new(0.5, 0.5, 0.2)),
+            Alterer::mutation(OpMutator::new(factory.clone(), 0.01, 0.05)),
+            Alterer::mutation(GraphMutator::new(factory.clone())
+                .add_mutation(NodeType::Weight, 0.05)
+                .add_mutation(NodeType::Aggregate, 0.03)
+                .add_mutation(NodeType::Gate, 0.03))])
         .fitness_fn(move |genotype: &Graph<f32>| {
             let mut reducer = GraphReducer::new(genotype);
             Score::from_f32(regression.error(|input| {
@@ -94,34 +70,19 @@ fn compupute(x: f32) -> f32 {
     return 4.0 * x.powf(3.0) - 3.0 * x.powf(2.0) + x;
 }
 
-// public Task<RegressionDataSet> LoadDataSet()
-// {
-//     var inputs = new List<float[]>();
-//     var targets = new List<float[]>();
-//     var input = -1.0f;
-//     for (var i = -10; i < 10; i++)
-//     {
-//         input += 0.1f;
-//         inputs.Add([input]);
-//         targets.Add([Compute(input)]);
-//     }
-
-//     return Task.FromResult(new RegressionDataSet(inputs, targets));
-// }
-
-// private static float Compute(float x)
-// {
-//     return 4f * (float)Math.Pow(x, 3) - 3f * (float)Math.Pow(x, 2) + x;
-// }
-// }
 
 
-        // .set_nodes(|arc, conn| {
-        //     conn.layer(vec![
-        //         &arc.weighted_acyclic(2, 3),
-        //         &arc.weighted_acyclic(3, 1)
-        //     ])
-        //     .build()
-        //     // arc.weighted_cyclic(2, 1, 2)
-        // });
 
+
+                   // Alterer::Alterer(Box::new(
+            //     GraphCrossover::new(0.5, 0.5, 0.2)
+            // )),
+            // Alterer::Mutation(Box::new(
+            //     OpMutator::new(factory.clone(), 0.01, 0.05)
+            // )),
+            // Alterer::Mutation(Box::new(
+            //     GraphMutator::new(factory.clone())
+            //         .add_mutation(NodeType::Weight, 0.03)
+            //         .add_mutation(NodeType::Aggregate, 0.01)
+            //         .add_mutation(NodeType::Gate, 0.05)
+            // )),

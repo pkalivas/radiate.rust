@@ -133,7 +133,8 @@ where
 
                     for i in 0..population.len() {
                         if rand::random::<f32>() < alterer.rate {
-                            let parent_indexes = subset::individual_indexes(&mut random, i, population.len(), 2);
+                            let mut parent_indexes = subset::individual_indexes(&mut random, i, population.len(), 2);
+                            parent_indexes.sort();
                             crossover.cross(population, &parent_indexes, generation);
                         }
                     }
