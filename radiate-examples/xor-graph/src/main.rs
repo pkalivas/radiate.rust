@@ -1,7 +1,6 @@
 use radiate_rust::*;
 use radiate_extensions::*;
 
-
 fn main() {
     let factory = NodeFactory::<f32>::regression(2)
         .outputs(vec![
@@ -17,15 +16,13 @@ fn main() {
         .alterer(vec![
             Alterer::alterer(GraphCrossover::new(0.5, 0.5, 0.2)),
             Alterer::mutation(OpMutator::new(factory.clone(), 0.01, 0.05)),
-            Alterer::mutation(GraphMutator::new(factory.clone())
+            Alterer::alterer(GraphMutator::new(factory.clone())
                 .add_mutation(NodeType::Weight, 0.05)
                 .add_mutation(NodeType::Aggregate, 0.03)
                 .add_mutation(NodeType::Gate, 0.03))])
         .fitness_fn(move |genotype: &Graph<f32>| {
             let mut reducer = GraphReducer::new(genotype);
-            Score::from_f32(regression.error(|input| {
-                reducer.reduce(&input)
-            }))
+            Score::from_f32(regression.error(|input| reducer.reduce(&input)))
         })
         .build();
 
@@ -66,14 +63,3 @@ fn get_sample_set() -> SampleSet<f32> {
 
     SampleSet::from_vecs(inputs, answers)
 }
-
-
-        // .set_nodes(|arc, conn| {
-        //     conn.layer(vec![
-        //         &arc.weighted_acyclic(2, 3),
-        //         &arc.weighted_acyclic(3, 1)
-        //     ])
-        //     .build()
-        //     // arc.weighted_cyclic(2, 1, 2)
-        // });
-

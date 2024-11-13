@@ -1,6 +1,5 @@
 use crate::engines::alterers::alter::Alter;
 use crate::engines::genome::genes::gene::Gene;
-use crate::engines::genome::phenotype::Phenotype;
 use crate::engines::genome::population::Population;
 use crate::engines::optimize::Optimize;
 use crate::engines::schema::subset;
@@ -103,6 +102,7 @@ where
     G: Gene<G, A>
 {
 
+    #[inline]
     fn alter(&self, population: &mut Population<G, A>, optimize: &Optimize, generation: i32) {
         optimize.sort(population);
 
@@ -115,12 +115,13 @@ where
             
                     for phenotype in population.iter_mut() {
                         if rand::random::<i32>() > range {
-                            let mut genotype = phenotype.genotype().clone();
+                            let mut genotype = phenotype.genotype_mut();
             
                             let mutation_count = mutator.mutate_genotype(&mut genotype, range);
 
                             if mutation_count > 0 {
-                                *phenotype = Phenotype::from_genotype(genotype, generation);
+                                (*phenotype).generation = generation;
+                                (*phenotype).score = None;
                             }
                         }
                     }

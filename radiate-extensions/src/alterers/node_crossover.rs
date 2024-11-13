@@ -26,6 +26,7 @@ where
         self.rate
     }
 
+    #[inline]
     fn cross_chromosomes(
         &self,
         chrom_one: &mut Chromosome<Node<T>, Ops<T>>,
