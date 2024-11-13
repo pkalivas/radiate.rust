@@ -1,5 +1,6 @@
 use super::genome::{genes::gene::Gene, population::Population};
 
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Optimize {
     Minimize,
     Maximize,
