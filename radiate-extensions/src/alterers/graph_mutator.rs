@@ -33,9 +33,10 @@ where
         self
     }
 
-    pub fn mutate(&self, collection: &Graph<T>, node_type: &NodeType) -> Option<Graph<T>> {
-        let source_node = modifier::random_source_node(collection.get_nodes());
-        let target_node = modifier::random_target_node(collection.get_nodes());
+    pub fn mutate(&self, collection: Graph<T>, node_type: &NodeType) -> Option<Graph<T>> {
+        let nodes = collection.get_nodes();
+        let source_node = modifier::random_source_node(nodes);
+        let target_node = modifier::random_target_node(nodes);
 
         if source_node.node_type == NodeType::Weight && node_type != &NodeType::Weight {
             let incoming_node = collection.get(*source_node.incoming.iter().next().unwrap()).unwrap();
@@ -127,7 +128,7 @@ where
                 .map(|node| node.clone())
                 .collect::<Vec<Node<T>>>());
 
-            if let Some(mutated_graph) = self.mutate(&graph, &mutation.node_type) {
+            if let Some(mutated_graph) = self.mutate(graph, &mutation.node_type) {
                 if !mutated_graph.is_valid() {
                     return 0;
                 }
