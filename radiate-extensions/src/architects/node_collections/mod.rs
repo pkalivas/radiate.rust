@@ -108,12 +108,30 @@ where
     let gene_node_type = node_types.choose(&mut random).unwrap();
 
     let genes = match gene_node_type {
-        NodeType::Input => collection.iter().filter(|node| node.node_type == NodeType::Input).collect::<Vec<&Node<T>>>(),
-        NodeType::Weight => collection.iter().filter(|node| node.node_type == NodeType::Weight).collect::<Vec<&Node<T>>>(),
-        NodeType::Gate => collection.iter().filter(|node| node.node_type == NodeType::Gate).collect::<Vec<&Node<T>>>(),
-        NodeType::Output => collection.iter().filter(|node| node.node_type == NodeType::Output).collect::<Vec<&Node<T>>>(),
-        NodeType::Link => collection.iter().filter(|node| node.node_type == NodeType::Link).collect::<Vec<&Node<T>>>(),
-        NodeType::Aggregate => collection.iter().filter(|node| node.node_type == NodeType::Aggregate).collect::<Vec<&Node<T>>>(),
+        NodeType::Input => collection
+            .iter()
+            .filter(|node| node.node_type == NodeType::Input)
+            .collect::<Vec<&Node<T>>>(),
+        NodeType::Weight => collection
+            .iter()
+            .filter(|node| node.node_type == NodeType::Weight)
+            .collect::<Vec<&Node<T>>>(),
+        NodeType::Gate => collection
+            .iter()
+            .filter(|node| node.node_type == NodeType::Gate)
+            .collect::<Vec<&Node<T>>>(),
+        NodeType::Output => collection
+            .iter()
+            .filter(|node| node.node_type == NodeType::Output)
+            .collect::<Vec<&Node<T>>>(),
+        NodeType::Link => collection
+            .iter()
+            .filter(|node| node.node_type == NodeType::Link)
+            .collect::<Vec<&Node<T>>>(),
+        NodeType::Aggregate => collection
+            .iter()
+            .filter(|node| node.node_type == NodeType::Aggregate)
+            .collect::<Vec<&Node<T>>>(),
     };
 
     if genes.len() == 0 {

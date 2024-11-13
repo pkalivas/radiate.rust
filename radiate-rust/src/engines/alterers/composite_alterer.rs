@@ -103,6 +103,7 @@ where
     G: Gene<G, A>
 {
 
+    #[inline]
     fn alter(&self, population: &mut Population<G, A>, optimize: &Optimize, generation: i32) {
         optimize.sort(population);
 

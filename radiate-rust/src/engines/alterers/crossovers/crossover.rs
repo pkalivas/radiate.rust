@@ -10,6 +10,7 @@ where
 {
     fn cross_rate(&self) -> f32;
     
+    #[inline]
     fn cross(&self, population: &mut Population<G, A>, parent_indexes: &[i32], generation: i32) {
         let index_one = parent_indexes[0] as usize;
         let index_two = parent_indexes[1] as usize;
@@ -25,6 +26,7 @@ where
         }
     }
 
+    #[inline]
     fn cross_genotypes(
         &self,
         geno_one: &mut Genotype<G, A>,
@@ -39,6 +41,7 @@ where
         self.cross_chromosomes(&mut chrom_one, &mut chrom_two)
     }
 
+    #[inline]
     fn cross_chromosomes(
         &self,
         chrom_one: &mut Chromosome<G, A>,

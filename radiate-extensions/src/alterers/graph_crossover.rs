@@ -31,6 +31,7 @@ where
         }
     }
 
+    #[inline]
     pub fn cross(&self, 
         population: &mut Population<Node<T>, Ops<T>>, 
         indexes: &[usize],
@@ -101,6 +102,7 @@ impl<T> Alter<Node<T>, Ops<T>> for GraphCrossover<T>
 where 
     T: Clone + PartialEq + Default
 {
+    #[inline]
     fn alter(&self, population: &mut Population<Node<T>, Ops<T>>, optimize: &Optimize, generation: i32) {
         optimize.sort(population);
         let mut new_population = Vec::with_capacity(population.len());
