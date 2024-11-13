@@ -20,7 +20,7 @@ where
     fn get_nodes(&self) -> &[Node<T>];
     fn get_nodes_mut(&mut self) -> &mut [Node<T>];
 
-    fn add(&mut self, node: Node<T>) -> &mut Self;
+    fn add(&mut self, node: Node<T>);
 
     fn insert(&self, nodes: Vec<Node<T>>) -> C {
         let mut new_nodes = self.get_nodes()

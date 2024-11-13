@@ -25,6 +25,14 @@ fn main() {
         ]);
 
     let graph_codex = GraphCodex::from_shape(2, 1, &factory);
+        // .set_nodes(|arc, conn| {
+        //     conn.layer(vec![
+        //         &arc.weighted_acyclic(2, 3),
+        //         &arc.weighted_acyclic(3, 1)
+        //     ])
+        //     .build()
+        //     // arc.weighted_cyclic(2, 1, 2)
+        // });
 
     let regression = Regression::new(get_sample_set(), ErrorFunction::MSE);
 
