@@ -3,7 +3,6 @@ use std::collections::{HashSet, VecDeque};
 
 use radiate_rust::engines::genome::genes::gene::Valid;
 
-use crate::architects::schema::direction::Direction;
 use crate::architects::node_collections::node::Node;
 
 
@@ -20,33 +19,7 @@ where
     fn get_nodes(&self) -> &[Node<T>];
     fn get_nodes_mut(&mut self) -> &mut [Node<T>];
 
-    fn add(&mut self, node: Node<T>);
-
-    fn insert(&self, nodes: Vec<Node<T>>) -> C {
-        let mut new_nodes = self.get_nodes()
-            .iter()
-            .cloned()
-            .collect::<Vec<Node<T>>>();
-
-        for node in nodes {
-            new_nodes.push(node);
-        }
-
-        C::from_nodes(new_nodes)
-    }
-
-    // fn insert(&self, nodes: Vec<Node<T>>) -> C {
-    //     let mut new_nodes = self.get_nodes()
-    //         .iter()
-    //         .cloned()
-    //         .collect::<Vec<Node<T>>>();
-
-    //     for node in nodes {
-    //         new_nodes.push(node);
-    //     }
-
-    //     C::from_nodes(new_nodes)
-    // }
+    fn insert(&mut self, nodes: Vec<Node<T>>);
 
     fn set(&mut self, index: usize, node: Node<T>) -> &mut Self {
         self.get_nodes_mut()[index] = node;
@@ -117,32 +90,34 @@ where
         C::from_nodes(new_nodes)
     }
 
-    fn set_cycles(&mut self, indecies: Vec<usize>) -> &mut Self {
-        if indecies.len() == 0 {
-            let all_indices = self.get_nodes()
-                .iter()
-                .map(|node| node.index)
-                .collect::<Vec<usize>>();
+    fn set_cycles(self, indecies: Vec<usize>) -> C;
 
-            return self.set_cycles(all_indices)
-        }
+    // fn set_cycles(&mut self, indecies: Vec<usize>) -> &mut Self {
+    //     if indecies.len() == 0 {
+    //         let all_indices = self.get_nodes()
+    //             .iter()
+    //             .map(|node| node.index)
+    //             .collect::<Vec<usize>>();
 
-        for idx in indecies {
-            let node_cycles = get_cycles(self.get_nodes(), idx);
+    //         return self.set_cycles(all_indices)
+    //     }
 
-            if node_cycles.len() == 0 {
-                let node = self.get_mut(idx).unwrap();
-                (*node).direction = Direction::Forward;
-            } else {
-                for cycle_idx in node_cycles {
-                    let node = self.get_mut(cycle_idx).unwrap();
-                    (*node).direction = Direction::Backward;
-                }
-            }
-        }
+    //     for idx in indecies {
+    //         let node_cycles = get_cycles(self.get_nodes(), idx);
 
-        self
-    }
+    //         if node_cycles.len() == 0 {
+    //             let node = self.get_mut(idx).unwrap();
+    //             (*node).direction = Direction::Forward;
+    //         } else {
+    //             for cycle_idx in node_cycles {
+    //                 let node = self.get_mut(cycle_idx).unwrap();
+    //                 (*node).direction = Direction::Backward;
+    //             }
+    //         }
+    //     }
+
+    //     self
+    // }
 }
 
 
