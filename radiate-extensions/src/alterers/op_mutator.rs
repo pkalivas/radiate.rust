@@ -55,11 +55,9 @@ where
                 }
             },
             _ => {
-                if random::<f32>() < self.replace_rate {
-                    let temp_node = self.factory.new_node(gene.index, gene.node_type);
-                    if temp_node.value.arity() == gene.value.arity() {
-                        return gene.from_allele(temp_node.allele());
-                    }
+                let temp_node = self.factory.new_node(gene.index, gene.node_type);
+                if temp_node.value.arity() == gene.value.arity() {
+                    return gene.from_allele(temp_node.allele());
                 }
 
                 gene.clone()
