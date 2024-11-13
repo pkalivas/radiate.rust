@@ -223,6 +223,34 @@ pub fn tan<T: Clone + Float>() -> Ops<T> {
     Ops::Fn("tan", 1, Arc::new(|inputs: &[T]| clamp(inputs[0].clone().tan())))
 }
 
+pub fn ceil<T: Clone + Float>() -> Ops<T> {
+    Ops::Fn("ceil", 1, Arc::new(|inputs: &[T]| clamp(inputs[0].clone().ceil())))
+}
+
+pub fn floor<T: Clone + Float>() -> Ops<T> {
+    Ops::Fn("floor", 1, Arc::new(|inputs: &[T]| clamp(inputs[0].clone().floor())))
+}
+
+pub fn gt<T: Clone + PartialEq + PartialOrd>() -> Ops<T> {
+    Ops::Fn(">", 2, Arc::new(|inputs: &[T]| {
+        if inputs[0] > inputs[1] {
+            inputs[0].clone()
+        } else {
+            inputs[1].clone()
+        }
+    }))
+}
+
+pub fn lt<T: Clone + PartialEq + PartialOrd>() -> Ops<T> {
+    Ops::Fn("<", 2, Arc::new(|inputs: &[T]| {
+        if inputs[0] < inputs[1] {
+            inputs[0].clone()
+        } else {
+            inputs[1].clone()
+        }
+    }))
+}
+
 pub fn max<T: Clone + PartialOrd>() -> Ops<T> {
     Ops::Fn("max", 2, Arc::new(|inputs: &[T]| {
         inputs.iter().fold(inputs[0].clone(), |acc, x| {
@@ -316,6 +344,28 @@ pub fn mish() -> Ops<f32> {
                 .exp()
                 .ln_1p()
                 .exp());
+
+        clamp(result)
+    }))
+}
+
+pub fn leaky_relu() -> Ops<f32> {
+    Ops::Fn("leaky_relu", 1, Arc::new(|inputs: &[f32]| {
+        let sum = inputs.iter().fold(0_f32, |acc, x| acc + x);
+        let result = if sum > 0_f32 {
+            sum
+        } else {
+            0.01 * sum
+        };
+
+        clamp(result)
+    }))
+}
+
+pub fn softplus() -> Ops<f32> {
+    Ops::Fn("soft_plus", 1, Arc::new(|inputs: &[f32]| {
+        let sum = inputs.iter().fold(0_f32, |acc, x| acc + x);
+        let result = sum.exp().ln_1p();
 
         clamp(result)
     }))
