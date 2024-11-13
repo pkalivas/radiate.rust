@@ -16,7 +16,7 @@ where
 
 impl<T> Tracer<T> 
 where
-    T: Clone + PartialEq
+    T: Clone + PartialEq + Default
 {
     pub fn new(input_size: usize) -> Self {
         Tracer {
@@ -47,6 +47,10 @@ where
         }
         if self.pending_idx != self.input_size {
             panic!("Tracer is not ready to be evaluated.");
+        }
+
+        if !node.enabled {
+            self.result = Some(T::default());
         }
 
         self.previous_result = self.result.clone();
