@@ -11,7 +11,6 @@ use crate::engines::selectors::selector::Selector;
 
 use super::alterers::alter::Alterer;
 use super::codexes::Codex;
-use super::Problem;
 
 pub struct GeneticEngineParams<'a, G, A, T>
 where
@@ -28,7 +27,6 @@ where
     pub population: Option<Population<G, A>>,
     pub codex: Option<Arc<&'a dyn Codex<G, A, T>>>,
     pub fitness_fn: Option<Arc<dyn Fn(&T) -> Score>>,
-    pub problem: Option<Box<dyn Problem<G, A, T>>>,
 }
 
 impl<'a, G, A, T> GeneticEngineParams<'a, G, A, T> 
@@ -48,7 +46,6 @@ where
             codex: None,
             population: None,
             fitness_fn: None,
-            problem: None,
         }
     }
 
@@ -142,33 +139,4 @@ where
             ]));
         }
     }
-
-    // fn build_problem(&mut self) {
-    //     if let Some(_) = &self.problem {
-    //         return;
-    //     }
-
-
-    //     if self.codex.is_none() {
-    //         panic!("Codex not set");
-    //     }
-
-    //     if self.fitness_fn.is_none() {
-    //         panic!("Fitness function not set");
-    //     }
-
-    //     let problem_codex = match self.codex {
-    //         Some(ref codex) => Arc::clone(codex),
-    //         None => panic!("Codex not set"),
-    //     };
-
-    //     let fitness_fn = match self.fitness_fn {
-    //         Some(ref fitness_fn) => Arc::clone(fitness_fn),
-    //         None => panic!("Fitness function not set"),
-    //     };
-
-    //     let problem = Box::new(DefaultProblem::new(problem_codex, fitness_fn));
-    //     let problem = problem as Box<dyn Problem<G, A, T>>;
-    //     self.problem = Some(problem);
-    // }
 }

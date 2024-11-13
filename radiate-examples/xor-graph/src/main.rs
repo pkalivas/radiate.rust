@@ -1,7 +1,6 @@
 use radiate_rust::*;
 use radiate_extensions::*;
 
-
 fn main() {
     let factory = NodeFactory::<f32>::regression(2)
         .outputs(vec![
@@ -23,9 +22,7 @@ fn main() {
                 .add_mutation(NodeType::Gate, 0.03))])
         .fitness_fn(move |genotype: &Graph<f32>| {
             let mut reducer = GraphReducer::new(genotype);
-            Score::from_f32(regression.error(|input| {
-                reducer.reduce(&input)
-            }))
+            Score::from_f32(regression.error(|input| reducer.reduce(&input)))
         })
         .build();
 

@@ -1,6 +1,7 @@
 
 
-use radiate_rust::engines::{alterers::alter::Alter, genome::{genes::gene::Gene, genotype::Genotype, phenotype::Phenotype, population::Population}, optimize::Optimize};
+
+use radiate_rust::{engines::alterers::alter::Alter, genome::{genes::gene::Gene, genotype::Genotype, phenotype::Phenotype, population::Population}, optimize::Optimize};
 
 use crate::{architects::node_collections::node::Node, operations::op::Ops, NodeType};
 

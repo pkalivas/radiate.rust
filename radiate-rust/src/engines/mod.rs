@@ -8,7 +8,6 @@ pub mod schema;
 pub mod score;
 pub mod selectors;
 pub mod engine_context;
-pub mod problem;
 
 pub use alterers::*;
 pub use score::*;
@@ -19,4 +18,3 @@ pub use genome::*;
 pub use optimize::*;
 pub use schema::*;
 pub use selectors::*;
-pub use problem::*;
