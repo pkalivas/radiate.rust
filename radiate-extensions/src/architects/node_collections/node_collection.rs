@@ -19,7 +19,7 @@ where
     fn get_nodes(&self) -> &[Node<T>];
     fn get_nodes_mut(&mut self) -> &mut [Node<T>];
 
-    fn insert(&mut self, nodes: Vec<Node<T>>);
+    fn add(&mut self, nodes: Vec<Node<T>>);
 
     fn set(&mut self, index: usize, node: Node<T>) -> &mut Self {
         self.get_nodes_mut()[index] = node;
