@@ -53,11 +53,11 @@ where
             let new_target_edge = self.factory.new_node(new_target_edge_index, source_node.node_type);
 
             if node_collections::is_locked(outgoing_node) {
-                let mut temp = Graph::from_nodes(collection.iter().map(|node| node.clone()).collect::<Vec<Node<T>>>());
-                temp.insert(vec![
-                    new_source_edge,
-                    new_node
-                ]);
+                let mut temp = Graph::from_nodes(collection
+                    .iter()
+                    .map(|node| node.clone())
+                    .chain(vec![new_source_edge, new_node])
+                    .collect::<Vec<Node<T>>>());
 
                 temp.attach(source_node_index, new_node_index);
                 temp.attach(new_node_index, new_source_edge_index);
@@ -66,13 +66,11 @@ where
 
                 return self.repair_insert(temp, new_node_index, incoming_node, outgoing_node);
             } else {
-                let mut temp = Graph::from_nodes(collection.iter().map(|node| node.clone()).collect::<Vec<Node<T>>>());
-
-                temp.insert(vec![
-                    new_source_edge,
-                    new_node,
-                    new_target_edge
-                ]);
+                let mut temp = Graph::from_nodes(collection
+                    .iter()
+                    .map(|node| node.clone())
+                    .chain(vec![new_source_edge, new_node, new_target_edge])
+                    .collect::<Vec<Node<T>>>());
 
                 temp.attach(source_node.index, new_source_edge_index);
                 temp.attach(source_node.index, new_node_index);
@@ -85,11 +83,11 @@ where
             return None;
         }
 
-        let mut temp = Graph::from_nodes(collection.iter().map(|node| node.clone()).collect::<Vec<Node<T>>>());
-
-        let new_node = self.factory.new_node(collection.len(), *node_type);
-
-        temp.insert(vec![new_node]);
+        let mut temp = Graph::from_nodes(collection
+            .iter()
+            .map(|node| node.clone())
+            .chain(vec![self.factory.new_node(collection.len(), *node_type)])
+            .collect::<Vec<Node<T>>>());
 
         temp.attach(source_node_index, collection.len());
         temp.attach(collection.len(), target_node_index);
