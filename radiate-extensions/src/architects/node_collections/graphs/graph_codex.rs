@@ -96,7 +96,6 @@ where
                     }
 
                     node.clone()
-                    
                 })
                 .collect::<Vec<Node<T>>>())]
         }

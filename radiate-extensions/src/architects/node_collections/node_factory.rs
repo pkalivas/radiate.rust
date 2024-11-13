@@ -133,7 +133,7 @@ where
                 op::prod(),
                 op::max(),
                 op::min(),
-                op::mish()
+                op::mish(),
             ])
             .weights(vec![op::weight()])
             .outputs(vec![op::linear()])
