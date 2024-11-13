@@ -123,6 +123,10 @@ where
                 op::prod(),
                 op::max(),
                 op::min(),
+                op::ceil(),
+                op::floor(),
+                op::gt(),
+                op::lt()
             ])
             .aggregates(vec![
                 op::sigmoid(),
@@ -134,6 +138,8 @@ where
                 op::max(),
                 op::min(),
                 op::mish(),
+                op::leaky_relu(),
+                op::softplus(),
             ])
             .weights(vec![op::weight()])
             .outputs(vec![op::linear()])

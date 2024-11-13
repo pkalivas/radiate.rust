@@ -138,14 +138,14 @@ where
     fn alter(&self, population: &mut Population<Node<T>, Ops<T>>, optimize: &Optimize, generation: i32) {
         optimize.sort(population);
 
-        for i in 0..population.len() {
+        for _ in 0..population.len() {
             if rand::random::<f32>() < self.crossover_rate && population.len() > NUM_PARENTS {
                 let parent_indexes = GraphCrossover::<T>::distinct_subset(population.len());
                 self.cross(population, &parent_indexes, generation);
                 
             } else {
                 // TODO: Do we need to copy the current value??
-                population.set(i, population.get(i).clone());
+                // population.set(i, population.get(i).clone());
             }
         }
     }
