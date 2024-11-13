@@ -96,7 +96,7 @@ mod tests {
 
         println!("\nModifing graph...\n");
 
-        if let Some(modified) = modifier.mutate(decoded, &NodeType::Weight) {
+        if let Some(modified) = modifier.mutate(&decoded.nodes, &NodeType::Weight) {
             for node in modified.iter() {
                 println!("{:?}", node);
             }

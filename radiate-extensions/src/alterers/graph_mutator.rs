@@ -34,12 +34,9 @@ where
         self
     }
 
-    pub fn mutate(&self, collection: Graph<T>, node_type: &NodeType) -> Option<Graph<T>> {
-        let mut temp = collection.clone();
-
-        let nodes = collection.get_nodes();
-        let source_node = node_collections::random_source_node(nodes);
-        let target_node = node_collections::random_target_node(nodes);
+    pub fn mutate(&self, collection: &[Node<T>], node_type: &NodeType) -> Option<Graph<T>> {
+        let source_node = node_collections::random_source_node(collection);
+        let target_node = node_collections::random_target_node(collection);
         let source_node_index = source_node.index;
         let target_node_index = target_node.index;
 
@@ -56,6 +53,7 @@ where
             let new_target_edge = self.factory.new_node(new_target_edge_index, source_node.node_type);
 
             if node_collections::is_locked(outgoing_node) {
+                let mut temp = Graph::from_nodes(collection.iter().map(|node| node.clone()).collect::<Vec<Node<T>>>());
                 temp.insert(vec![
                     new_source_edge,
                     new_node
@@ -68,6 +66,8 @@ where
 
                 return self.repair_insert(temp, new_node_index, incoming_node, outgoing_node);
             } else {
+                let mut temp = Graph::from_nodes(collection.iter().map(|node| node.clone()).collect::<Vec<Node<T>>>());
+
                 temp.insert(vec![
                     new_source_edge,
                     new_node,
@@ -81,9 +81,11 @@ where
 
                 return self.repair_insert(temp, new_node_index, incoming_node, outgoing_node);
             }
-        } else if !node_collections::can_connect(collection.get_nodes(), source_node.index, target_node.index) {
+        } else if !node_collections::can_connect(collection, source_node.index, target_node.index) {
             return None;
-        } 
+        }
+
+        let mut temp = Graph::from_nodes(collection.iter().map(|node| node.clone()).collect::<Vec<Node<T>>>());
 
         let new_node = self.factory.new_node(collection.len(), *node_type);
 
@@ -132,14 +134,9 @@ where
         let mutation = self.mutations.choose(&mut rng).unwrap();
 
         if random::<f32>() < mutation.rate {
-            let graph = Graph::from_nodes(genotype.iter()
-                .next()
-                .unwrap()
-                .iter()
-                .map(|node| node.clone())
-                .collect::<Vec<Node<T>>>());
+            let chromosome = genotype.get_chromosome(0);
 
-            if let Some(mutated_graph) = self.mutate(graph, &mutation.node_type) {
+            if let Some(mutated_graph) = self.mutate(&chromosome.genes, &mutation.node_type) {
                 if !mutated_graph.is_valid() {
                     return 0;
                 }
