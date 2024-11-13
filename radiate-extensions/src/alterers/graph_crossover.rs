@@ -61,8 +61,15 @@ where
                 continue;
             }
 
+            if (!node_one.enabled || !node_two.enabled) && rand::random::<f32>() < self.reenable_shared_node_rate {
+                let mut new_gene = node_one.clone();
+                new_gene.enabled = true;
+                new_chromo_one.set_gene(*node_one.index(), new_gene);
+                num_crosses += 1;
+            }
+
             if rand::random::<f32>() < self.crossover_parent_node_rate {
-                new_chromo_one.set_gene(*one_lookup.get(identity).unwrap(), node_one.from_allele(&node_two.value));
+                new_chromo_one.set_gene(*node_one.index(), node_one.from_allele(&node_two.allele()));
                 num_crosses += 1;
             }
         }
@@ -131,15 +138,14 @@ where
     fn alter(&self, population: &mut Population<Node<T>, Ops<T>>, optimize: &Optimize, generation: i32) {
         optimize.sort(population);
 
-        for _ in 0..population.len() {
+        for i in 0..population.len() {
             if rand::random::<f32>() < self.crossover_rate && population.len() > NUM_PARENTS {
                 let parent_indexes = GraphCrossover::<T>::distinct_subset(population.len());
-
                 self.cross(population, &parent_indexes, generation);
                 
             } else {
-                // population.set(i, population.get(i).clone());
                 // TODO: Do we need to copy the current value??
+                population.set(i, population.get(i).clone());
             }
         }
     }

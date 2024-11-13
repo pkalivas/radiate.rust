@@ -70,7 +70,13 @@ where
                 temp.attach(new_source_edge.index, outgoing_node.index);
                 temp.detach(source_node.index, outgoing_node.index);
 
-                return self.repair_insert(collection, &mut temp, &new_node, incoming_node, outgoing_node);
+                let mut result = self.repair_insert(collection, &mut temp, &new_node, incoming_node, outgoing_node);
+
+                if result.len() != collection.len() && !modifier::is_locked(&outgoing_node) {
+                    result.get_mut(source_node.index).unwrap().enabled = false;
+                }
+
+                return result;
             } else {
                 let mut temp = collection.insert(vec![
                     new_source_edge.clone(), 

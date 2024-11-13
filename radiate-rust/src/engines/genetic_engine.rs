@@ -130,6 +130,11 @@ where
             self.optimize().sort(&mut output.population);
         }
 
+        // let all_scores = output.population.iter().flat_map(|p| p.score()).collect::<Vec<&Score>>();
+        // let unique_scores = all_scores.iter().collect::<std::collections::HashSet<_>>();
+
+        // println!("{:?}", unique_scores.len());
+
         if let Some(current_score) = &output.score {
             if let Some(best_score) = output.population.get(0).score() {
                 if optimize.is_better(best_score, &current_score) {
