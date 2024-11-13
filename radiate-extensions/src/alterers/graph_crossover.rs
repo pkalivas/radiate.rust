@@ -1,7 +1,7 @@
 
 use std::collections::HashMap;
 
-use radiate_rust::engines::{alterers::{alter::Alter, crossovers::crossover::Crossover}, genome::{chromosome::Chromosome, genes::gene::Gene, genotype::Genotype, phenotype::Phenotype, population::Population}, optimize::Optimize};
+use radiate_rust::engines::{alterers::{alter::{Alter, Alterer}, crossovers::crossover::Crossover}, genome::{chromosome::Chromosome, genes::gene::Gene, genotype::Genotype, phenotype::Phenotype, population::Population}, optimize::Optimize};
 
 use crate::{architects::node_collections::node::Node, operations::op::Ops};
 
@@ -21,15 +21,36 @@ where
 
 impl<T> GraphCrossover<T>
 where
-    T: Clone + PartialEq + Default
+    T: Clone + PartialEq + Default + 'static
 {
-    pub fn new(crossover_rate: f32, crossover_parent_node_rate: f32, reenable_shared_node_rate: f32) -> Self {
-        Self {
+    // pub fn new(
+    //     crossover_rate: f32, 
+    //     crossover_parent_node_rate: f32, 
+    //     reenable_shared_node_rate: f32
+    // ) -> Self 
+    // {
+    //     Self {
+    //         crossover_rate,
+    //         crossover_parent_node_rate,
+    //         reenable_shared_node_rate,
+    //         _marker: std::marker::PhantomData
+    //     }
+    // }
+
+    pub fn new(
+        crossover_rate: f32, 
+        crossover_parent_node_rate: f32, 
+        reenable_shared_node_rate: f32
+    ) -> Alterer<Node<T>, Ops<T>>
+    {
+        let crossover = GraphCrossover {
             crossover_rate,
             crossover_parent_node_rate,
             reenable_shared_node_rate,
             _marker: std::marker::PhantomData
-        }
+        };
+
+        Alterer::Alterer(Box::new(crossover))
     }
 
     pub fn cross(&self, population: &mut Population<Node<T>, Ops<T>>, indexes: &[usize], generation: i32) {
@@ -133,7 +154,7 @@ where
 
 impl<T> Alter<Node<T>, Ops<T>> for GraphCrossover<T>
 where 
-    T: Clone + PartialEq + Default
+    T: Clone + PartialEq + Default + 'static
 {
     fn alter(&self, population: &mut Population<Node<T>, Ops<T>>, optimize: &Optimize, generation: i32) {
         optimize.sort(population);
@@ -143,9 +164,6 @@ where
                 let parent_indexes = GraphCrossover::<T>::distinct_subset(population.len());
                 self.cross(population, &parent_indexes, generation);
                 
-            } else {
-                // TODO: Do we need to copy the current value??
-                // population.set(i, population.get(i).clone());
             }
         }
     }
@@ -154,7 +172,7 @@ where
 
 impl<T> Crossover<Node<T>, Ops<T>> for GraphCrossover<T> 
 where
-    T: Clone + PartialEq + Default
+    T: Clone + PartialEq + Default + 'static
 {
     fn cross_rate(&self) -> f32 {
         self.crossover_rate

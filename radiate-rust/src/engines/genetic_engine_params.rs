@@ -9,7 +9,7 @@ use crate::engines::optimize::Optimize;
 use crate::engines::score::Score;
 use crate::engines::selectors::selector::Selector;
 
-use super::alterers::alter::Alterer;
+use super::alterers::alter::{Alter, Alterer};
 use super::codexes::Codex;
 
 pub struct GeneticEngineParams<'a, G, A, T>
@@ -27,6 +27,7 @@ where
     pub population: Option<Population<G, A>>,
     pub codex: Option<Arc<&'a dyn Codex<G, A, T>>>,
     pub fitness_fn: Option<Arc<dyn Fn(&T) -> Score>>,
+    pub other_alterers: Vec<&'a dyn Alter<G, A>>,
 }
 
 impl<'a, G, A, T> GeneticEngineParams<'a, G, A, T> 
@@ -46,6 +47,7 @@ where
             codex: None,
             population: None,
             fitness_fn: None,
+            other_alterers: vec![],
         }
     }
 
@@ -101,6 +103,11 @@ where
 
     pub fn maximizing(mut self) -> Self {
         self.optimize = Optimize::Maximize;
+        self
+    }
+
+    pub fn add_alterers(mut self, alterer: Vec<&'a dyn Alter<G, A>>) -> Self {
+        self.other_alterers = alterer;
         self
     }
 

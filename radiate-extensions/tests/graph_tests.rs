@@ -2,7 +2,7 @@
 #[cfg(test)]
 mod tests {
 
-    use radiate_extensions::alterers::graph_mutator::GraphMutator;
+    use radiate_extensions::alterers::graph_mutator::{GraphMutator, NodeMutate};
     // use radiate_extensions::architects::node_collectioLLns::graph_modifier::GraphModifier;
     // use radiate_extensions::architects::node_collections::modifiers::modifier::Modifier;
     use radiate_extensions::architects::schema::node_types::NodeType;
@@ -83,9 +83,8 @@ mod tests {
         let graph_codex = GraphCodex::from_factory(&factory)
             .set_nodes(|arc, _| arc.weighted_acyclic(2, 2));
 
-        let factory2 = NodeFactory::<f32>::regression(2);
-        let modifier = GraphMutator::<f32>::new(factory2)
-            .add_mutation(NodeType::Weight, 0.5);
+        // let factory2 = NodeFactory::<f32>::regression(2);
+        // let modifier = GraphMutator::<f32>::new(factory2, vec![NodeMutate::new(0.5, NodeType::Weight)]);
     
         let genotype = graph_codex.encode();
         let decoded = graph_codex.decode(&genotype);
@@ -96,10 +95,10 @@ mod tests {
 
         println!("\nModifing graph...\n");
 
-        if let Some(modified) = modifier.mutate(decoded, &NodeType::Weight) {
-            for node in modified.iter() {
-                println!("{:?}", node);
-            }
-        }
+        // if let Some(modified) = modifier.mutate(decoded, &NodeType::Weight) {
+        //     for node in modified.iter() {
+        //         println!("{:?}", node);
+        //     }
+        // }
     }
 }

@@ -1,5 +1,5 @@
 
-use radiate_rust::engines::{alterers::mutators::mutate::Mutate, genome::{chromosome::Chromosome, genes::gene::Valid, genotype::Genotype}};
+use radiate_rust::engines::{alterers::{alter::Alterer, mutators::mutate::Mutate}, genome::{chromosome::Chromosome, genes::gene::Valid, genotype::Genotype}};
 use rand::{random, seq::SliceRandom};
 
 use crate::{architects::{node_collections::{self, graphs::graph::Graph, node::Node, node_collection::NodeCollection, node_factory::NodeFactory}, schema::node_types::NodeType}, operations::op::Ops};
@@ -10,9 +10,15 @@ pub struct NodeMutate {
     pub node_type: NodeType
 }
 
+impl NodeMutate {
+    pub fn new(rate: f32, node_type: NodeType) -> Self {
+        NodeMutate { rate, node_type }
+    }
+}
+
 pub struct GraphMutator<T> 
 where
-    T: Clone + PartialEq + Default
+    T: Clone + PartialEq + Default + 'static 
 {
     pub factory: NodeFactory<T>,
     pub mutations: Vec<NodeMutate>,
@@ -22,11 +28,20 @@ impl<T> GraphMutator<T>
 where
     T: Clone + PartialEq + Default
 {
-    pub fn new(factory: NodeFactory<T>) -> Self {
-        GraphMutator {
+    // pub fn new(factory: NodeFactory<T>) -> Self {
+    //     GraphMutator {
+    //         factory,
+    //         mutations: vec![]
+    //     }
+    // }
+
+    pub fn new(factory: NodeFactory<T>, mutations: Vec<NodeMutate>) -> Alterer<Node<T>, Ops<T>> {
+        let mutator = GraphMutator {
             factory,
-            mutations: vec![]
-        }
+            mutations
+        };
+
+        Alterer::Mutation(Box::new(mutator))
     }
 
     pub fn add_mutation(mut self, node_type: NodeType, rate: f32) -> Self {
