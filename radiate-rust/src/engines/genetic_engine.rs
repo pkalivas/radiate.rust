@@ -84,15 +84,17 @@ where
     fn select_survivors(&self, population: &Population<G, A>) -> Population<G, A> {
         let selector = self.survivor_selector();
         let count = self.survivor_count();
+        let optimize = self.optimize();
 
-        selector.select(population, count)
+        selector.select(population, optimize, count)
     }
 
     fn select_offspring(&self, population: &Population<G, A>) -> Population<G, A> {
         let selector = self.offspring_selector();
         let count = self.offspring_count();
+        let optimize = self.optimize();
 
-        selector.select(population, count)
+        selector.select(population, optimize, count)
     }
 
     fn alter(&self, population: &mut Population<G, A>, generation: i32) {

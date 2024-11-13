@@ -1,12 +1,13 @@
 use crate::engines::genome::genes::gene::Gene;
 use crate::engines::genome::population::Population;
+use crate::Optimize;
 use rand::Rng;
 
 pub trait Select<G, A> 
 where
     G: Gene<G, A>
 {
-    fn select(&self, population: &Population<G, A>, count: usize) -> Population<G, A>;
+    fn select(&self, population: &Population<G, A>, optimize: &Optimize, count: usize) -> Population<G, A>;
 }
 
 #[allow(dead_code)]
@@ -37,7 +38,7 @@ impl<G, A> Select<G, A> for Selector
 where
     G: Gene<G, A>
 {
-    fn select(&self, population: &Population<G, A>, count: usize) -> Population<G, A> {
+    fn select(&self, population: &Population<G, A>, optimize: &Optimize, count: usize) -> Population<G, A> {
         match self {
             Selector::Tournament(size) => {
                 let mut rng = rand::thread_rng();
@@ -59,20 +60,48 @@ where
             }
             Selector::Roulette => {
                 let mut selected = Vec::with_capacity(count);
-                let mut rng = rand::thread_rng();
-                let total_fitness = self.total_fitness(population);
+                let mut fitness_values = Vec::with_capacity(population.len());
+                let mut total = 0.0;
+
+                for individual in population.iter() {
+                    let score = match individual.score() {
+                        Some(score) => score.as_float(),
+                        None => 0.0,
+                    };
+
+                    fitness_values.push(score);
+                    total += score;
+                }
+
+                let best = fitness_values[0];
+                let worst = fitness_values[fitness_values.len() - 1];
+                let range = total - worst * fitness_values.len() as f32;
+
+                if range == 0.0 || (best - worst).abs() < f32::EPSILON {
+                    return population
+                        .iter()
+                        .take(count)
+                        .map(|individual| individual.clone())
+                        .collect::<Population<G, A>>();
+                }
+
+                for i in 0..fitness_values.len() {
+                    fitness_values[i] = (fitness_values[i] - worst) / range;
+                }
+
+                if optimize == &Optimize::Minimize {
+                    fitness_values.reverse();
+                }
+
+                let total_fitness = fitness_values.iter().sum::<f32>();
 
                 for _ in 0..count {
-                    let mut idx = rng.gen_range(0.0..total_fitness);
+                    let mut idx = rand::thread_rng().gen_range(0.0..total_fitness);
 
-                    for individual in population.iter() {
-                        idx -= match individual.score() {
-                            Some(score) => score.as_float(),
-                            None => 0.0,
-                        };
-
+                    for i in 0..fitness_values.len() {
+                        idx -= fitness_values[i];
                         if idx <= 0.0 {
-                            selected.push(individual.clone());
+                            selected.push(population.get(i).clone());
                             break;
                         }
                     }
@@ -110,19 +139,55 @@ where
                 let mut selected = Vec::with_capacity(count);
                 let mut rng = rand::thread_rng();
 
-                let total_fitness = self.total_fitness(population);
+                let mut min = population.get(0).score().as_ref().unwrap().as_float();
+                let mut max = min;
+
+                for individual in population.iter() {
+                    let score = individual.score().as_ref().unwrap().as_float();
+                    if score < min {
+                        min = score;
+                    }
+                    if score > max {
+                        max = score;
+                    }
+                }
+
+                let diff = max - min;
+                if diff == 0.0 {
+                    return population
+                        .iter()
+                        .take(count)
+                        .map(|individual| individual.clone())
+                        .collect::<Population<G, A>>();
+                }
+
+                let mut result = Vec::with_capacity(population.len());
+                for individual in population.iter() {
+                    let score = individual.score().as_ref().unwrap().as_float();
+                    let fitness = (score - min) / diff;
+                    let value = (temperature * fitness).exp();
+
+                    result.push(value);
+                }
+
+                let total_fitness = result.iter().sum::<f32>();
+                for i in 0..result.len() {
+                    result[i] /= total_fitness;
+                }
+
+                if optimize == &Optimize::Minimize {
+                    result.reverse();
+                }
+
+                let total_fitness = result.iter().sum::<f32>();
 
                 for _ in 0..count {
                     let mut idx = rng.gen_range(0.0..total_fitness);
-                    for individual in population.iter() {
-                        let fitness = match individual.score() {
-                            Some(score) => score.as_float(),
-                            None => 0.0,
-                        };
-                        let probability = (fitness / temperature).exp();
-                        idx -= probability;
+
+                    for i in 0..result.len() {
+                        idx -= result[i];
                         if idx <= 0.0 {
-                            selected.push(individual.clone());
+                            selected.push(population.get(i).clone());
                             break;
                         }
                     }
