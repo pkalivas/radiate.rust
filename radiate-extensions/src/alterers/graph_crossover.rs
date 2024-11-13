@@ -61,6 +61,13 @@ where
                 continue;
             }
 
+            if (!node_one.enabled || !node_two.enabled) && rand::random::<f32>() < self.reenable_shared_node_rate {
+                let mut new_gene = node_one.clone();
+                new_gene.enabled = true;
+                new_chromo_one.set_gene(*node_one.index(), new_gene);
+                num_crosses += 1;
+            }
+
             if rand::random::<f32>() < self.crossover_parent_node_rate {
                 new_chromo_one.set_gene(*node_one.index(), node_one.from_allele(&node_two.allele()));
                 num_crosses += 1;
