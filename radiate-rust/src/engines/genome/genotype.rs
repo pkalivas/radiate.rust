@@ -19,6 +19,10 @@ where
         &self.chromosomes[index]
     }
 
+    pub fn set_chromosome(&mut self, index: usize, chromosome: Chromosome<G, A>) {
+        self.chromosomes[index] = chromosome;
+    }
+
     pub fn len(&self) -> usize {
         self.chromosomes.len()
     }

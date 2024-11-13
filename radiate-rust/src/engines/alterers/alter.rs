@@ -37,3 +37,29 @@ where
     Crossover(Box<dyn Crossover<G, A>>),
     Alterer(Box<dyn Alter<G, A>>)
 }
+
+impl<G, A> Alterer<G, A>
+where
+    G: Gene<G, A>
+{
+    pub fn alterer<T>(alterer: T) -> Self
+    where
+        T: Alter<G, A> + 'static
+     {
+        Alterer::Alterer(Box::new(alterer))
+    }
+
+    pub fn crossover<T>(crossover: T) -> Self
+    where
+        T: Crossover<G, A> + 'static
+    {
+        Alterer::Crossover(Box::new(crossover))
+    }
+
+    pub fn mutation<T>(mutation: T) -> Self
+    where
+        T: Mutate<G, A> + 'static
+    {
+        Alterer::Mutation(Box::new(mutation))
+    }
+}

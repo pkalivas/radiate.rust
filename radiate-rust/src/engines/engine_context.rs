@@ -22,6 +22,10 @@ where
     pub fn score(&self) -> &Score {
         self.score.as_ref().unwrap()
     }
+
+    pub fn seconds(&self) -> f64 {
+        self.timer.elapsed().as_secs_f64()
+    }
 }
 
 impl<G, A, T> Clone for EngineContext<G, A, T> 

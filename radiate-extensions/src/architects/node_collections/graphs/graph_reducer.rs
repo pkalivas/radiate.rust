@@ -28,7 +28,7 @@ where
                 .iter()
                 .map(|node| Tracer::new(node.input_size()))
                 .collect::<Vec<Tracer<T>>>(), 
-            order: Vec::new()
+            order: Vec::with_capacity(graph.len())
         }
     }
 
