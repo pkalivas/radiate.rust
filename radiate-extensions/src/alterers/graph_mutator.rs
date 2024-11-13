@@ -142,18 +142,3 @@ where
         0
     }
 }
-
-
-
-
-// let result = self.repair_insert(&mut temp, &new_node, incoming_node, outgoing_node);
-
-// if let Some(mut mutated_graph) = result {
-//     if mutated_graph.len() != collection.len() && !node_collections::is_locked(&outgoing_node){
-//         mutated_graph.get_mut(source_node.index).unwrap().enabled = false;
-//     }
-
-//     return Some(mutated_graph);
-// }
-
-// return result;

@@ -98,7 +98,10 @@ where
     }
 }
 
-impl<G: Gene<G, A>, A> Alter<G, A> for CompositeAlterer<G, A> {
+impl<G, A> Alter<G, A> for CompositeAlterer<G, A>
+where
+    G: Gene<G, A>
+{
 
     fn alter(&self, population: &mut Population<G, A>, optimize: &Optimize, generation: i32) {
         optimize.sort(population);

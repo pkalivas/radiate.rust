@@ -38,13 +38,7 @@ impl<T> Regression<T> {
             + DivAssign,
         F: FnMut(&Vec<T>) -> Vec<T>
     {
-        let mut sum = T::default();
-        for sample in self.sample_set.get_samples().iter() {
-            let output = error_fn(&sample.1);
-            sum += self.loss_function.calculate(&output, &sample.2);
-        }
-
-        sum
+        self.loss_function.calculate(&self.sample_set, &mut error_fn)
     }
 
     pub fn get_samples(&self) -> &[Sample<T>] {
