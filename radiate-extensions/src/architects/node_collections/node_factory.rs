@@ -140,6 +140,8 @@ where
                 op::mish(),
                 op::leaky_relu(),
                 op::softplus(),
+                op::sum(),
+                op::prod(),
             ])
             .weights(vec![op::weight()])
             .outputs(vec![op::linear()])
