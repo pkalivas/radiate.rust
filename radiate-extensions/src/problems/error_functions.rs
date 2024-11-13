@@ -2,6 +2,8 @@ use std::ops::{Add, Div, Mul, Sub, AddAssign, DivAssign, SubAssign};
 use num_traits::cast::FromPrimitive;
 use num_traits::float::Float;
 
+use super::SampleSet;
+
 pub enum ErrorFunction {
     MSE,
     MAE,
@@ -10,7 +12,7 @@ pub enum ErrorFunction {
 }
 
 impl ErrorFunction {
-    pub fn calculate<T>(&self, expected: &[T], actual: &[T]) -> T
+    pub fn calculate<T, F>(&self, samples: &SampleSet<T>, eval_func: &mut F) -> T
     where
         T: Clone + PartialEq + Default
             + Add<Output = T> 
@@ -23,39 +25,60 @@ impl ErrorFunction {
             + DivAssign
             + Float
             + FromPrimitive
-            + DivAssign
+            + DivAssign,
+        F: FnMut(&Vec<T>) -> Vec<T>
     {
         match self {
             ErrorFunction::MSE => {
                 let mut sum = T::default();
-                for i in 0..expected.len() {
-                    let diff = expected[i].clone() - actual[i].clone();
-                    sum += diff.clone() * diff.clone();
+                for sample in samples.get_samples().iter() {
+                    let output = eval_func(&sample.1);
+                    
+                    for i in 0..sample.2.len() {
+                        let diff = sample.2[i].clone() - output[i].clone();
+                        sum += diff * diff;
+                    }
                 }
-                sum /= T::from_usize(expected.len()).unwrap();
+
+                sum /= T::from_usize(samples.get_samples().len()).unwrap();
                 sum
             }
             ErrorFunction::MAE => {
                 let mut sum = T::default();
-                for i in 0..expected.len() {
-                    let diff = expected[i].clone() - actual[i].clone();
-                    sum += diff.clone();
+                for sample in samples.get_samples().iter() {
+                    let output = eval_func(&sample.1);
+
+                    for i in 0..sample.2.len() {
+                        let diff = sample.2[i].clone() - output[i].clone();
+                        sum += diff;
+                    }
                 }
-                sum /= T::from_usize(expected.len()).unwrap();
+
+                sum /= T::from_usize(samples.get_samples().len()).unwrap();
                 sum
-            },
+            }
             ErrorFunction::CrossEntropy => {
                 let mut sum = T::default();
-                for i in 0..expected.len() {
-                    sum += expected[i].clone() * actual[i].clone().ln();
+                for sample in samples.get_samples().iter() {
+                    let output = eval_func(&sample.1);
+
+                    for i in 0..sample.2.len() {
+                        sum += sample.2[i].clone() * output[i].clone().ln();
+                    }
                 }
+
                 sum
-            },
+            }
             ErrorFunction::Diff => {
                 let mut sum = T::default();
-                for i in 0..expected.len() {
-                    sum += (expected[i].clone() - actual[i].clone()).abs();
+                for sample in samples.get_samples().iter() {
+                    let output = eval_func(&sample.1);
+
+                    for i in 0..sample.2.len() {
+                        sum += (sample.2[i].clone() - output[i].clone()).abs();
+                    }
                 }
+
                 sum
             }
         }
