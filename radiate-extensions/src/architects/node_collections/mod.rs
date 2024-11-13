@@ -1,6 +1,5 @@
 use std::collections::HashSet;
 
-use node::Node;
 use rand::seq::SliceRandom;
 
 use super::schema::node_types::NodeType;
@@ -10,6 +9,11 @@ pub mod graphs;
 pub mod node;
 pub mod tracer;
 pub mod node_factory;
+
+pub use node_collection::NodeCollection;
+pub use node::Node;
+pub use node_factory::NodeFactory;
+pub use tracer::Tracer;
 
 
 pub fn can_connect<T>(collection: &[Node<T>], source: usize, target: usize) -> bool

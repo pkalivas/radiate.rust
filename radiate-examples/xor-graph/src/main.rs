@@ -35,7 +35,7 @@ fn main() {
                 GraphCrossover::new(0.5, 0.5, 0.2)
             )),
             Alterer::Mutation(Box::new(
-                OpMutator::new(factory.clone(), 0.001, 0.05)
+                OpMutator::new(factory.clone(), 0.01, 0.05)
             )),
             Alterer::Mutation(Box::new(
                 GraphMutator::new(factory.clone())
