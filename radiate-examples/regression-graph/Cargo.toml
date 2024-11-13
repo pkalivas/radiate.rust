@@ -1,0 +1,8 @@
+[package]
+name = "regression-graph"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+radiate-rust = { path = "../../radiate-rust" }
+radiate-extensions = { path = "../../radiate-extensions" }

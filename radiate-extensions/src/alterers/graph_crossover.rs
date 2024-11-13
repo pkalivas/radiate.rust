@@ -144,7 +144,7 @@ where
 {
     fn alter(&self, population: &mut Population<Node<T>, Ops<T>>, optimize: &Optimize, generation: i32) {
         optimize.sort(population);
-        let mut new_population = Vec::new();
+        let mut new_population = Vec::with_capacity(population.len());
 
         for index in 0..population.len() {
             if rand::random::<f32>() < self.crossover_rate && population.len() > NUM_PARENTS {
@@ -158,6 +158,10 @@ where
             } else {
                 new_population.push(population.get(index).clone());
             }
+        }
+
+        for (index, phenotype) in new_population.into_iter().enumerate() {
+            population.set(index, phenotype);
         }
     }
 }
