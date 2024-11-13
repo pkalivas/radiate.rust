@@ -12,7 +12,7 @@ fn main() {
         .offspring_selector(Selector::Elitism)
         .survivor_selector(Selector::Tournament(3))
         .alterer(vec![
-            Alterer::Mutator(0.01),
+            Alterer::Mutator(0.1),
             Alterer::UniformCrossover(0.5)
         ])
         .fitness_fn(|genotype: &String| {
