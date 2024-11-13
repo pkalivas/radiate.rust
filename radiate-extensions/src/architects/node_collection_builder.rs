@@ -102,11 +102,10 @@ where
             new_collection.attach(*source_idx, *target_idx);
         }
 
+
+        let indecies = new_collection.iter().map(|node| *node.index()).collect::<Vec<usize>>();
         NodeCollectionBuilder::<C, T>::repair(&self.factory, &mut new_collection
-            .set_cycles(new_collection
-                .iter()
-                .map(|node| *node.index())
-                .collect::<Vec<usize>>())
+            .set_cycles(indecies)
             .reindex(0))
     }
 
