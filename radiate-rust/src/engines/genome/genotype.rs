@@ -15,6 +15,10 @@ where
         &mut self.chromosomes[index]
     }
 
+    pub fn get_chromosome(&self, index: usize) -> &Chromosome<G, A> {
+        &self.chromosomes[index]
+    }
+
     pub fn len(&self) -> usize {
         self.chromosomes.len()
     }

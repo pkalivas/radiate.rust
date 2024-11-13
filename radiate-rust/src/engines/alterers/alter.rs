@@ -19,7 +19,8 @@ where
 {
     pub rate: f32,
     pub mutator: Option<Box<dyn Mutate<G, A>>>,
-    pub crossover: Option<Box<dyn Crossover<G, A>>>
+    pub crossover: Option<Box<dyn Crossover<G, A>>>,
+    pub alterer: Option<Box<dyn Alter<G, A>>>,
 }
 
 
@@ -34,4 +35,5 @@ where
     SwapMutator(f32),
     Mutation(Box<dyn Mutate<G, A>>),
     Crossover(Box<dyn Crossover<G, A>>),
+    Alterer(Box<dyn Alter<G, A>>)
 }

@@ -4,8 +4,8 @@ use rand::{prelude::Distribution, distributions::Standard, random};
 
 use num_traits::{Float, NumCast};
 
-const MAX_VALUE: f32 = 1e+6_f32;
-const MIN_VALUE: f32 = -1e+6_f32;
+const MAX_VALUE: f32 = 1e+5_f32;
+const MIN_VALUE: f32 = -1e+5_f32;
 
 
 pub enum Ops<T> 
@@ -160,7 +160,15 @@ pub fn mul<T: Mul<Output = T> + Clone + Float>() -> Ops<T> {
 }
 
 pub fn div<T: Div<Output = T> + Clone + Float>() -> Ops<T> {
-    Ops::Fn("/", 2, Arc::new(|inputs: &[T]| clamp(inputs[0].clone() / inputs[1].clone())))
+    Ops::Fn("/", 2, Arc::new(|inputs: &[T]| {
+        let denom = if inputs[1] == T::from(0).unwrap() {
+            inputs[0] / T::from(1).unwrap()
+        } else {
+            inputs[0].clone() / inputs[1].clone()
+        };
+
+        clamp(denom)
+    }))
 }
 
 pub fn sum<T: Add<Output = T> + Clone + Default + Float>() -> Ops<T> {
@@ -215,6 +223,30 @@ pub fn tan<T: Clone + Float>() -> Ops<T> {
     Ops::Fn("tan", 1, Arc::new(|inputs: &[T]| clamp(inputs[0].clone().tan())))
 }
 
+pub fn max<T: Clone + PartialOrd>() -> Ops<T> {
+    Ops::Fn("max", 2, Arc::new(|inputs: &[T]| {
+        inputs.iter().fold(inputs[0].clone(), |acc, x| {
+            if *x > acc {
+                x.clone()
+            } else {
+                acc
+            }
+        })
+    }))
+}
+
+pub fn min<T: Clone + PartialOrd>() -> Ops<T> {
+    Ops::Fn("min", 2, Arc::new(|inputs: &[T]| {
+        inputs.iter().fold(inputs[0].clone(), |acc, x| {
+            if *x < acc {
+                x.clone()
+            } else {
+                acc
+            }
+        })
+    }))
+}
+
 
 pub fn weight<T: Sub<Output = T> + Mul<Output = T> + Copy + Default + Float>() -> Ops<T>
 where
@@ -267,6 +299,23 @@ pub fn linear() -> Ops<f32> {
         let result = inputs
             .iter()
             .fold(0_f32, |acc, x| acc + x);
+
+        clamp(result)
+    }))
+}
+
+pub fn mish() -> Ops<f32> {
+    Ops::Fn("mish", 1, Arc::new(|inputs: &[f32]| {
+        let result = inputs
+            .iter()
+            .fold(0_f32, |acc, x| acc + x)
+            .tanh()
+            * (inputs
+                .iter()
+                .fold(0_f32, |acc, x| acc + x)
+                .exp()
+                .ln_1p()
+                .exp());
 
         clamp(result)
     }))

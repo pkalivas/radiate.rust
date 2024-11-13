@@ -88,7 +88,16 @@ where
         Genotype {
             chromosomes: vec![Chromosome::from_genes(self.nodes
                 .iter()
-                .map(|node| node.new_instance())
+                .map(|node| {
+                    let temp_node = self.factory.new_node(node.index, node.node_type);
+
+                    if temp_node.value.arity() == node.value.arity() {
+                        node.from_allele(&temp_node.allele());
+                    }
+
+                    node.clone()
+                    
+                })
                 .collect::<Vec<Node<T>>>())]
         }
     }

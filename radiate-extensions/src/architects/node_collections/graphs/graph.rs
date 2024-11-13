@@ -1,3 +1,4 @@
+
 use radiate_rust::engines::genome::genes::gene::Valid;
 
 use crate::architects::node_collections::node::Node;
@@ -71,5 +72,29 @@ where
         Graph {
             nodes: Vec::new(),
         }
+    }
+}
+
+
+impl<T> IntoIterator for Graph<T>
+where
+    T: Clone + PartialEq + Default
+{
+
+    type Item = Node<T>;
+    type IntoIter = std::vec::IntoIter<Node<T>>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.nodes.into_iter()
+    }
+}
+
+impl<T> FromIterator<Node<T>> for Graph<T>
+where
+    T: Clone + PartialEq + Default
+{
+    fn from_iter<I: IntoIterator<Item = Node<T>>>(iter: I) -> Self {
+        let nodes = iter.into_iter().collect();
+        Graph { nodes }
     }
 }

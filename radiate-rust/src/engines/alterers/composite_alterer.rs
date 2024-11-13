@@ -32,6 +32,7 @@ where
                         rate,
                         mutator: Some(Box::new(Mutator::new(rate))),
                         crossover: None,
+                        alterer: None,
                     });
                 },
                 Alterer::UniformCrossover(rate) => {
@@ -39,6 +40,7 @@ where
                         rate,
                         mutator: None,
                         crossover: Some(Box::new(UniformCrossover::new(rate))),
+                        alterer: None,
                     });
                 },
                 Alterer::SinglePointCrossover(rate) => {
@@ -46,6 +48,7 @@ where
                         rate,
                         mutator: None,
                         crossover: Some(Box::new(MultiPointCrossover::new(rate, 1))),
+                        alterer: None,
                     });
                 },
                 Alterer::MultiPointCrossover(rate, num_points) => {
@@ -53,6 +56,7 @@ where
                         rate,
                         mutator: None,
                         crossover: Some(Box::new(MultiPointCrossover::new(rate, num_points))),
+                        alterer: None,
                     });
                 },
                 Alterer::SwapMutator(rate) => {
@@ -60,6 +64,7 @@ where
                         rate,
                         mutator: Some(Box::new(SwapMutator::new(rate))),
                         crossover: None,
+                        alterer: None,
                     });
                 },
                 Alterer::Mutation(mutation) => {
@@ -67,6 +72,7 @@ where
                         rate: mutation.mutate_rate(),
                         mutator: Some(mutation),
                         crossover: None,
+                        alterer: None,
                     });
                 },
                 Alterer::Crossover(crossover) => {
@@ -74,6 +80,15 @@ where
                         rate: crossover.cross_rate(),
                         mutator: None,
                         crossover: Some(crossover),
+                        alterer: None,
+                    });
+                },
+                Alterer::Alterer(alterer) => {
+                    alterer_wraps.push(AlterWrap {
+                        rate: 1.0,
+                        mutator: None,
+                        crossover: None,
+                        alterer: Some(alterer),
                     });
                 },
             }
@@ -119,6 +134,12 @@ impl<G: Gene<G, A>, A> Alter<G, A> for CompositeAlterer<G, A> {
                             crossover.cross(population, &parent_indexes, generation);
                         }
                     }
+                },
+                None => (),
+            };
+            match alterer.alterer {
+                Some(ref alterer) => {
+                    alterer.alter(population, optimize, generation);
                 },
                 None => (),
             };

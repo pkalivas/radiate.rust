@@ -1,6 +1,6 @@
+use radiate_extensions::alterers::graph_crossover::GraphCrossover;
 use radiate_extensions::alterers::graph_mutator::GraphMutator;
-use radiate_extensions::alterers::node_crossover::NodeCrossover;
-use radiate_extensions::alterers::node_mutator::NodeMutator;
+use radiate_extensions::alterers::op_mutator::OpMutator;
 use radiate_extensions::architects::node_collections::graphs::graph::Graph;
 use radiate_extensions::architects::node_collections::graphs::graph_reducer::GraphReducer;
 use radiate_extensions::architects::schema::node_types::NodeType;
@@ -24,21 +24,6 @@ fn main() {
             op::sigmoid()
         ]);
 
-    let factory2 = NodeFactory::<f32>::regression(2)
-        .outputs(vec![
-            op::sigmoid()
-        ]);
-
-    let factory3 = NodeFactory::<f32>::regression(2)
-        .outputs(vec![
-            op::sigmoid()
-        ]);
-
-    let factory4 = NodeFactory::<f32>::regression(2)
-        .outputs(vec![
-            op::sigmoid()
-        ]);
-
     let graph_codex = GraphCodex::from_shape(2, 1, &factory);
 
     let regression = Regression::new(get_sample_set(), ErrorFunction::MSE);
@@ -46,21 +31,18 @@ fn main() {
     let engine = GeneticEngine::from_codex(&graph_codex)
         .minimizing()
         .alterer(vec![
-            Alterer::Mutation(Box::new(
-                NodeMutator::new(0.01, 0.05)
+            Alterer::Alterer(Box::new(
+                GraphCrossover::new(0.5, 0.5, 0.2)
             )),
             Alterer::Mutation(Box::new(
-                GraphMutator::new(0.05, factory2, NodeType::Weight)
+                OpMutator::new(factory.clone(), 0.01, 0.05)
             )),
             Alterer::Mutation(Box::new(
-                GraphMutator::new(0.03, factory3, NodeType::Aggregate)
+                GraphMutator::new(factory.clone())
+                    .add_mutation(NodeType::Weight, 0.05)
+                    .add_mutation(NodeType::Aggregate, 0.03)
+                    .add_mutation(NodeType::Gate, 0.03)
             )),
-            Alterer::Mutation(Box::new(
-                GraphMutator::new(0.03, factory4, NodeType::Gate)
-            )),
-            Alterer::Crossover(Box::new(
-                NodeCrossover::new(0.5)
-            ))
         ])
         .fitness_fn(move |genotype: &Graph<f32>| {
             let mut reducer = GraphReducer::new(genotype);

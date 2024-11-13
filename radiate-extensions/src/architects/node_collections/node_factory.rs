@@ -119,17 +119,35 @@ where
                 op::sin(),
                 op::cos(),
                 op::tan(),
+                op::sum(),
+                op::prod(),
+                op::max(),
+                op::min(),
             ])
             .aggregates(vec![
                 op::sigmoid(),
                 op::tanh(),
                 op::relu(),
                 op::linear(),
-                // op::sum(),
-                // op::prod(),
+                op::sum(),
+                op::prod(),
+                op::max(),
+                op::min(),
+                op::mish()
             ])
             .weights(vec![op::weight()])
             .outputs(vec![op::linear()])
 
+    }
+}
+
+impl<T> Clone for NodeFactory<T> 
+where
+    T: Clone + PartialEq + Default
+{
+    fn clone(&self) -> Self {
+        NodeFactory {
+            node_values: self.node_values.clone()
+        }
     }
 }
