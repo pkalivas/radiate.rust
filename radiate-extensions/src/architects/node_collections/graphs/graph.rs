@@ -1,7 +1,7 @@
 
 use radiate_rust::engines::genome::genes::gene::Valid;
 
-use crate::architects::node_collections::node::Node;
+use crate::{architects::node_collections::node::Node, node_collection, Direction};
 
 use super::super::node_collection::NodeCollection;
 
@@ -37,8 +37,35 @@ where
         &mut self.nodes
     }
 
-    fn add(&mut self, node: Node<T>) {
-        self.nodes.push(node);
+    fn insert(&mut self, nodes: Vec<Node<T>>) {
+        self.nodes.extend(nodes);
+    }
+
+    fn set_cycles(mut self, indecies: Vec<usize>) -> Graph<T>{
+        if indecies.len() == 0 {
+            let all_indices = self.get_nodes()
+                .iter()
+                .map(|node| node.index)
+                .collect::<Vec<usize>>();
+
+            return self.set_cycles(all_indices)
+        }
+
+        for idx in indecies {
+            let node_cycles = node_collection::get_cycles(self.get_nodes(), idx);
+
+            if node_cycles.len() == 0 {
+                let node = self.get_mut(idx).unwrap();
+                (*node).direction = Direction::Forward;
+            } else {
+                for cycle_idx in node_cycles {
+                    let node = self.get_mut(cycle_idx).unwrap();
+                    (*node).direction = Direction::Backward;
+                }
+            }
+        }
+
+        self
     }
 }
 
