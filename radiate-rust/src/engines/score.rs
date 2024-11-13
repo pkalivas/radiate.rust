@@ -1,3 +1,7 @@
+use std::hash::Hash;
+
+
+// #[derive(Hash)]
 pub struct Score {
     pub values: Vec<f32>,
 }
@@ -83,5 +87,17 @@ impl PartialOrd for Score {
 impl std::fmt::Debug for Score {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{:?}", self.values)
+    }
+}
+
+impl Eq for Score {}
+
+impl Hash for Score {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        let mut hash = 0;
+        for value in &self.values {
+            hash ^= value.to_bits();
+        }
+        hash.hash(state);
     }
 }

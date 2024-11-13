@@ -39,7 +39,7 @@ fn main() {
             )),
             Alterer::Mutation(Box::new(
                 GraphMutator::new(factory.clone())
-                    .add_mutation(NodeType::Weight, 0.05)
+                    .add_mutation(NodeType::Weight, 0.1)
                     .add_mutation(NodeType::Aggregate, 0.03)
                     .add_mutation(NodeType::Gate, 0.03)
             )),
