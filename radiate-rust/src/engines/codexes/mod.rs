@@ -9,6 +9,13 @@ pub mod float_codex;
 pub mod bit_codex;
 pub mod subset_codex;
 
+pub use char_codex::*;
+pub use int_codex::*;
+pub use float_codex::*;
+pub use bit_codex::*;
+pub use subset_codex::*;
+
+
 pub trait Codex<G, A, T>
 where 
     G: Gene<G, A>
