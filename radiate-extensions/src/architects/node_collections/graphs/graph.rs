@@ -37,9 +37,8 @@ where
         &mut self.nodes
     }
 
-    fn add(&mut self, node: Node<T>) -> &mut Self {
+    fn add(&mut self, node: Node<T>) {
         self.nodes.push(node);
-        self
     }
 }
 
