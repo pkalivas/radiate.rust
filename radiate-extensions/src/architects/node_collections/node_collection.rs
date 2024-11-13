@@ -19,6 +19,8 @@ where
     fn get_nodes(&self) -> &[Node<T>];
     fn get_nodes_mut(&mut self) -> &mut [Node<T>];
 
+    fn set_cycles(self, indecies: Vec<usize>) -> C;
+
     fn add(&mut self, nodes: Vec<Node<T>>);
 
     fn set(&mut self, index: usize, node: Node<T>) -> &mut Self {
@@ -89,35 +91,6 @@ where
 
         C::from_nodes(new_nodes)
     }
-
-    fn set_cycles(self, indecies: Vec<usize>) -> C;
-
-    // fn set_cycles(&mut self, indecies: Vec<usize>) -> &mut Self {
-    //     if indecies.len() == 0 {
-    //         let all_indices = self.get_nodes()
-    //             .iter()
-    //             .map(|node| node.index)
-    //             .collect::<Vec<usize>>();
-
-    //         return self.set_cycles(all_indices)
-    //     }
-
-    //     for idx in indecies {
-    //         let node_cycles = get_cycles(self.get_nodes(), idx);
-
-    //         if node_cycles.len() == 0 {
-    //             let node = self.get_mut(idx).unwrap();
-    //             (*node).direction = Direction::Forward;
-    //         } else {
-    //             for cycle_idx in node_cycles {
-    //                 let node = self.get_mut(cycle_idx).unwrap();
-    //                 (*node).direction = Direction::Backward;
-    //             }
-    //         }
-    //     }
-
-    //     self
-    // }
 }
 
 

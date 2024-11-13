@@ -73,7 +73,7 @@ where
                     .collect::<Vec<Node<T>>>());
 
                 temp.attach(source_node.index, new_source_edge_index);
-                temp.attach(source_node.index, new_node_index);
+                temp.attach(new_source_edge_index, new_node_index);
                 temp.attach(new_node_index, new_target_edge_index);
                 temp.attach(new_target_edge_index, outgoing_node.index);
 
@@ -132,14 +132,17 @@ where
         let mutation = self.mutations.choose(&mut rng).unwrap();
 
         if random::<f32>() < mutation.rate {
-            let chromosome = genotype.get_chromosome(0);
+            let chromosome_index = rand::random::<usize>() % genotype.len();
+            let chromosome = genotype.get_chromosome(chromosome_index);
 
             if let Some(mutated_graph) = self.mutate(&chromosome.genes, &mutation.node_type) {
                 if !mutated_graph.is_valid() {
                     return 0;
                 }
 
-                genotype.chromosomes = vec![Chromosome::from_genes(mutated_graph.into_iter().collect::<Vec<Node<T>>>())];
+                let new_chromosome = Chromosome::from_genes(mutated_graph.into_iter().collect::<Vec<Node<T>>>());
+                genotype.set_chromosome(chromosome_index, new_chromosome);
+
                 return 1;
             }
         }

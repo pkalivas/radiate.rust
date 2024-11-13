@@ -34,7 +34,7 @@ fn main() {
 
     let result = engine.run(|output| {
         println!("[ {:?} ]: {:?}", output.index, output.score().as_float());
-        output.index == 2000 || output.score().as_float() < 0.01
+        output.score().as_float() < 0.01 || output.seconds() > 5.0
     });
 
     display(&result);
