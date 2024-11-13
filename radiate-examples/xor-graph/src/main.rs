@@ -1,6 +1,6 @@
+use radiate_extensions::alterers::graph_crossover::GraphCrossover;
 use radiate_extensions::alterers::graph_mutator::GraphMutator;
-use radiate_extensions::alterers::node_crossover::NodeCrossover;
-use radiate_extensions::alterers::node_mutator::NodeMutator;
+use radiate_extensions::alterers::op_mutator::OpMutator;
 use radiate_extensions::architects::node_collections::graphs::graph::Graph;
 use radiate_extensions::architects::node_collections::graphs::graph_reducer::GraphReducer;
 use radiate_extensions::architects::schema::node_types::NodeType;
@@ -31,8 +31,11 @@ fn main() {
     let engine = GeneticEngine::from_codex(&graph_codex)
         .minimizing()
         .alterer(vec![
+            Alterer::Alterer(Box::new(
+                GraphCrossover::new(0.5, 0.5, 0.2)
+            )),
             Alterer::Mutation(Box::new(
-                NodeMutator::new(0.01, 0.05)
+                OpMutator::new(0.01, 0.05)
             )),
             Alterer::Mutation(Box::new(
                 GraphMutator::new(factory.clone())
@@ -40,9 +43,6 @@ fn main() {
                     .add_mutation(NodeType::Aggregate, 0.03)
                     .add_mutation(NodeType::Gate, 0.03)
             )),
-            Alterer::Crossover(Box::new(
-                NodeCrossover::new(0.5)
-            ))
         ])
         .fitness_fn(move |genotype: &Graph<f32>| {
             let mut reducer = GraphReducer::new(genotype);

@@ -8,7 +8,7 @@ use crate::architects::node_collections::node::Node;
 use crate::operations::op::Ops;
 
 
-pub struct NodeMutator<T>
+pub struct OpMutator<T>
 where
     Standard: Distribution<T>,
 {
@@ -17,7 +17,7 @@ where
     _phantom: std::marker::PhantomData<T>,
 }
 
-impl<T> NodeMutator<T> 
+impl<T> OpMutator<T> 
 where
     Standard: Distribution<T>,
 {
@@ -30,7 +30,7 @@ where
     }
 }
 
-impl<T> Mutate<Node<T>, Ops<T>> for NodeMutator<T>
+impl<T> Mutate<Node<T>, Ops<T>> for OpMutator<T>
 where
     T: Clone + PartialEq + Default + Mul<Output = T> + Sub<Output = T> + Add<Output = T> + Float,
     Standard: Distribution<T>,
