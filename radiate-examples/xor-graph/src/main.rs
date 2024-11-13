@@ -1,22 +1,6 @@
-use radiate_extensions::alterers::graph_crossover::GraphCrossover;
-use radiate_extensions::alterers::graph_mutator::GraphMutator;
-use radiate_extensions::alterers::op_mutator::OpMutator;
-use radiate_extensions::architects::node_collections::graphs::graph::Graph;
-use radiate_extensions::architects::node_collections::graphs::graph_reducer::GraphReducer;
-use radiate_extensions::architects::schema::node_types::NodeType;
-use radiate_extensions::operations::op;
-use radiate_extensions::problems::error_functions::ErrorFunction;
-use radiate_extensions::problems::regression::Regression;
-use radiate_extensions::problems::sample_set::SampleSet;
-use radiate_rust::engines::alterers::alter::Alterer;
+use radiate_rust::*;
+use radiate_extensions::*;
 
-use radiate_extensions::architects::node_collections::graphs::graph_codex::GraphCodex;
-use radiate_extensions::architects::node_collections::node::Node;
-use radiate_extensions::architects::node_collections::node_factory::NodeFactory;
-use radiate_extensions::operations::op::Ops;
-use radiate_rust::engines::engine_context::EngineContext;
-use radiate_rust::engines::genetic_engine::GeneticEngine;
-use radiate_rust::engines::score::Score;
 
 fn main() {
     let factory = NodeFactory::<f32>::regression(2)

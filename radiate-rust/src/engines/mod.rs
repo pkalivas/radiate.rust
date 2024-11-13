@@ -8,3 +8,13 @@ pub mod schema;
 pub mod score;
 pub mod selectors;
 pub mod engine_context;
+
+pub use alterers::*;
+pub use score::*;
+pub use genetic_engine::*;
+pub use genetic_engine_params::*;
+pub use engine_context::*;
+pub use genome::*;
+pub use optimize::*;
+pub use schema::*;
+pub use selectors::*;

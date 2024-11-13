@@ -15,6 +15,9 @@ pub use node::Node;
 pub use node_factory::NodeFactory;
 pub use tracer::Tracer;
 
+pub use graphs::*;
+
+
 
 pub fn can_connect<T>(collection: &[Node<T>], source: usize, target: usize) -> bool
 where
