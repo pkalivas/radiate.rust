@@ -214,14 +214,24 @@ where
     T: Clone + PartialEq + std::fmt::Debug
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Node {{ id: {}, index: {}, dir: {:?}, node_type: {:?}, arity: {:?}, value: {:?}, incoming: {:?}, outgoing: {:?} }}", 
-            self.id,
+
+        let incoming = self.incoming.iter()
+            .map(|idx| idx.to_string())
+            .collect::<Vec<String>>()
+            .join(", ");
+        
+        write!(
+            f,
+            "[{:<3}] {:>10?} {:^9} V:{:<5} R:{:<5} {:<2} {:<2} < [{}]",
             self.index,
-            self.direction,
-            self.node_type,
-            self.arity,
-            self.value, 
-            self.incoming, 
-            self.outgoing)
+            format!("{:?}", self.node_type)[..3].to_owned(),
+            self.value.name(),
+            self.is_valid(),
+            // self.is_enabled,
+            self.is_recurrent(),
+            self.incoming.len(),
+            self.outgoing.len(),
+            incoming
+        )
     }
 }

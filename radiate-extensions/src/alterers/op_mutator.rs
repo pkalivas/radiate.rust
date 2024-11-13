@@ -5,27 +5,30 @@ use rand::{prelude::Distribution, distributions::Standard, random};
 use radiate_rust::engines::{alterers::mutators::mutate::Mutate, genome::genes::gene::Gene};
 
 use crate::architects::node_collections::node::Node;
+use crate::architects::node_collections::node_factory::NodeFactory;
 use crate::operations::op::Ops;
 
 
 pub struct OpMutator<T>
 where
     Standard: Distribution<T>,
+    T: Clone + PartialEq + Default
 {
     pub rate: f32,
     pub replace_rate: f32,
-    _phantom: std::marker::PhantomData<T>,
+    pub factory: NodeFactory<T>,
 }
 
 impl<T> OpMutator<T> 
 where
     Standard: Distribution<T>,
+    T: Clone + PartialEq + Default
 {
-    pub fn new(rate: f32, replace_rate: f32) -> Self {
+    pub fn new(factory: NodeFactory<T>, rate: f32, replace_rate: f32) -> Self {
         Self { 
             rate,
             replace_rate,
-             _phantom: std::marker::PhantomData 
+            factory
         }
     }
 }
@@ -51,7 +54,16 @@ where
                     gene.from_allele(&Ops::MutableConst(&name, *arity, new_value, supplier.clone(), operation.clone()))
                 }
             },
-            _ => gene.from_allele(&gene.allele())
+            _ => {
+                if random::<f32>() < self.replace_rate {
+                    let temp_node = self.factory.new_node(gene.index, gene.node_type);
+                    if temp_node.value.arity() == gene.value.arity() {
+                        return gene.from_allele(temp_node.allele());
+                    }
+                }
+
+                gene.clone()
+            }
         }
     }
 }

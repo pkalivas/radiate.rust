@@ -121,6 +121,8 @@ where
                 op::tan(),
                 op::sum(),
                 op::prod(),
+                op::max(),
+                op::min(),
             ])
             .aggregates(vec![
                 op::sigmoid(),
@@ -129,6 +131,9 @@ where
                 op::linear(),
                 op::sum(),
                 op::prod(),
+                op::max(),
+                op::min(),
+                op::mish()
             ])
             .weights(vec![op::weight()])
             .outputs(vec![op::linear()])
