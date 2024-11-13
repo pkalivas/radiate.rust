@@ -13,15 +13,13 @@ fn main() {
 
     let engine = GeneticEngine::from_codex(&graph_codex)
         .minimizing()
-        .offspring_selector(Selector::Boltzmann(4_f32))
         .alterer(vec![
             Alterer::alterer(GraphCrossover::new(0.5, 0.5, 0.2)),
             Alterer::mutation(OpMutator::new(factory.clone(), 0.01, 0.05)),
             Alterer::alterer(GraphMutator::new(factory.clone())
                 .add_mutation(NodeType::Weight, 0.05)
                 .add_mutation(NodeType::Aggregate, 0.03)
-                .add_mutation(NodeType::Gate, 0.03))
-        ])
+                .add_mutation(NodeType::Gate, 0.03))])
         .fitness_fn(move |genotype: &Graph<f32>| {
             let mut reducer = GraphReducer::new(genotype);
             Score::from_f32(regression.error(|input| reducer.reduce(&input)))

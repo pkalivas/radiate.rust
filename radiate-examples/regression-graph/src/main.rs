@@ -22,7 +22,7 @@ fn main() {
             Alterer::mutation(OpMutator::new(factory.clone(), 0.01, 0.05)),
             Alterer::alterer(GraphMutator::new(factory.clone())
                 .add_mutation(NodeType::Weight, 0.05)
-                .add_mutation(NodeType::Aggregate, 0.01)
+                .add_mutation(NodeType::Aggregate, 0.03)
                 .add_mutation(NodeType::Gate, 0.03))])
         .fitness_fn(move |genotype: &Graph<f32>| {
             let mut reducer = GraphReducer::new(genotype);

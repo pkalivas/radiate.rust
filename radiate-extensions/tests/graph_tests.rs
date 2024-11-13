@@ -96,7 +96,7 @@ mod tests {
 
         println!("\nModifing graph...\n");
 
-        if let Some(modified) = modifier.mutate_nodes(&decoded.nodes, &NodeType::Weight) {
+        if let Some(modified) = modifier.insert_forward_node(&decoded.nodes, &NodeType::Weight) {
             for node in modified.iter() {
                 println!("{:?}", node);
             }

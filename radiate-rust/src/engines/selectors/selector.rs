@@ -19,25 +19,11 @@ pub enum Selector {
     Boltzmann(f32),
 }
 
-impl Selector {
-    pub fn total_fitness<G, A>(&self, population: &Population<G, A>) -> f32
-    where
-        G: Gene<G, A>
-    {
-        population
-            .iter()
-            .map(|i| match i.score() {
-                Some(score) => score.as_float(),
-                None => 0.0,
-            })
-            .sum::<f32>()
-    }
-}
-
 impl<G, A> Select<G, A> for Selector 
 where
     G: Gene<G, A>
 {
+    #[inline]
     fn select(&self, population: &Population<G, A>, optimize: &Optimize, count: usize) -> Population<G, A> {
         match self {
             Selector::Tournament(size) => {
@@ -74,7 +60,12 @@ where
                 }
 
                 let best = fitness_values[0];
-                let worst = fitness_values[fitness_values.len() - 1];
+                let worst = if fitness_values[fitness_values.len() - 1] < 0.0 {
+                  0.0
+                } else {
+                    fitness_values[fitness_values.len() - 1]
+                };
+            
                 let range = total - worst * fitness_values.len() as f32;
 
                 if range == 0.0 || (best - worst).abs() < f32::EPSILON {
