@@ -19,6 +19,10 @@ where
         &self.genotype
     }
 
+    pub fn genotype_mut(&mut self) -> &mut Genotype<G, A> {
+        &mut self.genotype
+    }
+
     pub fn from_genotype(genotype: Genotype<G, A>, generation: i32) -> Self {
         Phenotype {
             genotype,

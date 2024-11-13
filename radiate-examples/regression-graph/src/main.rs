@@ -20,9 +20,9 @@ fn main() {
         .alterer(vec![
             Alterer::alterer(GraphCrossover::new(0.5, 0.5, 0.2)),
             Alterer::mutation(OpMutator::new(factory.clone(), 0.01, 0.05)),
-            Alterer::mutation(GraphMutator::new(factory.clone())
+            Alterer::alterer(GraphMutator::new(factory.clone())
                 .add_mutation(NodeType::Weight, 0.05)
-                .add_mutation(NodeType::Aggregate, 0.03)
+                .add_mutation(NodeType::Aggregate, 0.01)
                 .add_mutation(NodeType::Gate, 0.03))])
         .fitness_fn(move |genotype: &Graph<f32>| {
             let mut reducer = GraphReducer::new(genotype);
@@ -45,11 +45,23 @@ fn display(result: &EngineContext<Node<f32>, Ops<f32>, Graph<f32>>) {
         println!("{:?}", node);
     }
     println!("{:?}", result.timer.elapsed());
+
+    let mut regression_accuracy = 0.0;
+    let mut total = 0.0;
+
     let mut reducer = GraphReducer::new(&result.best);
     for sample in get_sample_set().get_samples().iter() {
         let output = reducer.reduce(&sample.1);
+
+        total += sample.2[0].abs();
+        regression_accuracy += (sample.2[0] - output[0]).abs();
+
         println!("{:.2?} :: {:.2?}", sample.2[0], output[0]);
     }
+
+    regression_accuracy = (total - regression_accuracy) / total;
+
+    println!("Accuracy: {:.2?}", regression_accuracy);
 }
 
 fn get_sample_set() -> SampleSet<f32> {
@@ -69,20 +81,3 @@ fn get_sample_set() -> SampleSet<f32> {
 fn compupute(x: f32) -> f32 {
     return 4.0 * x.powf(3.0) - 3.0 * x.powf(2.0) + x;
 }
-
-
-
-
-
-                   // Alterer::Alterer(Box::new(
-            //     GraphCrossover::new(0.5, 0.5, 0.2)
-            // )),
-            // Alterer::Mutation(Box::new(
-            //     OpMutator::new(factory.clone(), 0.01, 0.05)
-            // )),
-            // Alterer::Mutation(Box::new(
-            //     GraphMutator::new(factory.clone())
-            //         .add_mutation(NodeType::Weight, 0.03)
-            //         .add_mutation(NodeType::Aggregate, 0.01)
-            //         .add_mutation(NodeType::Gate, 0.05)
-            // )),

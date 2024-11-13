@@ -32,6 +32,7 @@ where
         }
     }
 
+    #[inline]
     pub fn reduce(&mut self, inputs: &[T]) -> Vec<T> {
         if !self.order.is_empty() {
             return self.reduce_with_order(inputs);
@@ -93,6 +94,7 @@ where
         result
     }
 
+    #[inline]
     fn reduce_with_order(&mut self, inputs: &[T]) -> Vec<T> {
         let mut result = Vec::new();
         for index in &self.order {

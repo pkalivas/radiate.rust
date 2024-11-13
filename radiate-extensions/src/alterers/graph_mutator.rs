@@ -1,5 +1,5 @@
 
-use radiate_rust::engines::{alterers::mutators::mutate::Mutate, genome::{chromosome::Chromosome, genes::gene::Valid, genotype::Genotype}};
+use radiate_rust::{engines::genome::{chromosome::Chromosome, genes::gene::Valid}, Alter, Optimize, Phenotype, Population};
 use rand::{random, seq::SliceRandom};
 
 use crate::{architects::{node_collections::{self, graphs::graph::Graph, node::Node, node_collection::NodeCollection, node_factory::NodeFactory}, schema::node_types::NodeType}, operations::op::Ops};
@@ -34,7 +34,8 @@ where
         self
     }
 
-    pub fn mutate(&self, collection: &[Node<T>], node_type: &NodeType) -> Option<Graph<T>> {
+    #[inline]
+    pub fn mutate_nodes(&self, collection: &[Node<T>], node_type: &NodeType) -> Option<Vec<Node<T>>> {
         let source_node = node_collections::random_source_node(collection);
         let target_node = node_collections::random_target_node(collection);
         let source_node_index = source_node.index;
@@ -96,12 +97,13 @@ where
         return self.repair_insert(temp, collection.len(), source_node, target_node);
     }
 
+    #[inline]
     fn repair_insert(&self,
         mut collection: Graph<T>, 
         new_node_index: usize,
         source_node: &Node<T>,
         target_node: &Node<T>
-    ) -> Option<Graph<T>>
+    ) -> Option<Vec<Node<T>>>
     {
         for _ in 0..collection.get(new_node_index).unwrap().arity().unwrap() - 1 {
             let other_source_node = node_collections::random_source_node(collection.get_nodes());
@@ -115,38 +117,42 @@ where
             return None;
         }
 
-        return Some(collection.set_cycles(vec![source_node.index, target_node.index]));
+        return Some(collection.set_cycles(vec![source_node.index, target_node.index]).into_iter().collect::<Vec<Node<T>>>());
     }
 }
 
-impl<T> Mutate<Node<T>, Ops<T>> for GraphMutator<T>
+impl<T> Alter<Node<T>, Ops<T>> for GraphMutator<T>
 where
-    T: Clone + PartialEq + Default
+    T: Clone + PartialEq + Default    
 {
-    fn mutate_rate(&self) -> f32 {
-        0.0
-    }
-
-    fn mutate_genotype(&self, genotype: &mut Genotype<Node<T>, Ops<T>>, _: i32) -> i32 {
+    fn alter(&self, population: &mut Population<Node<T>, Ops<T>>, _: &Optimize, generation: i32) {
         let mut rng = rand::thread_rng();
-        let mutation = self.mutations.choose(&mut rng).unwrap();
 
-        if random::<f32>() < mutation.rate {
+        for i in 0..population.len() {
+            let mutation = self.mutations.choose(&mut rng).unwrap();
+
+            if random::<f32>() > mutation.rate {
+                continue;
+            }
+
+            let genotype = population.get(i).genotype();
             let chromosome_index = rand::random::<usize>() % genotype.len();
             let chromosome = genotype.get_chromosome(chromosome_index);
 
-            if let Some(mutated_graph) = self.mutate(&chromosome.genes, &mutation.node_type) {
-                if !mutated_graph.is_valid() {
-                    return 0;
+            if let Some(mutated_graph) = self.mutate_nodes(&chromosome.genes, &mutation.node_type) {
+                if !mutated_graph.iter().all(|node| node.is_valid()) {
+                    continue;
                 }
 
-                let new_chromosome = Chromosome::from_genes(mutated_graph.into_iter().collect::<Vec<Node<T>>>());
-                genotype.set_chromosome(chromosome_index, new_chromosome);
+                if mutated_graph.len() == chromosome.genes.len() {
+                    continue;
+                }
 
-                return 1;
+                let mut copied_genotype = genotype.clone();
+
+                copied_genotype.set_chromosome(chromosome_index, Chromosome::from_genes(mutated_graph));
+                population.set(i, Phenotype::from_genotype(copied_genotype, generation));
             }
         }
-
-        0
     }
 }

@@ -1,6 +1,9 @@
 
 
-use radiate_rust::engines::{alterers::alter::Alter, genome::{genes::gene::Gene, genotype::Genotype, phenotype::Phenotype, population::Population}, optimize::Optimize};
+
+use std::collections::HashMap;
+
+use radiate_rust::{engines::alterers::alter::Alter, genome::{genes::gene::Gene, genotype::Genotype, phenotype::Phenotype, population::Population}, optimize::Optimize};
 
 use crate::{architects::node_collections::node::Node, operations::op::Ops, NodeType};
 
@@ -31,8 +34,9 @@ where
         }
     }
 
+    #[inline]
     pub fn cross(&self, 
-        population: &mut Population<Node<T>, Ops<T>>, 
+        population: &Population<Node<T>, Ops<T>>, 
         indexes: &[usize],
         generation: i32
     ) -> Option<Phenotype<Node<T>, Ops<T>>> 
@@ -101,25 +105,22 @@ impl<T> Alter<Node<T>, Ops<T>> for GraphCrossover<T>
 where 
     T: Clone + PartialEq + Default
 {
+    #[inline]
     fn alter(&self, population: &mut Population<Node<T>, Ops<T>>, optimize: &Optimize, generation: i32) {
         optimize.sort(population);
-        let mut new_population = Vec::with_capacity(population.len());
+        let mut new_phenotypes = HashMap::new();
 
         for index in 0..population.len() {
             if rand::random::<f32>() < self.crossover_rate && population.len() > NUM_PARENTS {
                 let parent_indexes = GraphCrossover::<T>::distinct_subset(population.len());
 
                 if let Some(phenotype) = self.cross(population, &parent_indexes, generation) {
-                    new_population.push(phenotype);
-                } else {
-                    new_population.push(population.get(index).clone());
-                }                
-            } else {
-                new_population.push(population.get(index).clone());
-            }
+                    new_phenotypes.insert(index, phenotype);
+                } 
+            } 
         }
 
-        for (index, phenotype) in new_population.into_iter().enumerate() {
+        for (index, phenotype) in new_phenotypes.into_iter() {
             population.set(index, phenotype);
         }
     }

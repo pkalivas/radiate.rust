@@ -42,6 +42,7 @@ where
         self.rate
     }
 
+    #[inline]
     fn mutate_gene(&self, gene: &Node<T>) -> Node<T> {
         match gene.allele() {
             Ops::MutableConst(name, arity, value, supplier, operation) => {

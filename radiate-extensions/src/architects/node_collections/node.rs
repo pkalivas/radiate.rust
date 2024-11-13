@@ -228,10 +228,10 @@ where
         
         write!(
             f,
-            "[{:<3}] {:>10?} {:^9} E: {:<5} V:{:<5} R:{:<5} {:<2} {:<2} < [{}]",
+            "[{:<3}] {:>10?} :: {:<12} E: {:<5} V:{:<5} R:{:<5} {:<2} {:<2} < [{}]",
             self.index,
             format!("{:?}", self.node_type)[..3].to_owned(),
-            self.value.name(),
+            format!("{:?}", self.value).to_owned(),
             self.is_valid(),
             self.enabled,
             self.is_recurrent(),

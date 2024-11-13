@@ -15,6 +15,7 @@ impl MultiPointCrossover {
         Self { num_points, rate }
     }
 
+    #[inline]
     pub fn swap<G: Gene<G, A>, A>(
         chrom_one: &mut Chromosome<G, A>,
         start: usize,
@@ -55,6 +56,7 @@ where
         self.rate
     }
     
+    #[inline]
     fn cross_chromosomes(
         &self,
         chrom_one: &mut Chromosome<G, A>,

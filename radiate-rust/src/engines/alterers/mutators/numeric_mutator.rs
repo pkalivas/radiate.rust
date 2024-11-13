@@ -21,6 +21,7 @@ impl<G: NumericGene<G, A>, A> Mutate<G, A> for NumericMutator {
         self.rate
     }
 
+    #[inline]
     fn mutate_chromosome(&self, chromosome: &mut Chromosome<G, A>, _: i32) -> i32 {
         let mut random = rand::thread_rng();
         let mut mutations = 0;
