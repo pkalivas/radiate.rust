@@ -40,8 +40,7 @@ impl ErrorFunction {
                     }
                 }
 
-                sum /= T::from_usize(samples.get_samples().len()).unwrap();
-                sum
+                sum / T::from_usize(samples.get_samples().len()).unwrap()
             }
             ErrorFunction::MAE => {
                 let mut sum = T::default();

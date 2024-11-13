@@ -112,11 +112,11 @@ where
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Ops::Fn(name, arity, _) => write!(f, "Fn: {}({})", name, arity),
-            Ops::Value(value) => write!(f, "Value: {:?}", value),
+            Ops::Fn(name, _, _) => write!(f, "Fn: {}", name),
+            Ops::Value(value) => write!(f, "Val: {:?}", value),
             Ops::Var(name, index) => write!(f, "Var: {}({})", name, index),
-            Ops::Const(name, value) => write!(f, "Const: {}({:?})", name, value),
-            Ops::MutableConst(name, arity, value, _, _) => write!(f, "MutConst: {}({})({:.2?})", name, arity, value),
+            Ops::Const(name, value) => write!(f, "C: {}({:?})", name, value),
+            Ops::MutableConst(name, _, value, _, _) => write!(f, "{}({:.2?})", name, value),
         }
     }
 }
@@ -350,7 +350,7 @@ pub fn mish() -> Ops<f32> {
 }
 
 pub fn leaky_relu() -> Ops<f32> {
-    Ops::Fn("leaky_relu", 1, Arc::new(|inputs: &[f32]| {
+    Ops::Fn("l_relu", 1, Arc::new(|inputs: &[f32]| {
         let sum = inputs.iter().fold(0_f32, |acc, x| acc + x);
         let result = if sum > 0_f32 {
             sum
