@@ -19,25 +19,11 @@ pub enum Selector {
     Boltzmann(f32),
 }
 
-impl Selector {
-    pub fn total_fitness<G, A>(&self, population: &Population<G, A>) -> f32
-    where
-        G: Gene<G, A>
-    {
-        population
-            .iter()
-            .map(|i| match i.score() {
-                Some(score) => score.as_float(),
-                None => 0.0,
-            })
-            .sum::<f32>()
-    }
-}
-
 impl<G, A> Select<G, A> for Selector 
 where
     G: Gene<G, A>
 {
+    #[inline]
     fn select(&self, population: &Population<G, A>, optimize: &Optimize, count: usize) -> Population<G, A> {
         match self {
             Selector::Tournament(size) => {
