@@ -13,7 +13,7 @@ fn main() {
     let codex = IntCodex::new(1, 10, 0, 100).with_bounds(0, 100);
 
     let engine = GeneticEngine::from_codex(&codex)
-        .population_size(100)
+        .population_size(150)
         .minimizing()
         .offspring_selector(Selector::Elitism)
         .survivor_selector(Selector::Tournament(4))

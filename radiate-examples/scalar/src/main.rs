@@ -1,5 +1,3 @@
-use std::f32::consts::PI;
-
 use radiate_rust::*;
 
 
@@ -7,7 +5,7 @@ const MAX_INDEX: i32 = 25;
 
 
 fn main() {
-    let codex = FloatCodex::scalar(0.0, 2.0 * PI);
+    let codex = FloatCodex::scalar(0.0, 2.0 * std::f32::consts::PI);
 
     let engine = GeneticEngine::from_codex(&codex)
         .alterer(vec![
