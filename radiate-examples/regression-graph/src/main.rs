@@ -2,6 +2,11 @@
 use radiate_extensions::*;
 use radiate_rust::*;
 
+
+const MIN_SCORE: f32 = 0.01;
+const MAX_SECONDS: f64 = 5.0;
+
+
 fn main() {
     let factory = NodeFactory::<f32>::regression(1)
         .gates(vec![
@@ -16,7 +21,6 @@ fn main() {
 
     let engine = GeneticEngine::from_codex(&graph_codex)
         .minimizing()
-        .offspring_selector(Selector::Boltzmann(4_f32))
         .alterer(vec![
             GraphCrossover::alterer(0.5, 0.5),
             OpMutator::alterer(factory.clone(), 0.01, 0.05),
@@ -36,7 +40,7 @@ fn main() {
 
     let result = engine.run(|output| {
         println!("[ {:?} ]: {:?}", output.index, output.score().as_float());
-        output.score().as_float() < 0.01 || output.seconds() > 5.0
+        output.score().as_float() < MIN_SCORE || output.seconds() > MAX_SECONDS
     });
 
     display(&result);

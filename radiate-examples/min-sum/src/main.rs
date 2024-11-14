@@ -5,13 +5,15 @@ use radiate_rust::engines::genetic_engine::GeneticEngine;
 use radiate_rust::engines::score::Score;
 use radiate_rust::engines::selectors::selector::Selector;
 
+
 const MIN_SCORE: i32 = 0;
+
 
 fn main() {
     let codex = IntCodex::new(1, 10, 0, 100).with_bounds(0, 100);
 
     let engine = GeneticEngine::from_codex(&codex)
-        .population_size(100)
+        .population_size(150)
         .minimizing()
         .offspring_selector(Selector::Elitism)
         .survivor_selector(Selector::Tournament(4))
@@ -28,7 +30,6 @@ fn main() {
 
     let result = engine.run(|output| {
         println!("[ {:?} ]: {:?}", output.index, output.best.first().unwrap());
-        
         output.score().as_int() == MIN_SCORE
     });
 
