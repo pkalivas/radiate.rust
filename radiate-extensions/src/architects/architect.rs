@@ -1,4 +1,5 @@
 
+
 use crate::architects::node_collections::node::Node;
 use crate::architects::node_collections::node_collection::NodeCollection;
 use crate::architects::node_collection_builder::NodeCollectionBuilder;
@@ -121,49 +122,164 @@ where
                 .build()
         })
     }
-}
 
+    pub fn attention_unit(&self, input_size: usize, output_size: usize, num_heads: usize) -> Graph<T> {
+        let graph_architect = Architect::<Graph<T>, T>::new(self.node_factory);
+        graph_architect.build(|arc, builder| {
+            let input = arc.input(input_size);
+            let output = arc.output(output_size);
 
-pub trait Arch<C, T>
-where
-    C: NodeCollection<C, T> + Clone + Default,
-    T: Clone + PartialEq + Default
-{
-    fn get_factory(&self) -> &NodeFactory<T>;
+            let query_weights = arc.weight(input_size * num_heads);
+            let key_weights = arc.weight(input_size * num_heads);
+            let value_weights = arc.weight(input_size * num_heads);
 
-    fn build<F, A>(&self, build_fn: F) -> C
-    where
-        F: FnOnce(&A, NodeCollectionBuilder<C, T>) -> C,
-        A: Arch<C, T>;
+            let attention_scores = arc.new_collection(NodeType::Aggregate, num_heads);
+            let attention_aggreg = arc.new_collection(NodeType::Aggregate, num_heads);
 
-    fn input(&self, siez: usize) -> C {
-        self.new_collection(NodeType::Input, siez)
+            builder
+                .one_to_many(&input, &query_weights)
+                .one_to_many(&input, &key_weights)
+                .one_to_many(&input, &value_weights)
+                .many_to_one(&query_weights, &attention_scores)
+                .many_to_one(&key_weights, &attention_scores)
+                .one_to_many(&attention_scores, &attention_aggreg)
+                .many_to_one(&value_weights, &attention_aggreg)
+                .many_to_one(&attention_aggreg, &output)
+                .build()
+        })
     }
 
-    fn output(&self, siez: usize) -> C {
-        self.new_collection(NodeType::Output, siez)
+    pub fn hopfield(&self, input_size: usize, output_size: usize) -> Graph<T> {
+        let graph_architect = Architect::<Graph<T>, T>::new(self.node_factory);
+        graph_architect.build(|arc, builder| {
+            let input = arc.input(input_size);
+            let output = arc.output(output_size);
+            let aggregates = arc.aggregate(input_size);
+            let weights = arc.weight(input_size * output_size);
+
+            builder
+                .one_to_many(&input, &aggregates)
+                .one_to_many(&aggregates, &weights)
+                .many_to_one(&weights, &aggregates)
+                .many_to_one(&aggregates, &output)
+                .build()
+        })
     }
 
-    fn gate(&self, siez: usize) -> C {
-        self.new_collection(NodeType::Gate, siez)
+    pub fn lstm(&self, input_size: usize, output_size: usize, memory_size: usize) -> Graph<T> {
+        let graph_architect = Architect::<Graph<T>, T>::new(self.node_factory);
+        graph_architect.build(|arc, builder| {
+            let input = arc.input(input_size);
+            let output = arc.output(output_size);
+
+            let input_to_forget_weights = arc.weight(input_size * memory_size);
+            let hidden_to_forget_weights = arc.weight(memory_size * memory_size);
+
+            let input_to_input_weights = arc.weight(input_size * memory_size);
+            let hidden_to_input_weights = arc.weight(memory_size * memory_size);
+
+            let input_to_candidate_weights = arc.weight(input_size * memory_size);
+            let hidden_to_candidate_weights = arc.weight(memory_size * memory_size);
+
+            let input_to_output_weights = arc.weight(input_size * memory_size);
+            let hidden_to_output_weights = arc.weight(memory_size * memory_size);
+
+            let output_weights = arc.weight(memory_size * output_size);
+
+            let forget_gate = arc.aggregate(memory_size);
+            let input_gate = arc.aggregate(memory_size);
+            let candidate_gate = arc.aggregate(memory_size);
+            let output_gate = arc.aggregate(memory_size);
+
+            let input_candidate_mul_gate = arc.new_collection(NodeType::Aggregate, memory_size);
+            let forget_memory_mul_gate = arc.new_collection(NodeType::Aggregate, memory_size);
+            let memory_candidate_gate = arc.new_collection(NodeType::Aggregate, memory_size);
+            let output_tahn_mul_gate = arc.new_collection(NodeType::Aggregate, memory_size);
+            let tanh_gate = arc.new_collection(NodeType::Aggregate, memory_size);
+
+            builder
+                .one_to_many(&input, &input_to_forget_weights)
+                .one_to_many(&input, &input_to_input_weights)
+                .one_to_many(&input, &input_to_candidate_weights)
+                .one_to_many(&input, &input_to_output_weights)
+                .one_to_many(&output_tahn_mul_gate, &hidden_to_forget_weights)
+                .one_to_many(&output_tahn_mul_gate, &hidden_to_input_weights)
+                .one_to_many(&output_tahn_mul_gate, &hidden_to_candidate_weights)
+                .one_to_many(&output_tahn_mul_gate, &hidden_to_output_weights)
+                .many_to_one(&input_to_forget_weights, &forget_gate)
+                .many_to_one(&hidden_to_forget_weights, &forget_gate)
+                .many_to_one(&input_to_input_weights, &input_gate)
+                .many_to_one(&hidden_to_input_weights, &input_gate)
+                .many_to_one(&input_to_candidate_weights, &candidate_gate)
+                .many_to_one(&hidden_to_candidate_weights, &candidate_gate)
+                .many_to_one(&input_to_output_weights, &output_gate)
+                .many_to_one(&hidden_to_output_weights, &output_gate)
+                .one_to_one(&forget_gate, &forget_memory_mul_gate)
+                .one_to_one(&memory_candidate_gate, &forget_memory_mul_gate)
+                .one_to_one(&input_gate, &input_candidate_mul_gate)
+                .one_to_one(&candidate_gate, &input_candidate_mul_gate)
+                .one_to_one(&forget_memory_mul_gate, &memory_candidate_gate)
+                .one_to_one(&input_candidate_mul_gate, &memory_candidate_gate)
+                .one_to_one(&memory_candidate_gate, &tanh_gate)
+                .one_to_one(&tanh_gate, &output_tahn_mul_gate)
+                .one_to_one(&output_gate, &output_tahn_mul_gate)
+                .one_to_many(&output_tahn_mul_gate, &output_weights)
+                .many_to_one(&output_weights, &output)
+                .build()
+        })
     }
 
-    fn aggregate(&self, siez: usize) -> C {
-        self.new_collection(NodeType::Aggregate, siez)
-    }
+    pub fn gru(&self, input_size: usize, output_size: usize, memory_size: usize) -> Graph<T> {
+        let graph_architect = Architect::<Graph<T>, T>::new(self.node_factory);
+        graph_architect.build(|arc, builder| {
+            let input = arc.input(input_size);
+            let output = arc.output(output_size);
 
-    fn weight(&self, siez: usize) -> C {
-        self.new_collection(NodeType::Weight, siez)
-    }
+            let output_weights = arc.weight(memory_size * output_size);
 
-    fn new_collection(&self, node_type: NodeType, size: usize) -> C {
-        let nodes = self.new_nodes(node_type, size);
-        C::from_nodes(nodes)
-    }
+            let reset_gate = arc.aggregate(memory_size);
+            let update_gate = arc.aggregate(memory_size);
+            let candidate_gate = arc.aggregate(memory_size);
 
-    fn new_nodes(&self, node_type: NodeType, size: usize) -> Vec<Node<T>> {
-        (0..size)
-            .map(|i| self.get_factory().new_node(i, node_type))
-            .collect::<Vec<Node<T>>>()
+            let input_to_reset_weights = arc.weight(input_size * memory_size);
+            let input_to_update_weights = arc.weight(input_size * memory_size);
+            let input_to_candidate_weights = arc.weight(input_size * memory_size);
+
+            let hidden_to_reset_weights = arc.weight(memory_size * memory_size);
+            let hidden_to_update_weights = arc.weight(memory_size * memory_size);
+            let hidden_to_candidate_weights = arc.weight(memory_size * memory_size);
+
+            let hidden_reset_gate = arc.new_collection(NodeType::Aggregate, memory_size);
+            let update_candidate_mul_gate = arc.new_collection(NodeType::Aggregate, memory_size);
+            let invert_update_gate = arc.new_collection(NodeType::Aggregate, memory_size);
+            let hidden_invert_mul_gate = arc.new_collection(NodeType::Aggregate, memory_size);
+            let candidate_hidden_add_gate = arc.new_collection(NodeType::Aggregate, memory_size);
+
+            builder
+                .one_to_many(&input, &input_to_reset_weights)
+                .one_to_many(&input, &input_to_update_weights)
+                .one_to_many(&input, &input_to_candidate_weights)
+                .one_to_many(&candidate_hidden_add_gate, &hidden_to_reset_weights)
+                .one_to_many(&candidate_hidden_add_gate, &hidden_to_update_weights)
+                .many_to_one(&input_to_reset_weights, &reset_gate)
+                .many_to_one(&hidden_to_reset_weights, &&reset_gate)
+                .many_to_one(&input_to_update_weights, &update_gate)
+                .many_to_one(&hidden_to_update_weights, &update_gate)
+                .one_to_one(&reset_gate, &hidden_reset_gate)
+                .one_to_one(&candidate_hidden_add_gate, &hidden_reset_gate)
+                .one_to_many(&hidden_reset_gate, &hidden_to_candidate_weights)
+                .many_to_one(&input_to_candidate_weights, &candidate_gate)
+                .many_to_one(&hidden_to_candidate_weights, &candidate_gate)
+                .one_to_one(&update_gate, &update_candidate_mul_gate)
+                .one_to_one(&candidate_gate, &update_candidate_mul_gate)
+                .one_to_one(&update_gate, &invert_update_gate)
+                .one_to_one(&candidate_hidden_add_gate, &hidden_invert_mul_gate)
+                .one_to_one(&invert_update_gate, &hidden_invert_mul_gate)
+                .one_to_one(&hidden_invert_mul_gate, &candidate_hidden_add_gate)
+                .one_to_one(&update_candidate_mul_gate, &candidate_hidden_add_gate)
+                .one_to_many(&candidate_hidden_add_gate, &output_weights)
+                .many_to_one(&output_weights, &output)
+                .build()    
+        })
     }
 }
