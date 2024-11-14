@@ -1,8 +1,13 @@
 
-use radiate_rust::{engines::genome::{chromosome::Chromosome, genes::gene::Valid}, Alter, Optimize, Phenotype, Population};
 use rand::{random, seq::SliceRandom};
 
-use crate::{architects::{node_collections::{self, graphs::graph::Graph, node::Node, node_collection::NodeCollection, node_factory::NodeFactory}, schema::node_types::NodeType}, operations::op::Ops};
+use radiate_rust::engines::alterers::Alter;
+use radiate_rust::engines::optimize::Optimize;
+use radiate_rust::engines::genome::*;
+
+use crate::architects::node_collections::*;
+use crate::architects::schema::node_types::NodeType;
+use crate::operations::op::Ops;
 
 
 pub struct NodeMutate {
@@ -42,8 +47,8 @@ where
 
     #[inline]
     pub fn insert_forward_node(&self, collection: &[Node<T>], node_type: &NodeType) -> Option<Vec<Node<T>>> {
-        let source_node = node_collections::random_source_node(collection);
-        let target_node = node_collections::random_target_node(collection);
+        let source_node = random_source_node(collection);
+        let target_node = random_target_node(collection);
         let source_node_index = source_node.index;
         let target_node_index = target_node.index;
 
@@ -59,7 +64,7 @@ where
             let new_node = self.factory.new_node(new_node_index, *node_type);
             let new_target_edge = self.factory.new_node(new_target_edge_index, source_node.node_type);
 
-            if node_collections::is_locked(outgoing_node) {
+            if is_locked(outgoing_node) {
                 let mut temp = Graph::from_nodes(collection
                     .iter()
                     .map(|node| node.clone())
@@ -86,7 +91,7 @@ where
 
                 return self.repair_insert(temp, new_node_index, incoming_node, outgoing_node, false);
             }
-        } else if !node_collections::can_connect(collection, source_node.index, target_node.index, false) {
+        } else if !can_connect(collection, source_node.index, target_node.index, false) {
             return None;
         }
 
@@ -103,9 +108,10 @@ where
         return self.repair_insert(temp, collection.len(), source_node, target_node, false);
     }
 
+    #[inline]
     pub fn insert_recurrent_node(&self, collection: &[Node<T>], node_type: &NodeType) -> Option<Vec<Node<T>>> {
-        let source_node = node_collections::random_source_node(collection);
-        let target_node = node_collections::random_target_node(collection);
+        let source_node = random_source_node(collection);
+        let target_node = random_target_node(collection);
         let source_node_index = source_node.index;
         let target_node_index = target_node.index;
 
@@ -123,7 +129,7 @@ where
             let new_target_edge = self.factory.new_node(new_target_edge_index, source_node.node_type);
             let recurrent_edge = self.factory.new_node(recurrent_edge_index, source_node.node_type);
 
-            if node_collections::is_locked(outgoing_node) {
+            if is_locked(outgoing_node) {
                 let mut temp = Graph::from_nodes(collection
                     .iter()
                     .map(|node| node.clone())
@@ -169,7 +175,7 @@ where
                     return self.repair_insert(temp, new_node_index, incoming_node, outgoing_node, true);
                 }
             }
-        } else if !node_collections::can_connect(collection, source_node.index, target_node.index, true) {
+        } else if !can_connect(collection, source_node.index, target_node.index, true) {
             return None;
         }
 
@@ -198,9 +204,9 @@ where
     ) -> Option<Vec<Node<T>>>
     {
         for _ in 0..collection.get(new_node_index).unwrap().arity().unwrap() - 1 {
-            let other_source_node = node_collections::random_source_node(collection.get_nodes());
+            let other_source_node = random_source_node(collection.get_nodes());
 
-            if node_collections::can_connect(collection.get_nodes(), other_source_node.index, new_node_index, recurrent) {
+            if can_connect(collection.get_nodes(), other_source_node.index, new_node_index, recurrent) {
                 collection.attach(other_source_node.index, new_node_index);
             }
         }
@@ -254,77 +260,3 @@ where
         }
     }
 }
-
-
-
-
-
-
-// pub fn insert_recurrent_node(&self, collection: &[Node<T>], node_type: &NodeType) -> Option<Vec<Node<T>>> {
-//     let source_node = node_collections::random_source_node(collection);
-//     let target_node = node_collections::random_target_node(collection);
-//     let source_node_index = source_node.index;
-//     let target_node_index = target_node.index;
-
-//     let new_source_edge_index = collection.len();
-//     let new_node_index = collection.len() + 1;
-//     let new_target_edge_index = collection.len() + 2;
-//     let recurrent_edge_index = collection.len() + 3;
-
-//     if source_node.node_type == NodeType::Weight && node_type != &NodeType::Weight {
-//         let incoming_node = collection.get(*source_node.incoming.iter().next().unwrap()).unwrap();
-//         let outgoing_node = collection.get(*source_node.outgoing.iter().next().unwrap()).unwrap();
-
-//         let new_source_edge = self.factory.new_node(new_source_edge_index, source_node.node_type);
-//         let new_node = self.factory.new_node(new_node_index, *node_type);
-//         let new_target_edge = self.factory.new_node(new_target_edge_index, source_node.node_type);
-//         let recurrent_edge = self.factory.new_node(recurrent_edge_index, source_node.node_type);
-
-//         if node_collections::is_locked(outgoing_node) {
-//             let mut temp = Graph::from_nodes(collection
-//                 .iter()
-//                 .map(|node| node.clone())
-//                 .chain(vec![new_source_edge, new_node])
-//                 .collect::<Vec<Node<T>>>());
-
-//             temp.attach(source_node_index, new_node_index);
-//             temp.attach(new_node_index, new_source_edge_index);
-//             temp.attach(new_source_edge_index, new_node_index);
-//             temp.attach(new_node_index, new_target_edge_index);
-//             temp.attach(new_target_edge_index, outgoing_node.index);
-//             temp.detach(source_node_index, outgoing_node.index);
-
-//             return self.repair_insert(temp, new_node_index, incoming_node, outgoing_node);
-//         } else {
-//             if !source_node.is_recurrent() {
-                
-//             }
-//             let mut temp = Graph::from_nodes(collection
-//                 .iter()
-//                 .map(|node| node.clone())
-//                 .chain(vec![new_source_edge, new_node, new_target_edge])
-//                 .collect::<Vec<Node<T>>>());
-
-//             temp.attach(source_node.index, new_source_edge_index);
-//             temp.attach(new_source_edge_index, new_node_index);
-//             temp.attach(new_node_index, new_target_edge_index);
-//             temp.attach(new_target_edge_index, outgoing_node.index);
-
-//             return self.repair_insert(temp, new_node_index, incoming_node, outgoing_node);
-//         }
-//     } else if !node_collections::can_connect(collection, source_node.index, target_node.index) {
-//         return None;
-//     }
-
-//     let mut temp = Graph::from_nodes(collection
-//         .iter()
-//         .map(|node| node.clone())
-//         .chain(vec![self.factory.new_node(collection.len(), *node_type)])
-//         .collect::<Vec<Node<T>>>());
-
-//     temp.attach(source_node_index, collection.len());
-//     temp.attach(collection.len(), target_node_index);
-//     temp.detach(source_node_index, target_node_index);
-
-//     return self.repair_insert(temp, collection.len(), source_node, target_node);
-// }

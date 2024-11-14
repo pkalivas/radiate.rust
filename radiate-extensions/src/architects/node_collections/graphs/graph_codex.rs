@@ -4,13 +4,7 @@ use radiate_rust::engines::genome::genotype::Genotype;
 use radiate_rust::engines::genome::chromosome::Chromosome;
 use radiate_rust::engines::codexes::Codex;
 
-use crate::architects::node_collections::node_factory::NodeFactory;
-use crate::architects::node_collection_builder::NodeCollectionBuilder;
-use crate::architects::node_collections::graphs::graph::Graph;
-use crate::architects::node_collections::node_collection::NodeCollection;
-use crate::architects::node_collections::node::Node;
-use crate::architects::architect::Architect;
-use crate::architects::schema::node_types::NodeType;
+use crate::architects::*;
 use crate::operations::op::Ops;
 
 

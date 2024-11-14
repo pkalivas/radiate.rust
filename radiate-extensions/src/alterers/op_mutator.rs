@@ -2,7 +2,8 @@ use std::ops::{Mul, Sub, Add};
 
 use num_traits::Float;
 use rand::{prelude::Distribution, distributions::Standard, random};
-use radiate_rust::engines::{alterers::mutators::mutate::Mutate, genome::genes::gene::Gene};
+use radiate_rust::engines::alterers::mutators::mutate::Mutate;
+use radiate_rust::engines::genome::genes::gene::Gene;
 
 use crate::architects::node_collections::node::Node;
 use crate::architects::node_collections::node_factory::NodeFactory;
