@@ -71,7 +71,7 @@ where
                 temp.attach(new_source_edge_index, outgoing_node.index);
                 temp.detach(source_node_index, outgoing_node.index);
 
-                return self.repair_insert(temp, new_node_index, incoming_node, outgoing_node);
+                return self.repair_insert(temp, new_node_index, incoming_node, outgoing_node, false);
             } else {
                 let mut temp = Graph::from_nodes(collection
                     .iter()
@@ -84,9 +84,9 @@ where
                 temp.attach(new_node_index, new_target_edge_index);
                 temp.attach(new_target_edge_index, outgoing_node.index);
 
-                return self.repair_insert(temp, new_node_index, incoming_node, outgoing_node);
+                return self.repair_insert(temp, new_node_index, incoming_node, outgoing_node, false);
             }
-        } else if !node_collections::can_connect(collection, source_node.index, target_node.index) {
+        } else if !node_collections::can_connect(collection, source_node.index, target_node.index, false) {
             return None;
         }
 
@@ -100,7 +100,7 @@ where
         temp.attach(collection.len(), target_node_index);
         temp.detach(source_node_index, target_node_index);
 
-        return self.repair_insert(temp, collection.len(), source_node, target_node);
+        return self.repair_insert(temp, collection.len(), source_node, target_node, false);
     }
 
     pub fn insert_recurrent_node(&self, collection: &[Node<T>], node_type: &NodeType) -> Option<Vec<Node<T>>> {
@@ -137,7 +137,7 @@ where
                 temp.attach(new_target_edge_index, outgoing_node.index);
                 temp.detach(incoming_node.index, outgoing_node.index);
 
-                return self.repair_insert(temp, new_node_index, incoming_node, outgoing_node);
+                return self.repair_insert(temp, new_node_index, incoming_node, outgoing_node, true);
             } else {
                 if !source_node.is_recurrent() {
                     let mut temp = Graph::from_nodes(collection
@@ -153,7 +153,7 @@ where
                     temp.attach(recurrent_edge_index, new_node_index);
                     temp.attach(new_node_index, recurrent_edge_index);
 
-                    return self.repair_insert(temp, new_node_index, incoming_node, outgoing_node);
+                    return self.repair_insert(temp, new_node_index, incoming_node, outgoing_node, true);
                 } else {
                     let mut temp = Graph::from_nodes(collection
                         .iter()
@@ -166,10 +166,10 @@ where
                     temp.attach(new_node_index, new_target_edge_index);
                     temp.attach(new_target_edge_index, outgoing_node.index);
     
-                    return self.repair_insert(temp, new_node_index, incoming_node, outgoing_node);
+                    return self.repair_insert(temp, new_node_index, incoming_node, outgoing_node, true);
                 }
             }
-        } else if !node_collections::can_connect(collection, source_node.index, target_node.index) {
+        } else if !node_collections::can_connect(collection, source_node.index, target_node.index, true) {
             return None;
         }
 
@@ -183,7 +183,7 @@ where
         temp.attach(collection.len(), target_node_index);
         temp.detach(source_node_index, target_node_index);
 
-        return self.repair_insert(temp, collection.len(), source_node, target_node);
+        return self.repair_insert(temp, collection.len(), source_node, target_node, true);
     }
 
 
@@ -192,13 +192,15 @@ where
         mut collection: Graph<T>, 
         new_node_index: usize,
         source_node: &Node<T>,
-        target_node: &Node<T>
+        target_node: &Node<T>,
+        recurrent: bool
+
     ) -> Option<Vec<Node<T>>>
     {
         for _ in 0..collection.get(new_node_index).unwrap().arity().unwrap() - 1 {
             let other_source_node = node_collections::random_source_node(collection.get_nodes());
 
-            if node_collections::can_connect(collection.get_nodes(), other_source_node.index, new_node_index) {
+            if node_collections::can_connect(collection.get_nodes(), other_source_node.index, new_node_index, recurrent) {
                 collection.attach(other_source_node.index, new_node_index);
             }
         }
