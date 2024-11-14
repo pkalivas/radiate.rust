@@ -1,11 +1,14 @@
 use radiate_rust::*;
 use radiate_extensions::*;
 
+
+const MAX_INDEX: i32 = 500;
+const MIN_SCORE: f32 = 0.01;
+
+
 fn main() {
     let factory = NodeFactory::<f32>::regression(2)
-        .outputs(vec![
-            op::sigmoid()
-        ]);
+        .outputs(vec![op::sigmoid()]);
 
     let graph_codex = GraphCodex::from_shape(1, 1, &factory)
         .set_nodes(|arc, _| arc.lstm(1, 1, 1));
@@ -32,7 +35,7 @@ fn main() {
 
     let result = engine.run(|output| {
         println!("[ {:?} ]: {:?}", output.index, output.score().as_float());
-        output.index == 500 || output.score().as_float() < 0.01
+        output.index == MAX_INDEX || output.score().as_float() < MIN_SCORE
     });
 
     display(&result);

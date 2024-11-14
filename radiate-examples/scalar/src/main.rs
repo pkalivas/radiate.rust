@@ -10,13 +10,12 @@ fn main() {
     let codex = FloatCodex::scalar(0.0, 2.0 * PI);
 
     let engine = GeneticEngine::from_codex(&codex)
-        .minimizing()
         .alterer(vec![
             Alterer::mutation(NumericMutator::new(0.01)),
             Alterer::crossover(MeanCrossover::new(0.5)),
         ])
         .fitness_fn(|genotype: &Vec<Vec<f32>>| {
-            let value = genotype.iter().next().unwrap().iter().next().unwrap();
+            let value = genotype.first().unwrap().first().unwrap();
             Score::from_f32(fitness(*value))
         })
         .build();

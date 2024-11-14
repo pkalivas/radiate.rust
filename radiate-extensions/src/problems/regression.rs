@@ -1,6 +1,6 @@
 use super::sample_set::Sample;
 use super::{error_functions::ErrorFunction, sample_set::SampleSet};
-use std::ops::{Add, Div, Mul, Sub, AddAssign, DivAssign, SubAssign};
+use std::ops::{Add, Div, Mul, Sub, AddAssign, DivAssign, SubAssign, MulAssign};
 use num_traits::cast::FromPrimitive;
 use num_traits::float::Float;
 
@@ -33,9 +33,9 @@ impl<T> Regression<T> {
             + AddAssign
             + SubAssign
             + DivAssign
+            + MulAssign
             + Float
-            + FromPrimitive
-            + DivAssign,
+            + FromPrimitive,
         F: FnMut(&Vec<T>) -> Vec<T>
     {
         self.loss_function.calculate(&self.sample_set, &mut error_fn)
