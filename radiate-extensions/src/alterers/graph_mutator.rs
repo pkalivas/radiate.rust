@@ -234,7 +234,10 @@ where
         }
 
         return Some(collection
-            .set_cycles(vec![source_node.index, target_node.index])
+            .set_cycles(vec![
+                source_node.index,
+                target_node.index
+            ])
             .into_iter()
             .collect::<Vec<Node<T>>>());
     }

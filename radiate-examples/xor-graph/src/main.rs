@@ -7,8 +7,12 @@ const MIN_SCORE: f32 = 0.01;
 
 
 fn main() {
+
     let factory = NodeFactory::<f32>::regression(2)
         .outputs(vec![op::sigmoid()]);
+
+    // let arch = Architect::<Tree<f32>, f32>::new(&factory).tree(3);
+
 
     let graph_codex = GraphCodex::from_shape(2, 1, &factory);
 

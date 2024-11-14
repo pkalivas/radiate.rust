@@ -2,19 +2,8 @@
 #[cfg(test)]
 mod tests {
 
-    use radiate_extensions::alterers::graph_mutator::GraphMutator;
-    // use radiate_extensions::architects::node_collectioLLns::graph_modifier::GraphModifier;
-    // use radiate_extensions::architects::node_collections::modifiers::modifier::Modifier;
-    use radiate_extensions::architects::schema::node_types::NodeType;
-    use radiate_extensions::NodeMutate;
-    use radiate_rust::engines::codexes::Codex;
-
-    use radiate_extensions::architects::architect::Architect;
-    use radiate_extensions::architects::node_collections::graphs::graph_codex::GraphCodex;
-    use radiate_extensions::architects::node_collections::node_factory::NodeFactory;
-    use radiate_extensions::architects::node_collections::graphs::graph::Graph;
-    use radiate_extensions::architects::node_collections::node_collection::NodeCollection;
-    use radiate_extensions::architects::node_collections::graphs::graph_reducer::GraphReducer;
+    use radiate_extensions::*;
+    use radiate_rust::*;
 
     #[test]
     fn test_graph() {
@@ -32,9 +21,7 @@ mod tests {
                 .one_to_one(&arc.input(2), &arc.output(2))
                 .build());
 
-        let nodes = graph.get_nodes();
-
-        for node in nodes {
+        for node in graph.get_nodes() {
             println!("{:?}", node);
         }
     }

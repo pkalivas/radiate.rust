@@ -1,12 +1,33 @@
 use std::hash::Hash;
 
-
-// #[derive(Hash)]
 pub struct Score {
     pub values: Vec<f32>,
 }
 
 impl Score {
+
+    pub fn from_any(value: &dyn std::any::Any) -> Self {
+        if let Some(value) = value.downcast_ref::<f32>() {
+            Score::from_f32(*value)
+        } else if let Some(value) = value.downcast_ref::<i32>() {
+            Score::from_int(*value)
+        } else if let Some(value) = value.downcast_ref::<usize>() {
+            Score::from_usize(*value)
+        } else if let Some(value) = value.downcast_ref::<String>() {
+            Score::from_string(value)
+        } else if let Some(value) = value.downcast_ref::<Score>() {
+            value.clone()
+        } else if let Some(value) = value.downcast_ref::<Vec<f32>>() {
+            Score::from_vec(value.clone())
+        } else {
+            panic!("Invalid type for Score")
+        }
+    }
+
+    pub fn from_vec(values: Vec<f32>) -> Self {
+        Score { values }
+    }
+
     pub fn from_f32(value: f32) -> Self {
         if value.is_nan() {
             panic!("Score value cannot be NaN")
