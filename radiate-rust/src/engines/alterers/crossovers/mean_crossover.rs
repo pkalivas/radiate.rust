@@ -6,15 +6,13 @@ use crate::Chromosome;
 use super::Crossover;
 
 
-pub struct MeanCrossover{
+pub struct MeanCrossover {
     pub rate: f32,
 }
 
 impl MeanCrossover {
     pub fn new(rate: f32) -> Self {
-        MeanCrossover {
-            rate,
-        }
+        MeanCrossover { rate }
     }
 }
 
@@ -27,10 +25,10 @@ where
     }
 
     fn cross_chromosomes(
-            &self,
-            chrom_one: &mut Chromosome<G, A>,
-            chrom_two: &mut Chromosome<G, A>
-        ) -> i32 {
+        &self,
+        chrom_one: &mut Chromosome<G, A>,
+        chrom_two: &mut Chromosome<G, A>
+    ) -> i32 {
         let mut count = 0;
 
         for (gene_one, gene_two) in chrom_one.iter_mut().zip(chrom_two.iter()) {

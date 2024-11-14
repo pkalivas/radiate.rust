@@ -221,7 +221,6 @@ where
         source_node: &Node<T>,
         target_node: &Node<T>,
         recurrent: bool
-
     ) -> Option<Vec<Node<T>>>
     {
         for _ in 0..collection.get(new_node_index).unwrap().arity().unwrap() - 1 {
