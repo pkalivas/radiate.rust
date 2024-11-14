@@ -108,11 +108,13 @@ where
         let max_age = self.params.max_age;
         let codex = self.codex();
 
-        for individual in population.iter_mut() {
-            if individual.age(generation) > max_age {
-                *individual = Phenotype::from_genotype(codex.encode(), generation);
-            } else if !individual.genotype().is_valid() {
-                *individual = Phenotype::from_genotype(codex.encode(), generation);
+        for i in 0..population.len() {
+            let phenotype = population.get(i);
+            
+            if phenotype.age(generation) > max_age {
+                population.set(i, Phenotype::from_genotype(codex.encode(), generation));
+            } else if !phenotype.genotype().is_valid() {
+                population.set(i, Phenotype::from_genotype(codex.encode(), generation));
             }
         }
     }
