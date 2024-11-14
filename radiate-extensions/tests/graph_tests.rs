@@ -6,6 +6,7 @@ mod tests {
     // use radiate_extensions::architects::node_collectioLLns::graph_modifier::GraphModifier;
     // use radiate_extensions::architects::node_collections::modifiers::modifier::Modifier;
     use radiate_extensions::architects::schema::node_types::NodeType;
+    use radiate_extensions::NodeMutate;
     use radiate_rust::engines::codexes::Codex;
 
     use radiate_extensions::architects::architect::Architect;
@@ -84,8 +85,9 @@ mod tests {
             .set_nodes(|arc, _| arc.weighted_acyclic(2, 2));
 
         let factory2 = NodeFactory::<f32>::regression(2);
-        let modifier = GraphMutator::<f32>::new(factory2)
-            .add_mutation(NodeType::Weight, 0.5);
+        let modifier = GraphMutator::<f32>::new(factory2, vec![
+            NodeMutate::Forward(NodeType::Weight, 0.5),
+        ]);
     
         let genotype = graph_codex.encode();
         let decoded = graph_codex.decode(&genotype);

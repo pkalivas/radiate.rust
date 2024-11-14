@@ -5,9 +5,8 @@ use crate::architects::node_collections::*;
 use crate::operations::op::Ops;
 
 
-
 pub struct NodeCrossover<T> {
-    rate: f32,
+    pub rate: f32,
     _marker: std::marker::PhantomData<T>,
 }
 

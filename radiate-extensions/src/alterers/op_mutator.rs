@@ -1,6 +1,7 @@
 use std::ops::{Mul, Sub, Add};
 
 use num_traits::Float;
+use radiate_rust::Alterer;
 use rand::{prelude::Distribution, distributions::Standard, random};
 use radiate_rust::engines::alterers::mutators::mutate::Mutate;
 use radiate_rust::engines::genome::genes::gene::Gene;
@@ -13,7 +14,7 @@ use crate::operations::op::Ops;
 pub struct OpMutator<T>
 where
     Standard: Distribution<T>,
-    T: Clone + PartialEq + Default
+    T: Clone + PartialEq + Default + Float
 {
     pub rate: f32,
     pub replace_rate: f32,
@@ -23,7 +24,7 @@ where
 impl<T> OpMutator<T> 
 where
     Standard: Distribution<T>,
-    T: Clone + PartialEq + Default
+    T: Clone + PartialEq + Default + Float + 'static
 {
     pub fn new(factory: NodeFactory<T>, rate: f32, replace_rate: f32) -> Self {
         Self { 
@@ -31,6 +32,16 @@ where
             replace_rate,
             factory
         }
+    }
+
+    pub fn alterer(factory: NodeFactory<T>, rate: f32, replace_rate: f32) -> Alterer<Node<T>, Ops<T>> {
+        let alterer = Self {
+            rate,
+            replace_rate,
+            factory
+        };
+
+        Alterer::Mutation(Box::new(alterer))
     }
 }
 
