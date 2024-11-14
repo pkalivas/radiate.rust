@@ -5,7 +5,7 @@ pub fn individual_indexes(
     index: usize,
     size: usize,
     order: usize,
-) -> Vec<i32> {
+) -> Vec<usize> {
     let mut sub_set = subset(size as usize, order as usize, random);
     let mut i = 0;
     while sub_set[i] < index as i32 && i < sub_set.len() - 1 {
@@ -13,7 +13,7 @@ pub fn individual_indexes(
     }
 
     sub_set[i] = index as i32;
-    sub_set
+    sub_set.iter().map(|x| *x as usize).collect()
 }
 
 pub fn subset(n: usize, k: usize, random: &mut ThreadRng) -> Vec<i32> {

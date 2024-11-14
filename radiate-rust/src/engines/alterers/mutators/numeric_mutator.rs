@@ -10,13 +10,14 @@ pub struct NumericMutator {
 
 impl NumericMutator {
     pub fn new(rate: f32) -> Self {
-        Self {
-            rate,
-        }
+        Self { rate }
     }
 }
 
-impl<G: NumericGene<G, A>, A> Mutate<G, A> for NumericMutator {
+impl<G, A> Mutate<G, A> for NumericMutator
+where
+    G: NumericGene<G, A>
+{
     fn mutate_rate(&self) -> f32 {
         self.rate
     }

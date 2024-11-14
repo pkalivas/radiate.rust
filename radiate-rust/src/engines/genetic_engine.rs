@@ -72,7 +72,7 @@ where
             let individual = handle.population.get_mut(idx);
             if !individual.score().is_some() {
                 let decoded = codex.decode(individual.genotype());
-                let score = fitness_fn(&decoded);
+                let score = fitness_fn(decoded);
 
                 individual.set_score(Some(score));
             }
@@ -165,7 +165,7 @@ where
         self.params.codex.as_ref().unwrap()
     }
 
-    fn fitness_fn(&self) -> &Arc<dyn Fn(&T) -> Score> {
+    fn fitness_fn(&self) -> &Arc<dyn Fn(T) -> Score> {
         self.params.fitness_fn.as_ref().unwrap()
     }
 

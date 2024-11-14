@@ -15,7 +15,7 @@ fn main() {
             Alterer::Mutator(0.1),
             Alterer::UniformCrossover(0.5)
         ])
-        .fitness_fn(|genotype: &String| {
+        .fitness_fn(|genotype: String| {
             Score::from_usize(genotype.chars().zip(target.chars()).fold(
                 0,
                 |acc, (geno, targ)| {

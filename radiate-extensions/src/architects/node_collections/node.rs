@@ -2,7 +2,9 @@ use std::collections::HashSet;
 use uuid::Uuid;
 use radiate_rust::engines::genome::genes::gene::{Gene, Valid};
 
-use crate::{architects::schema::{direction::Direction, node_types::NodeType}, operations::op::Ops};
+use crate::architects::schema::{direction::Direction, node_types::NodeType};
+use crate::operations::op::Ops;
+
 
 pub struct Node<T>
 where
@@ -23,8 +25,8 @@ impl<T> Node<T>
 where
     T: Clone + PartialEq 
 {
-    pub fn new(index: usize, node_type: NodeType, value: Ops<T>) -> Node<T> {
-        Node {
+    pub fn new(index: usize, node_type: NodeType, value: Ops<T>) -> Self {
+        Self {
             id: Uuid::new_v4(),
             index,
             value,

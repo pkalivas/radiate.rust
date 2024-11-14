@@ -11,11 +11,10 @@ where
     fn cross_rate(&self) -> f32;
     
     #[inline]
-    fn cross(&self, population: &mut Population<G, A>, parent_indexes: &[i32], generation: i32) {
-        let index_one = parent_indexes[0] as usize;
-        let index_two = parent_indexes[1] as usize;
+    fn cross(&self, population: &mut Population<G, A>, parent_indexes: &[usize], generation: i32) {
+        let index_one = parent_indexes[0];
+        let index_two = parent_indexes[1];
 
-        // TODO: Check if clone is needed
         let mut geno_one = population.get(index_one).genotype().clone();
         let mut geno_two = population.get(index_two).genotype().clone();
 

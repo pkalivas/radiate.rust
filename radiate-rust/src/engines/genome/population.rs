@@ -60,7 +60,7 @@ where
         }
     }
 
-    pub fn from_func<F>(size: usize, f: F) -> Self
+    pub fn from_fn<F>(size: usize, f: F) -> Self
     where
         F: Fn() -> Phenotype<G, A>,
     {

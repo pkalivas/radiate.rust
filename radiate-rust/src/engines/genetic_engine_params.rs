@@ -26,7 +26,7 @@ where
     pub alterer: Option<CompositeAlterer<G, A>>,
     pub population: Option<Population<G, A>>,
     pub codex: Option<Arc<&'a dyn Codex<G, A, T>>>,
-    pub fitness_fn: Option<Arc<dyn Fn(&T) -> Score>>,
+    pub fitness_fn: Option<Arc<dyn Fn(T) -> Score>>,
 }
 
 impl<'a, G, A, T> GeneticEngineParams<'a, G, A, T> 
@@ -74,7 +74,7 @@ where
         self
     }
 
-    pub fn fitness_fn(mut self, fitness_func: impl Fn(&T) -> Score + 'static) -> Self {
+    pub fn fitness_fn(mut self, fitness_func: impl Fn(T) -> Score + 'static) -> Self {
         self.fitness_fn = Some(Arc::new(fitness_func));
         self
     }
@@ -122,7 +122,7 @@ where
     fn build_population(&mut self) {
         self.population = match &self.population {
             None => Some(match self.codex.as_ref() {
-                Some(codex) => Population::from_func(self.population_size, || {
+                Some(codex) => Population::from_fn(self.population_size, || {
                     Phenotype::from_genotype(codex.encode(), 0)
                 }),
                 None => panic!("Codex not set"),

@@ -30,8 +30,8 @@ fn main() {
                 NodeMutate::Forward(NodeType::Gate, 0.03),
             ])
         ])
-        .fitness_fn(move |genotype: &Graph<f32>| {
-            let mut reducer = GraphReducer::new(genotype);
+        .fitness_fn(move |genotype: Graph<f32>| {
+            let mut reducer = GraphReducer::new(&genotype);
             Score::from_f32(regression.error(|input| {
                 reducer.reduce(&input)
             }))

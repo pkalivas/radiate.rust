@@ -16,7 +16,7 @@ fn main() {
 
     let engine = GeneticEngine::from_codex(&codex)
         .max_age(MAX_EPOCHS)
-        .fitness_fn(move |genotype: &Vec<&Item>| Knapsack::fitness(&knapsack.capacity, genotype))
+        .fitness_fn(move |genotype: Vec<&Item>| Knapsack::fitness(&knapsack.capacity, &genotype))
         .build();
 
     let result = engine.run(|output| {

@@ -21,7 +21,7 @@ fn main() {
             Alterer::mutation(NumericMutator::new(0.01)),
             Alterer::UniformCrossover(0.5)
         ])
-        .fitness_fn(|genotype: &Vec<Vec<i32>>| {
+        .fitness_fn(|genotype: Vec<Vec<i32>>| {
             Score::from_int(genotype.iter().fold(0, |acc, chromosome| {
                 acc + chromosome.iter().fold(0, |acc, gene| acc + gene)
             }))
