@@ -16,13 +16,13 @@ fn main() {
         .minimizing()
         .offspring_selector(Selector::Boltzmann(4_f32))
         .alterer(vec![
-            Alterer::alterer(GraphCrossover::new(0.5, 0.5, 0.2)),
-            Alterer::mutation(OpMutator::new(factory.clone(), 0.01, 0.05)),
-            Alterer::alterer(GraphMutator::new(factory.clone())
-                .add_recurrent_mutation(NodeType::Weight, 0.05)
-                .add_recurrent_mutation(NodeType::Aggregate, 0.03)
-                .add_recurrent_mutation(NodeType::Gate, 0.03)
-            )
+            GraphCrossover::alterer(0.5, 0.5, 0.2),
+            OpMutator::alterer(factory.clone(), 0.01, 0.05),
+            GraphMutator::alterer(factory.clone(), vec![
+                NodeMutate::Recurrent(NodeType::Weight, 0.05),
+                NodeMutate::Recurrent(NodeType::Aggregate, 0.03),
+                NodeMutate::Recurrent(NodeType::Gate, 0.03),
+            ])
         ])
         .fitness_fn(move |genotype: &Graph<f32>| {
             let mut reducer = GraphReducer::new(genotype);
@@ -46,7 +46,7 @@ fn display(result: &EngineContext<Node<f32>, Ops<f32>, Graph<f32>>) {
     let mut reducer = GraphReducer::new(&result.best);
     for sample in get_sample_set().get_samples().iter() {
         let output = reducer.reduce(&sample.1);
-        println!("{:?} -> epected: {:?}, actual: {:?}", sample.1, sample.2, output);
+        println!("{:?} -> epected: {:?}, actual: {:.3?}", sample.1, sample.2, output);
     }
 }
 

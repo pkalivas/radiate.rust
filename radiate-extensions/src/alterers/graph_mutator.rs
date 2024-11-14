@@ -1,6 +1,7 @@
 
 use rand::{random, seq::SliceRandom};
 
+use radiate_rust::Alterer;
 use radiate_rust::engines::alterers::Alter;
 use radiate_rust::engines::optimize::Optimize;
 use radiate_rust::engines::genome::*;
@@ -9,11 +10,32 @@ use crate::architects::node_collections::*;
 use crate::architects::schema::node_types::NodeType;
 use crate::operations::op::Ops;
 
+pub enum NodeMutate {
+    Forward(NodeType, f32),
+    Recurrent(NodeType, f32),
+}
 
-pub struct NodeMutate {
-    pub rate: f32,
-    pub node_type: NodeType,
-    pub recurrent: bool,
+impl NodeMutate {
+    pub fn node_type(&self) -> NodeType {
+        match self {
+            NodeMutate::Forward(node_type, _) => *node_type,
+            NodeMutate::Recurrent(node_type, _) => *node_type,
+        }
+    }
+
+    pub fn rate(&self) -> f32 {
+        match self {
+            NodeMutate::Forward(_, rate) => *rate,
+            NodeMutate::Recurrent(_, rate) => *rate,
+        }
+    }
+
+    pub fn is_recurrent(&self) -> bool {
+        match self {
+            NodeMutate::Forward(_, _) => false,
+            NodeMutate::Recurrent(_, _) => true,
+        }
+    }
 }
 
 pub struct GraphMutator<T> 
@@ -26,7 +48,7 @@ where
 
 impl<T> GraphMutator<T>
 where
-    T: Clone + PartialEq + Default
+    T: Clone + PartialEq + Default + 'static
 {
     pub fn new(factory: NodeFactory<T>) -> Self {
         GraphMutator {
@@ -35,13 +57,22 @@ where
         }
     }
 
+    pub fn alterer(factory: NodeFactory<T>, mutations: Vec<NodeMutate>) -> Alterer<Node<T>, Ops<T>> {
+        let mutator = GraphMutator {
+            factory,
+            mutations
+        };
+
+        Alterer::Alterer(Box::new(mutator))
+    }
+
     pub fn add_mutation(mut self, node_type: NodeType, rate: f32) -> Self {
-        self.mutations.push(NodeMutate { rate, node_type, recurrent: false });
+        self.mutations.push(NodeMutate::Forward(node_type, rate));
         self
     }
     
     pub fn add_recurrent_mutation(mut self, node_type: NodeType, rate: f32) -> Self {
-        self.mutations.push(NodeMutate { rate, node_type, recurrent: true });
+        self.mutations.push(NodeMutate::Recurrent(node_type, rate));
         self
     }
 
@@ -221,7 +252,7 @@ where
 
 impl<T> Alter<Node<T>, Ops<T>> for GraphMutator<T>
 where
-    T: Clone + PartialEq + Default    
+    T: Clone + PartialEq + Default + 'static
 {
     fn alter(&self, population: &mut Population<Node<T>, Ops<T>>, _: &Optimize, generation: i32) {
         let mut rng = rand::thread_rng();
@@ -229,7 +260,7 @@ where
         for i in 0..population.len() {
             let mutation = self.mutations.choose(&mut rng).unwrap();
 
-            if random::<f32>() > mutation.rate {
+            if random::<f32>() > mutation.rate() {
                 continue;
             }
 
@@ -237,10 +268,10 @@ where
             let chromosome_index = rand::random::<usize>() % genotype.len();
             let chromosome = genotype.get_chromosome(chromosome_index);
 
-            let mutated_graph = if mutation.recurrent {
-                self.insert_recurrent_node(&chromosome.genes, &mutation.node_type)
+            let mutated_graph = if mutation.is_recurrent() {
+                self.insert_recurrent_node(&chromosome.genes, &mutation.node_type())
             } else {
-                self.insert_forward_node(&chromosome.genes, &mutation.node_type)
+                self.insert_forward_node(&chromosome.genes, &mutation.node_type())
             };
 
             if let Some(mutated_graph) = mutated_graph {

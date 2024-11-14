@@ -4,6 +4,7 @@ use std::collections::HashMap;
 use radiate_rust::engines::alterers::Alter;
 use radiate_rust::engines::optimize::Optimize;
 use radiate_rust::engines::genome::*;
+use radiate_rust::Alterer;
 
 use crate::architects::node_collections::*;
 use crate::architects::schema::node_types::NodeType;
@@ -25,15 +26,34 @@ where
 
 impl<T> GraphCrossover<T>
 where
-    T: Clone + PartialEq + Default
+    T: Clone + PartialEq + Default + 'static
 {
-    pub fn new(crossover_rate: f32, crossover_parent_node_rate: f32, reenable_shared_node_rate: f32) -> Self {
+    pub fn new(
+        crossover_rate: f32,
+        crossover_parent_node_rate: f32, 
+        reenable_shared_node_rate: f32
+    ) -> Self {
         Self {
             crossover_rate,
             crossover_parent_node_rate,
             reenable_shared_node_rate,
             _marker: std::marker::PhantomData
         }
+    }
+
+    pub fn alterer(
+        crossover_rate: f32,
+        crossover_parent_node_rate: f32,
+        reenable_shared_node_rate: f32
+    ) -> Alterer<Node<T>, Ops<T>> {
+        let alterer = Self {
+            crossover_rate,
+            crossover_parent_node_rate, 
+            reenable_shared_node_rate,
+            _marker: std::marker::PhantomData
+        };
+
+        Alterer::Alterer(Box::new(alterer))
     }
 
     #[inline]
@@ -105,7 +125,7 @@ where
 
 impl<T> Alter<Node<T>, Ops<T>> for GraphCrossover<T>
 where 
-    T: Clone + PartialEq + Default
+    T: Clone + PartialEq + Default + 'static
 {
     #[inline]
     fn alter(&self, population: &mut Population<Node<T>, Ops<T>>, optimize: &Optimize, generation: i32) {
