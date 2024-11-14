@@ -72,6 +72,16 @@ where
         self
     }
 
+    pub fn root(mut self, value: Ops<T>) -> NodeFactory<T> {
+        self.add_node_values(NodeType::Root, vec![value]);
+        self
+    }
+
+    pub fn leafs(mut self, values: Vec<Ops<T>>) -> NodeFactory<T> {
+        self.add_node_values(NodeType::Link, values);
+        self
+    }
+
     pub fn set_values(mut self, node_type: NodeType, values: Vec<Ops<T>>) -> NodeFactory<T> {
         self.add_node_values(node_type, values);
         self
@@ -106,6 +116,10 @@ where
             .inputs((0..input_size)
                 .map(|idx| op::var(idx))
                 .collect::<Vec<Ops<f32>>>())
+            .leafs((0..input_size)
+                .map(|idx| op::var(idx))
+                .collect::<Vec<Ops<f32>>>())
+            .root(op::linear())
             .gates(vec![
                 op::add(),
                 op::sub(),

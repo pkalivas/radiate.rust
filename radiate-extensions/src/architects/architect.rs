@@ -36,24 +36,32 @@ where
         build_fn(self, NodeCollectionBuilder::new(&self.node_factory))
     }
 
-    pub fn input(&self, siez: usize) -> C {
-        self.new_collection(NodeType::Input, siez)
+    pub fn input(&self, size: usize) -> C {
+        self.new_collection(NodeType::Input, size)
     }
 
-    pub fn output(&self, siez: usize) -> C {
-        self.new_collection(NodeType::Output, siez)
+    pub fn output(&self, size: usize) -> C {
+        self.new_collection(NodeType::Output, size)
     }
 
-    pub fn gate(&self, siez: usize) -> C {
-        self.new_collection(NodeType::Gate, siez)
+    pub fn gate(&self, size: usize) -> C {
+        self.new_collection(NodeType::Gate, size)
     }
 
-    pub fn aggregate(&self, siez: usize) -> C {
-        self.new_collection(NodeType::Aggregate, siez)
+    pub fn aggregate(&self, size: usize) -> C {
+        self.new_collection(NodeType::Aggregate, size)
     }
 
-    pub fn weight(&self, siez: usize) -> C {
-        self.new_collection(NodeType::Weight, siez)
+    pub fn weight(&self, size: usize) -> C {
+        self.new_collection(NodeType::Weight, size)
+    }
+
+    pub fn root(&self) -> C {
+        self.new_collection(NodeType::Root, 1)
+    }
+
+    pub fn leaf(&self) -> C {
+        self.new_collection(NodeType::Leaf, 1)
     }
 
     pub fn new_collection(&self, node_type: NodeType, size: usize) -> C {
@@ -69,10 +77,7 @@ where
 
     pub fn tree(&self, depth: usize) -> Tree<T> {
         Architect::<Tree<T>, T>::new(&self.node_factory)
-            .build(|arc, _| {
-                let root = arc.gate(1);
-                self.grow_tree(&root, depth)
-            })
+            .build(|arc, _| self.grow_tree(&arc.root(), depth))
     }
 
     pub fn acyclic(&self, input_size: usize, output_size: usize) -> Graph<T> {
@@ -293,7 +298,7 @@ where
     fn grow_tree(&self, parent: &Tree<T>, depth: usize) -> Tree<T> {
         if depth == 0 {
             return Architect::<Tree<T>, T>::new(&self.node_factory)
-                .build(|arc, _| arc.gate(1));
+                .build(|arc, _| arc.leaf());
         }
 
         let mut builder = NodeCollectionBuilder::new(&self.node_factory);

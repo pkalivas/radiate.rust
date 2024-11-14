@@ -5,7 +5,6 @@ use radiate_rust::engines::genome::genes::gene::Valid;
 
 use crate::architects::node_collections::node::Node;
 
-
 pub trait NodeCollection<C, T>: Valid
 where
     C: NodeCollection<C, T> + Default + Clone,
