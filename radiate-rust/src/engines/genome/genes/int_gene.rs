@@ -108,6 +108,13 @@ impl NumericGene<IntGene, i32> for IntGene {
             ..*self
         }
     }
+
+    fn mean(&self, other: &IntGene) -> IntGene {
+        IntGene {
+            allele: (self.allele + other.allele) / 2,
+            ..*self
+        }
+    }
 }
 
 impl Clone for IntGene {

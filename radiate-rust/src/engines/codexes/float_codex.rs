@@ -31,6 +31,10 @@ impl FloatCodex {
         self.upper_bound = upper_bound;
         self
     }
+
+    pub fn scalar(min: f32, max: f32) -> Self {
+        FloatCodex::new(1, 1, min, max)
+    }
 }
 
 impl Codex<FloatGene, f32, Vec<Vec<f32>>> for FloatCodex {

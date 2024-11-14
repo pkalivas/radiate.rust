@@ -29,5 +29,5 @@ where
     fn sub(&self, other: &G) -> G;
     fn mul(&self, other: &G) -> G;
     fn div(&self, other: &G) -> G;
+    fn mean(&self, other: &G) -> G;
 }
-

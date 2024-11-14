@@ -12,6 +12,7 @@
       <sourceFolder url="file://$MODULE_DIR$/radiate-extensions/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/radiate-examples/regression-graph/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/radiate-examples/simple-memory-graph/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/radiate-examples/scalar/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/radiate-examples/min-sum/target" />
       <excludeFolder url="file://$MODULE_DIR$/radiate-examples/string-evolver/target" />
       <excludeFolder url="file://$MODULE_DIR$/radiate-rust/target" />

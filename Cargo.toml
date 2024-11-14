@@ -3,5 +3,5 @@ members = [
     "radiate-rust",
     "radiate-examples/min-sum",
     "radiate-examples/string-evolver",
-    "radiate-extensions", "radiate-examples/xor-graph", "radiate-examples/knapsack", "radiate-examples/regression-graph", "radiate-examples/simple-memory-graph",
+    "radiate-extensions", "radiate-examples/xor-graph", "radiate-examples/knapsack", "radiate-examples/regression-graph", "radiate-examples/simple-memory-graph", "radiate-examples/scalar",
 ]

@@ -106,6 +106,13 @@ impl NumericGene<FloatGene, f32> for FloatGene {
             ..*self
         }
     }
+
+    fn mean(&self, other: &FloatGene) -> FloatGene {
+        FloatGene {
+            allele: (self.allele + other.allele) / 2_f32,
+            ..*self
+        }
+    }
 }
 
 impl Clone for FloatGene {
