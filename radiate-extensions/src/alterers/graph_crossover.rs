@@ -20,7 +20,6 @@ where
 {
     pub crossover_rate: f32,
     pub crossover_parent_node_rate: f32,
-    pub reenable_shared_node_rate: f32,
     _marker: std::marker::PhantomData<T>
 }
 
@@ -31,25 +30,21 @@ where
     pub fn new(
         crossover_rate: f32,
         crossover_parent_node_rate: f32, 
-        reenable_shared_node_rate: f32
     ) -> Self {
         Self {
             crossover_rate,
             crossover_parent_node_rate,
-            reenable_shared_node_rate,
             _marker: std::marker::PhantomData
         }
     }
 
     pub fn alterer(
         crossover_rate: f32,
-        crossover_parent_node_rate: f32,
-        reenable_shared_node_rate: f32
+        crossover_parent_node_rate: f32
     ) -> Alterer<Node<T>, Ops<T>> {
         let alterer = Self {
             crossover_rate,
             crossover_parent_node_rate, 
-            reenable_shared_node_rate,
             _marker: std::marker::PhantomData
         };
 
@@ -83,13 +78,6 @@ where
 
             if node_one.node_type != NodeType::Weight || node_two.node_type != NodeType::Weight {
                 continue;
-            }
-
-            if (!node_one.enabled || !node_two.enabled) && rand::random::<f32>() < self.reenable_shared_node_rate {
-                let mut new_gene = node_one.clone();
-                new_gene.enabled = true;
-                new_chromo_one.set_gene(*node_one.index(), new_gene);
-                num_crosses += 1;
             }
 
             if rand::random::<f32>() < self.crossover_parent_node_rate {
@@ -152,6 +140,15 @@ where
 
 
 
+
+
+
+// if (!node_one.enabled || !node_two.enabled) && rand::random::<f32>() < self.reenable_shared_node_rate {
+//     let mut new_gene = node_one.clone();
+//     new_gene.enabled = true;
+//     new_chromo_one.set_gene(*node_one.index(), new_gene);
+//     num_crosses += 1;
+// }
 
 
 
