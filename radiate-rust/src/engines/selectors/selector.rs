@@ -48,16 +48,14 @@ where
                 let mut selected = Vec::with_capacity(count);
                 let mut fitness_values = Vec::with_capacity(population.len());
                 let mut rng = rand::thread_rng();
-                let mut total = 0.0;
-
-                for individual in population.iter() {
-                    let score = match individual.score() {
+                
+                let total = population
+                    .iter()
+                    .map(|individual| match individual.score() {
                         Some(score) => score.as_float(),
                         None => 0.0,
-                    };
-
-                    total += score;
-                }
+                    })
+                    .sum::<f32>();
 
                 for individual in population.iter() {
                     let score = match individual.score() {

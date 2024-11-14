@@ -71,7 +71,7 @@ where
     pub fn acyclic(&self, input_size: usize, output_size: usize) -> Graph<T> {
         let graph_architect = Architect::<Graph<T>, T>::new(self.node_factory);
         graph_architect.build(|arc, builder| builder
-            .one_to_one(&arc.input(input_size), &arc.output(output_size))
+            .all_to_all(&arc.input(input_size), &arc.output(output_size))
             .build())
     }
 

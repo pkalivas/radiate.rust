@@ -8,7 +8,7 @@ fn main() {
         ]);
 
     let graph_codex = GraphCodex::from_shape(1, 1, &factory)
-        .set_nodes(|arc, _| arc.gru(1, 1, 1));
+        .set_nodes(|arc, _| arc.lstm(1, 1, 1));
 
     let regression = Regression::new(get_sample_set(), ErrorFunction::MSE);
 
