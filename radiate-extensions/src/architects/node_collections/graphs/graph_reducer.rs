@@ -98,20 +98,21 @@ where
     fn reduce_with_order(&mut self, inputs: &[T]) -> Vec<T> {
         let mut result = Vec::new();
         for index in &self.order {
-            let node = self.graph.get(*index).unwrap();
-            if node.node_type == NodeType::Input {
-                self.tracers[node.index].add_input(inputs[node.index].clone());
-            } else {
-                for incoming in &node.incoming {
-                    let arg = self.tracers[*incoming].result.clone().unwrap_or_else(|| T::default());
-                    self.tracers[node.index].add_input(arg);
+            if let Some(node) = self.graph.get(*index) {
+                if node.node_type == NodeType::Input {
+                    self.tracers[node.index].add_input(inputs[node.index].clone());
+                } else {
+                    for incoming in &node.incoming {
+                        let arg = self.tracers[*incoming].result.clone().unwrap_or_else(|| T::default());
+                        self.tracers[node.index].add_input(arg);
+                    }
                 }
-            }
 
-            self.tracers[node.index].eval(&node);
+                self.tracers[node.index].eval(&node);
 
-            if node.node_type == NodeType::Output {
-                result.push(self.tracers[node.index].result.clone().unwrap());
+                if node.node_type == NodeType::Output {
+                    result.push(self.tracers[node.index].result.clone().unwrap());
+                }
             }
         }
 

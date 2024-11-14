@@ -47,6 +47,7 @@ where
             Selector::Roulette => {
                 let mut selected = Vec::with_capacity(count);
                 let mut fitness_values = Vec::with_capacity(population.len());
+                let mut rng = rand::thread_rng();
                 let mut total = 0.0;
 
                 for individual in population.iter() {
@@ -55,29 +56,16 @@ where
                         None => 0.0,
                     };
 
-                    fitness_values.push(score);
                     total += score;
                 }
 
-                let best = fitness_values[0];
-                let worst = if fitness_values[fitness_values.len() - 1] < 0.0 {
-                    fitness_values[fitness_values.len() - 1]
-                } else {
-                    0.0
-                };
-            
-                let range = total - worst * fitness_values.len() as f32;
+                for individual in population.iter() {
+                    let score = match individual.score() {
+                        Some(score) => score.as_float(),
+                        None => 0.0,
+                    };
 
-                if range == 0.0 || (best - worst).abs() < f32::EPSILON {
-                    return population
-                        .iter()
-                        .take(count)
-                        .map(|individual| individual.clone())
-                        .collect::<Population<G, A>>();
-                }
-
-                for i in 0..fitness_values.len() {
-                    fitness_values[i] = (fitness_values[i] - worst) / range;
+                    fitness_values.push(score / total);
                 }
 
                 if optimize == &Optimize::Minimize {
@@ -87,7 +75,7 @@ where
                 let total_fitness = fitness_values.iter().sum::<f32>();
 
                 for _ in 0..count {
-                    let mut idx = rand::thread_rng().gen_range(0.0..total_fitness);
+                    let mut idx = rng.gen_range(0.0..total_fitness);
 
                     for i in 0..fitness_values.len() {
                         idx -= fitness_values[i];
