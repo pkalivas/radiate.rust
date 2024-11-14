@@ -4,8 +4,10 @@ use radiate_rust::engines::codexes::subset_codex::SubSetCodex;
 use radiate_rust::engines::genetic_engine::GeneticEngine;
 use radiate_rust::engines::score::Score;
 
+
 const KNAPSACK_SIZE: usize = 15;
 const MAX_EPOCHS: i32 = 50;
+
 
 fn main() {    
     let knapsack = Knapsack::new(KNAPSACK_SIZE);
@@ -14,9 +16,7 @@ fn main() {
 
     let engine = GeneticEngine::from_codex(&codex)
         .max_age(MAX_EPOCHS)
-        .fitness_fn(move |genotype: &Vec<&Item>| {
-            Knapsack::fitness(&knapsack.capacity, genotype)
-        })
+        .fitness_fn(move |genotype: &Vec<&Item>| Knapsack::fitness(&knapsack.capacity, genotype))
         .build();
 
     let result = engine.run(|output| {

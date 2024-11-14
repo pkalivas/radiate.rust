@@ -2,6 +2,11 @@
 use radiate_extensions::*;
 use radiate_rust::*;
 
+
+const MIN_SCORE: f32 = 0.01;
+const MAX_SECONDS: f64 = 5.0;
+
+
 fn main() {
     let factory = NodeFactory::<f32>::regression(1)
         .gates(vec![
@@ -36,7 +41,7 @@ fn main() {
 
     let result = engine.run(|output| {
         println!("[ {:?} ]: {:?}", output.index, output.score().as_float());
-        output.score().as_float() < 0.01 || output.seconds() > 5.0
+        output.score().as_float() < MIN_SCORE || output.seconds() > MAX_SECONDS
     });
 
     display(&result);
