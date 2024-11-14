@@ -15,6 +15,7 @@ where
         let index_one = parent_indexes[0] as usize;
         let index_two = parent_indexes[1] as usize;
 
+        // TODO: Check if clone is needed
         let mut geno_one = population.get(index_one).genotype().clone();
         let mut geno_two = population.get(index_two).genotype().clone();
 
@@ -32,8 +33,7 @@ where
         geno_one: &mut Genotype<G, A>,
         geno_two: &mut Genotype<G, A>,
     ) -> i32 {
-        let min_index = std::cmp::min(geno_one.len(), geno_two.len());
-        let chromosome_index = rand::random::<usize>() % min_index;
+        let chromosome_index = rand::random::<usize>() % std::cmp::min(geno_one.len(), geno_two.len());
 
         let mut chrom_one = geno_one.get_chromosome_mut(chromosome_index);
         let mut chrom_two = geno_two.get_chromosome_mut(chromosome_index);

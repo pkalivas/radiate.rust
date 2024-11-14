@@ -19,7 +19,7 @@ pub use trees::*;
 pub use graphs::*;
 
 
-
+#[inline]
 pub fn can_connect<T>(collection: &[Node<T>], source: usize, target: usize, recurrent: bool) -> bool
 where
     T: Clone + PartialEq + Default
@@ -37,6 +37,7 @@ where
     return would_create_cycle && !nodes_are_weights && source != target;
 }
 
+#[inline]
 pub fn would_create_cycle<T>(collection: &[Node<T>], source: usize, target: usize) -> bool
 where
     T: Clone + PartialEq + Default
@@ -75,6 +76,7 @@ where
     }   
 }
 
+#[inline]
 pub fn random_source_node<T>(collection: &[Node<T>]) -> &Node<T>
 where
     T: Clone + PartialEq + Default
@@ -87,6 +89,7 @@ where
     ])
 }
 
+#[inline]
 pub fn random_target_node<T>(collection: &[Node<T>]) -> &Node<T>
 where
     T: Clone + PartialEq + Default
@@ -97,6 +100,7 @@ where
     ])
 }
 
+#[inline]
 fn random_node_of_type<T>(collection: &[Node<T>], node_types: Vec<NodeType>) -> &Node<T>
 where
     T: Clone + PartialEq + Default
@@ -136,7 +140,11 @@ where
     };
 
     if genes.len() == 0 {
-        return random_node_of_type(collection, node_types.iter().filter(|nt| *nt != gene_node_type).cloned().collect());
+        return random_node_of_type(collection, node_types
+            .iter()
+            .filter(|nt| *nt != gene_node_type)
+            .cloned()
+            .collect());
     }
 
     return genes.choose(&mut random).unwrap()

@@ -112,8 +112,8 @@ where
     #[inline]
     fn alter(&self, population: &mut Population<Node<T>, Ops<T>>, optimize: &Optimize, generation: i32) {
         optimize.sort(population);
+        
         let mut new_phenotypes = HashMap::new();
-
         for index in 0..population.len() {
             if rand::random::<f32>() < self.crossover_rate && population.len() > NUM_PARENTS {
                 let parent_indexes = GraphCrossover::<T>::distinct_subset(population.len());

@@ -8,7 +8,7 @@ pub struct SubSetCodex<'a, T> {
 
 impl<'a, T> SubSetCodex<'a, T> {
     pub fn new(items: &'a Vec<T>) -> Self {
-        SubSetCodex { items }
+        Self { items }
     }
 }
 
