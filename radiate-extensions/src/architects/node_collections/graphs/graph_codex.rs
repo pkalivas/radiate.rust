@@ -7,7 +7,6 @@ use radiate_rust::engines::codexes::Codex;
 use crate::architects::*;
 use crate::operations::op::Ops;
 
-
 pub struct GraphCodex<'a, T> 
 where
     T: Clone + PartialEq + Default

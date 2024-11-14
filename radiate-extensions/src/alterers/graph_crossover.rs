@@ -27,10 +27,7 @@ impl<T> GraphCrossover<T>
 where
     T: Clone + PartialEq + Default + 'static
 {
-    pub fn new(
-        crossover_rate: f32,
-        crossover_parent_node_rate: f32, 
-    ) -> Self {
+    pub fn new(crossover_rate: f32, crossover_parent_node_rate: f32) -> Self {
         Self {
             crossover_rate,
             crossover_parent_node_rate,
@@ -38,10 +35,7 @@ where
         }
     }
 
-    pub fn alterer(
-        crossover_rate: f32,
-        crossover_parent_node_rate: f32
-    ) -> Alterer<Node<T>, Ops<T>> {
+    pub fn alterer(crossover_rate: f32, crossover_parent_node_rate: f32) -> Alterer<Node<T>, Ops<T>> {
         let alterer = Self {
             crossover_rate,
             crossover_parent_node_rate, 

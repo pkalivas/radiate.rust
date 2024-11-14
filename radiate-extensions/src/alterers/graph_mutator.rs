@@ -50,30 +50,20 @@ impl<T> GraphMutator<T>
 where
     T: Clone + PartialEq + Default + 'static
 {
-    pub fn new(factory: NodeFactory<T>) -> Self {
-        GraphMutator {
+    pub fn new(factory: NodeFactory<T>, mutations: Vec<NodeMutate>) -> Self {
+        Self {
             factory,
-            mutations: vec![]
+            mutations
         }
     }
 
     pub fn alterer(factory: NodeFactory<T>, mutations: Vec<NodeMutate>) -> Alterer<Node<T>, Ops<T>> {
-        let mutator = GraphMutator {
+        let mutator = Self {
             factory,
             mutations
         };
 
         Alterer::Alterer(Box::new(mutator))
-    }
-
-    pub fn add_mutation(mut self, node_type: NodeType, rate: f32) -> Self {
-        self.mutations.push(NodeMutate::Forward(node_type, rate));
-        self
-    }
-    
-    pub fn add_recurrent_mutation(mut self, node_type: NodeType, rate: f32) -> Self {
-        self.mutations.push(NodeMutate::Recurrent(node_type, rate));
-        self
     }
 
     #[inline]
