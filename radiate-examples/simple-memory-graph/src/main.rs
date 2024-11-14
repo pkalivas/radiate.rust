@@ -7,12 +7,14 @@ fn main() {
             op::sigmoid()
         ]);
 
-    let graph_codex = GraphCodex::from_shape(2, 1, &factory);
+    let graph_codex = GraphCodex::from_shape(1, 1, &factory)
+        .set_nodes(|arc, _| arc.weighted_cyclic(1, 1, 1));
 
     let regression = Regression::new(get_sample_set(), ErrorFunction::MSE);
 
     let engine = GeneticEngine::from_codex(&graph_codex)
         .minimizing()
+        .offspring_selector(Selector::Boltzmann(4_f32))
         .alterer(vec![
             Alterer::alterer(GraphCrossover::new(0.5, 0.5, 0.2)),
             Alterer::mutation(OpMutator::new(factory.clone(), 0.01, 0.05)),

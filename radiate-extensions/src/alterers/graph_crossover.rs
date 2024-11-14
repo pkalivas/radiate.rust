@@ -1,9 +1,13 @@
 
 use std::collections::HashMap;
 
-use radiate_rust::{engines::alterers::alter::Alter, genome::{genes::gene::Gene, genotype::Genotype, phenotype::Phenotype, population::Population}, optimize::Optimize};
+use radiate_rust::engines::alterers::Alter;
+use radiate_rust::engines::optimize::Optimize;
+use radiate_rust::engines::genome::*;
 
-use crate::{architects::node_collections::node::Node, operations::op::Ops, NodeType};
+use crate::architects::node_collections::*;
+use crate::architects::schema::node_types::NodeType;
+use crate::operations::op::Ops;
 
 
 const NUM_PARENTS: usize = 2;

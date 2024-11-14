@@ -61,9 +61,9 @@ where
 
                 let best = fitness_values[0];
                 let worst = if fitness_values[fitness_values.len() - 1] < 0.0 {
-                  0.0
-                } else {
                     fitness_values[fitness_values.len() - 1]
+                } else {
+                    0.0
                 };
             
                 let range = total - worst * fitness_values.len() as f32;

@@ -19,21 +19,21 @@ pub use graphs::*;
 
 
 
-pub fn can_connect<T>(collection: &[Node<T>], source: usize, target: usize) -> bool
+pub fn can_connect<T>(collection: &[Node<T>], source: usize, target: usize, recurrent: bool) -> bool
 where
     T: Clone + PartialEq + Default
 {
     let source_node = &collection.get(source).unwrap();
     let target_node = &collection.get(target).unwrap();
 
-    if source_node.outgoing.len() == 0 || source_node.is_recurrent() {
+    if (source_node.outgoing.len() == 0 || source_node.is_recurrent()) && !recurrent {
         return false;
     }
 
-    let would_create_cycle = would_create_cycle(collection, source, target);
+    let would_create_cycle = recurrent || !would_create_cycle(collection, source, target);
     let nodes_are_weights = source_node.node_type == NodeType::Weight || target_node.node_type == NodeType::Weight;
 
-    return !would_create_cycle && !nodes_are_weights && source != target;
+    return would_create_cycle && !nodes_are_weights && source != target;
 }
 
 pub fn would_create_cycle<T>(collection: &[Node<T>], source: usize, target: usize) -> bool
