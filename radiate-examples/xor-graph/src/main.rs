@@ -45,9 +45,8 @@ fn display(result: &EngineContext<Node<f32>, Ops<f32>, Graph<f32>>) {
     }
     println!("{:?}", result.timer.elapsed());
     let mut reducer = GraphReducer::new(&result.best);
-    let iterator = GraphIterator::new(&result.best.get_nodes());
 
-    for node in iterator {
+    for node in result.best.topological_iter() {
         println!("{:?}", node);
     }
 

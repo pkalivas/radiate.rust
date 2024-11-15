@@ -6,7 +6,6 @@ use crate::architects::node_collections::node_factory::NodeFactory;
 
 use super::Graph;
 
-
 pub struct Architect<'a, C, T>
 where
     C: NodeCollection<C, T> + Clone + Default,
