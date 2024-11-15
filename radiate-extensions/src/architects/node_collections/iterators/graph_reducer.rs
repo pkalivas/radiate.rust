@@ -37,7 +37,7 @@ where
     pub fn reduce(&mut self, inputs: &[T]) -> Vec<T> {
         if !self.order.is_empty() {
             return self.reduce_with_order(inputs);
-        } 
+        }
 
         let mut checks = 0;
         let mut completed = vec![false; self.graph.len()];

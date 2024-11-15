@@ -202,3 +202,13 @@ where
         output.clone()
     }
 }
+
+
+// pub struct EngineIterator<'a, G, A, T>
+// where
+//     G: Gene<G, A>,
+//     T: Clone
+// {
+//     pub engine: GeneticEngine<'a, G, A, T>,
+//     pub limit: Box<dyn Fn(&EngineContext<G, A, T>) -> bool>,
+// }

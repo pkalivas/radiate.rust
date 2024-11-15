@@ -1,15 +1,17 @@
 use std::collections::VecDeque;
 
-use super::super::node::Node;
+use crate::NodeCollection;
 
+use super::super::node::Node;
+use super::super::graph::Graph;
 
 pub struct GraphIterator<'a, T>
 where
     T: Clone + PartialEq + Default
 {
-    pub graph: &'a [Node<T>],
+    pub graph: &'a Graph<T>,
     pub completed: Vec<bool>,
-    pub next_items: VecDeque<usize>,
+    pub index_queue: VecDeque<usize>,
     pub pending_index: usize,
 }
 
@@ -17,11 +19,11 @@ impl<'a, T> GraphIterator<'a, T>
 where
     T: Clone + PartialEq + Default
 {
-    pub fn new(graph: &'a [Node<T>]) -> Self {
+    pub fn new(graph: &'a Graph<T>) -> Self {
         Self { 
             graph, 
             completed: vec![false; graph.len()],
-            next_items: VecDeque::new(),
+            index_queue: VecDeque::new(),
             pending_index: 0,
         }
     }
@@ -40,28 +42,32 @@ where
                 continue;
             }
 
-            let node = &self.graph[index];
-
-            let mut degree = node.incoming.len();
-            for incoming_index in &node.incoming {
-                let incoming_node = &self.graph[*incoming_index];
-                if self.completed[incoming_node.index] || incoming_node.is_recurrent() {
-                    degree -= 1;
+            if let Some(node) = self.graph.get(index) {
+                let mut degree = node.incoming.len();
+                for incoming_index in &node.incoming {
+                    if let Some(incoming_node) = self.graph.get(*incoming_index) {
+                        if self.completed[incoming_node.index] || incoming_node.is_recurrent() {
+                            degree -= 1;
+                        }
+                    }
                 }
-            }
-
-            if degree == 0 {
-                self.completed[node.index] = true;
-                self.next_items.push_back(node.index);
-            } else {
-                min_pending_index = std::cmp::min(min_pending_index, node.index);
+    
+                if degree == 0 {
+                    self.completed[node.index] = true;
+                    self.index_queue.push_back(node.index);
+                } else {
+                    min_pending_index = std::cmp::min(min_pending_index, node.index);
+                }
             }
         }
 
         self.pending_index = min_pending_index;
 
-        if let Some(index) = self.next_items.pop_front() {
-            return Some(&self.graph[index]);
+        if let Some(index) = self.index_queue.pop_front() {
+            return match self.graph.get(index) {
+                Some(node) => Some(node),
+                None => None,
+            }
         } 
 
         None

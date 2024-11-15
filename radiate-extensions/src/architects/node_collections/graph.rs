@@ -21,7 +21,7 @@ where
     }
 
     pub fn topological_iter(&self) -> impl Iterator<Item = &Node<T>> {
-        GraphIterator::new(&self.nodes)
+        GraphIterator::new(&self)
     }
 }
 
