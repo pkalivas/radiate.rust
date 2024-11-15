@@ -10,7 +10,11 @@ fn main() {
     let factory = NodeFactory::<f32>::regression(2)
         .outputs(vec![op::sigmoid()]);
 
-    let graph_codex = GraphCodex::from_shape(2, 1, &factory);
+    let graph_codex = GraphCodex::from_shape(2, 1, &factory)
+        .set_nodes(|arc, builder| builder.layer(vec![
+            &arc.weighted_acyclic(2, 3),
+            &arc.weighted_acyclic(3, 1)]
+        ).build());
 
     let regression = Regression::new(get_sample_set(), ErrorFunction::MSE);
 

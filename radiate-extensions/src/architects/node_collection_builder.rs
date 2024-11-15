@@ -113,21 +113,7 @@ where
         let mut previous = collections[0];
 
         for collection in collections.iter() {
-            for node in collection.iter() {
-                if !conn.nodes.contains_key(node.id()) {
-                    let node_id = node.id();
-
-                    conn.nodes.insert(&node_id, node);
-                    conn.node_order.insert(conn.node_order.len(), &node_id);
-
-                    for outgoing in collection.iter().filter(|item| node.outgoing().contains(item.index())) {
-                        conn.relationships.push(NodeRelationship {
-                            source_id: node.id(),
-                            target_id: outgoing.id(),
-                        });
-                    }
-                }
-            }
+            conn.attach(*collection);
         }
 
         for i in 1..collections.len() {
@@ -138,7 +124,7 @@ where
         conn
     }
 
-    fn connect(&mut self, connection: ConnectTypes, one: &'a C, two: &'a C) {
+    pub fn connect(&mut self, connection: ConnectTypes, one: &'a C, two: &'a C) {
         self.attach(one);
         self.attach(two);
 
@@ -152,7 +138,7 @@ where
         }
     }
 
-    fn attach(&mut self, group: &'a C) {
+    pub fn attach(&mut self, group: &'a C) {
         for node in group.iter() {
             if !self.nodes.contains_key(node.id()) {
                 let node_id = node.id();

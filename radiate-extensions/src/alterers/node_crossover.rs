@@ -1,21 +1,28 @@
 use radiate_rust::engines::alterers::Crossover;
 use radiate_rust::engines::genome::*;
+use radiate_rust::Alterer;
 
 use crate::architects::node_collections::*;
 use crate::operations::op::Ops;
 
 
-pub struct NodeCrossover<T> {
+pub struct NodeCrossover<T>
+where
+    T: Clone + PartialEq + Default + 'static
+{
     pub rate: f32,
     _marker: std::marker::PhantomData<T>,
 }
 
-impl<T> NodeCrossover<T> {
-    pub fn new(rate: f32) -> Self {
-        Self {
+impl<T> NodeCrossover<T>
+where 
+    T: Clone + PartialEq + Default + 'static
+{
+    pub fn alterer(rate: f32) -> Alterer<Node<T>, Ops<T>> {
+        Alterer::Crossover(Box::new(Self {
             rate,
             _marker: std::marker::PhantomData,
-        }
+        }))
     }
 }
 

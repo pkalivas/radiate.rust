@@ -26,22 +26,12 @@ where
     Standard: Distribution<T>,
     T: Clone + PartialEq + Default + Float + 'static
 {
-    pub fn new(factory: NodeFactory<T>, rate: f32, replace_rate: f32) -> Self {
-        Self { 
-            rate,
-            replace_rate,
-            factory
-        }
-    }
-
     pub fn alterer(factory: NodeFactory<T>, rate: f32, replace_rate: f32) -> Alterer<Node<T>, Ops<T>> {
-        let alterer = Self {
+        Alterer::Mutation(Box::new(Self {
             rate,
             replace_rate,
             factory
-        };
-
-        Alterer::Mutation(Box::new(alterer))
+        }))
     }
 }
 
