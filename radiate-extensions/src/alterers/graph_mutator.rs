@@ -239,6 +239,7 @@ impl<T> Alter<Node<T>, Ops<T>> for GraphMutator<T>
 where
     T: Clone + PartialEq + Default + 'static
 {
+    #[inline]
     fn alter(&self, population: &mut Population<Node<T>, Ops<T>>, _: &Optimize, generation: i32) {
         let mut rng = rand::thread_rng();
 
