@@ -12,12 +12,12 @@ where
     pub node_values: HashMap<NodeType, Vec<Ops<T>>>
 }
 
-impl<T> NodeFactory<T> 
+impl<T> NodeFactory<T>
 where
     T: Clone + PartialEq + Default
 {
-    pub fn new() -> NodeFactory<T> {
-        NodeFactory {
+    pub fn new() -> Self {
+        Self {
             node_values: HashMap::new()
         }
     }

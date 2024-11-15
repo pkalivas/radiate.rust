@@ -1,4 +1,5 @@
-use super::super::Node;
+use super::super::node::Node;
+
 
 pub struct GraphIterator<'a, T>
 where

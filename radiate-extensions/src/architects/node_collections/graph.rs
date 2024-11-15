@@ -3,13 +3,26 @@ use radiate_rust::engines::genome::genes::gene::Valid;
 
 use crate::{architects::node_collections::node::Node, node_collection, Direction};
 
-use super::super::node_collection::NodeCollection;
+use super::{super::node_collection::NodeCollection, GraphIterator};
 
 pub struct Graph<T>
 where
     T: Clone + PartialEq
 {
     pub nodes: Vec<Node<T>>,
+}
+
+impl<T> Graph<T>
+where
+    T: Clone + PartialEq + Default
+{
+    pub fn new() -> Self {
+        Graph::default()
+    }
+
+    pub fn topological_iter(&self) -> impl Iterator<Item = &Node<T>> {
+        GraphIterator::new(&self.nodes)
+    }
 }
 
 impl<T> NodeCollection<Graph<T>, T> for Graph<T>

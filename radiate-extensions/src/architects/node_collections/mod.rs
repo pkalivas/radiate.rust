@@ -5,18 +5,18 @@ use rand::seq::SliceRandom;
 use super::schema::node_types::NodeType;
 
 pub mod node_collection;
-pub mod graphs;
-pub mod node;
-pub mod tracer;
-pub mod node_factory;
+pub mod graph;
+pub mod nodes;
+pub mod factories;
 pub mod iterators;
+pub mod codexes;
 
-pub use node_collection::NodeCollection;
-pub use node::Node;
-pub use node_factory::NodeFactory;
-pub use tracer::Tracer;
-pub use graphs::*;
+pub use node_collection::*;
+pub use nodes::*;
+pub use graph::*;
+pub use factories::*;
 pub use iterators::*;
+pub use codexes::*;
 
 
 #[inline]

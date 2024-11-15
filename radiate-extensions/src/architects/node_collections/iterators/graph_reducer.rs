@@ -2,7 +2,7 @@ use crate::architects::node_collections::tracer::Tracer;
 use crate::architects::schema::node_types::NodeType;
 use crate::Node;
 
-use super::graph::Graph;
+use super::super::graph::Graph;
 use super::super::node_collection::NodeCollection;
 
 
