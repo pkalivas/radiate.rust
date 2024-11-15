@@ -43,15 +43,12 @@ fn display(result: &EngineContext<Node<f32>, Ops<f32>, Graph<f32>>) {
     for node in result.best.nodes.iter() {
         println!("{:?}", node);
     }
+    
     println!("{:?}", result.timer.elapsed());
+
     let mut reducer = GraphReducer::new(&result.best);
-
-    for node in result.best.topological_iter() {
-        println!("{:?}", node);
-    }
-
     for sample in get_sample_set().get_samples().iter() {
-        let output = reducer.reduce(&sample.1);
+        let output = &reducer.reduce(&sample.1);
         println!("{:?} -> epected: {:?}, actual: {:.3?}", sample.1, sample.2, output);
     }
 }
