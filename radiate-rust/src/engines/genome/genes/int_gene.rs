@@ -46,7 +46,7 @@ impl Gene<IntGene, i32> for IntGene {
             min: self.min,
             max: self.max,
             upper_bound: self.upper_bound,
-            lower_bound: self.lower_bound
+            lower_bound: self.lower_bound,
         }
     }
 }
@@ -100,9 +100,9 @@ impl NumericGene<IntGene, i32> for IntGene {
     fn div(&self, other: &IntGene) -> IntGene {
         let other_allele = match other.allele() == &0_i32 {
             true => 1_i32,
-            false => *other.allele()
+            false => *other.allele(),
         };
-        
+
         IntGene {
             allele: self.allele / other_allele,
             ..*self

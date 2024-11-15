@@ -8,10 +8,10 @@ use crate::engines::optimize::Optimize;
 use crate::engines::schema::timer::Timer;
 use crate::engines::score::Score;
 
+use super::codexes::Codex;
 use super::engine_context::EngineContext;
 use super::genome::phenotype::Phenotype;
 use super::selectors::selector::Select;
-use super::codexes::Codex;
 
 pub struct GeneticEngine<'a, G, A, T>
 where
@@ -24,9 +24,8 @@ where
 impl<'a, G, A, T> GeneticEngine<'a, G, A, T>
 where
     G: Gene<G, A>,
-    T: Clone
+    T: Clone,
 {
-
     pub fn new(params: GeneticEngineParams<'a, G, A, T>) -> Self {
         GeneticEngine { params }
     }
@@ -35,9 +34,9 @@ where
         GeneticEngineParams::new().codex(codex)
     }
 
-    pub fn run<F>(&self, limit: F) -> EngineContext<G, A, T> 
+    pub fn run<F>(&self, limit: F) -> EngineContext<G, A, T>
     where
-        F: Fn(&EngineContext<G, A, T>) -> bool
+        F: Fn(&EngineContext<G, A, T>) -> bool,
     {
         let mut ctx = self.start();
 
@@ -58,7 +57,7 @@ where
             self.audit(&mut ctx);
 
             if limit(&ctx) {
-                break self.stop(&mut ctx)
+                break self.stop(&mut ctx);
             }
         }
     }
@@ -110,7 +109,7 @@ where
 
         for i in 0..population.len() {
             let phenotype = population.get(i);
-            
+
             if phenotype.age(generation) > max_age {
                 population.set(i, Phenotype::from_genotype(codex.encode(), generation));
             } else if !phenotype.genotype().is_valid() {
@@ -119,7 +118,12 @@ where
         }
     }
 
-    fn recombine(&self, handle: &mut EngineContext<G, A, T>, survivors: Population<G, A>, offspring: Population<G, A>) {
+    fn recombine(
+        &self,
+        handle: &mut EngineContext<G, A, T>,
+        survivors: Population<G, A>,
+        offspring: Population<G, A>,
+    ) {
         handle.population = survivors
             .into_iter()
             .chain(offspring.into_iter())
@@ -193,7 +197,7 @@ where
             best: self.codex().decode(&population.get(0).genotype()),
             index: 0,
             timer: Timer::new(),
-            score: None
+            score: None,
         }
     }
 

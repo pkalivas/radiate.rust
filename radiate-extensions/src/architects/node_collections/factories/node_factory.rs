@@ -2,23 +2,25 @@ use std::collections::HashMap;
 
 use rand::seq::SliceRandom;
 
-use crate::{architects::{node_collections::node::Node, schema::node_types::NodeType}, operations::op::{self, Ops}};
+use crate::{
+    architects::{node_collections::node::Node, schema::node_types::NodeType},
+    operations::op::{self, Ops},
+};
 
-
-pub struct NodeFactory<T> 
+pub struct NodeFactory<T>
 where
-    T: Clone + PartialEq + Default
+    T: Clone + PartialEq + Default,
 {
-    pub node_values: HashMap<NodeType, Vec<Ops<T>>>
+    pub node_values: HashMap<NodeType, Vec<Ops<T>>>,
 }
 
 impl<T> NodeFactory<T>
 where
-    T: Clone + PartialEq + Default
+    T: Clone + PartialEq + Default,
 {
     pub fn new() -> Self {
         Self {
-            node_values: HashMap::new()
+            node_values: HashMap::new(),
         }
     }
 
@@ -28,7 +30,10 @@ where
     }
 
     pub fn input_values(mut self, values: Vec<T>) -> NodeFactory<T> {
-        self.add_node_values(NodeType::Input, values.iter().map(|v| op::value(v.clone())).collect());
+        self.add_node_values(
+            NodeType::Input,
+            values.iter().map(|v| op::value(v.clone())).collect(),
+        );
         self
     }
 
@@ -38,37 +43,49 @@ where
     }
 
     pub fn output_values(mut self, values: Vec<T>) -> NodeFactory<T> {
-        self.add_node_values(NodeType::Output, values.iter().map(|v| op::value(v.clone())).collect());
+        self.add_node_values(
+            NodeType::Output,
+            values.iter().map(|v| op::value(v.clone())).collect(),
+        );
         self
     }
-    
+
     pub fn gates(mut self, values: Vec<Ops<T>>) -> NodeFactory<T> {
         self.add_node_values(NodeType::Gate, values);
         self
     }
 
     pub fn gate_values(mut self, values: Vec<T>) -> NodeFactory<T> {
-        self.add_node_values(NodeType::Gate, values.iter().map(|v| op::value(v.clone())).collect());
+        self.add_node_values(
+            NodeType::Gate,
+            values.iter().map(|v| op::value(v.clone())).collect(),
+        );
         self
     }
-    
+
     pub fn aggregates(mut self, values: Vec<Ops<T>>) -> NodeFactory<T> {
         self.add_node_values(NodeType::Aggregate, values);
         self
     }
 
     pub fn aggregate_values(mut self, values: Vec<T>) -> NodeFactory<T> {
-        self.add_node_values(NodeType::Aggregate, values.iter().map(|v| op::value(v.clone())).collect());
+        self.add_node_values(
+            NodeType::Aggregate,
+            values.iter().map(|v| op::value(v.clone())).collect(),
+        );
         self
     }
-    
+
     pub fn weights(mut self, values: Vec<Ops<T>>) -> NodeFactory<T> {
         self.add_node_values(NodeType::Weight, values);
         self
     }
 
     pub fn weight_values(mut self, values: Vec<T>) -> NodeFactory<T> {
-        self.add_node_values(NodeType::Weight, values.iter().map(|v| op::value(v.clone())).collect());
+        self.add_node_values(
+            NodeType::Weight,
+            values.iter().map(|v| op::value(v.clone())).collect(),
+        );
         self
     }
 
@@ -81,7 +98,7 @@ where
         self.node_values.insert(node_type, values);
     }
 
-    pub fn new_node(&self, index: usize, node_type: NodeType) -> Node<T>  {
+    pub fn new_node(&self, index: usize, node_type: NodeType) -> Node<T> {
         let mut rng = rand::thread_rng();
         if let Some(values) = self.node_values.get(&node_type) {
             match node_type {
@@ -89,7 +106,7 @@ where
                     let value = values[index % values.len()].clone();
                     let arity = value.arity();
                     return Node::new(index, node_type, value).set_arity(arity);
-                },
+                }
                 _ => {
                     let value = values.choose(&mut rng).unwrap();
                     let arity = value.arity();
@@ -97,15 +114,17 @@ where
                 }
             }
         }
-        
+
         Node::new(index, node_type, Ops::default())
     }
 
     pub fn regression(input_size: usize) -> NodeFactory<f32> {
         NodeFactory::new()
-            .inputs((0..input_size)
-                .map(|idx| op::var(idx))
-                .collect::<Vec<Ops<f32>>>())
+            .inputs(
+                (0..input_size)
+                    .map(|idx| op::var(idx))
+                    .collect::<Vec<Ops<f32>>>(),
+            )
             .gates(vec![
                 op::add(),
                 op::sub(),
@@ -126,7 +145,7 @@ where
                 op::ceil(),
                 op::floor(),
                 op::gt(),
-                op::lt()
+                op::lt(),
             ])
             .aggregates(vec![
                 op::sigmoid(),
@@ -145,17 +164,16 @@ where
             ])
             .weights(vec![op::weight()])
             .outputs(vec![op::linear()])
-
     }
 }
 
-impl<T> Clone for NodeFactory<T> 
+impl<T> Clone for NodeFactory<T>
 where
-    T: Clone + PartialEq + Default
+    T: Clone + PartialEq + Default,
 {
     fn clone(&self) -> Self {
         NodeFactory {
-            node_values: self.node_values.clone()
+            node_values: self.node_values.clone(),
         }
     }
 }

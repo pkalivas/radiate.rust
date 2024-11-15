@@ -1,30 +1,38 @@
 use super::sample_set::Sample;
 use super::{error_functions::ErrorFunction, sample_set::SampleSet};
-use std::ops::{Add, Div, Mul, Sub, AddAssign, DivAssign, SubAssign, MulAssign};
 use num_traits::cast::FromPrimitive;
 use num_traits::float::Float;
+use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign};
 
-pub struct Regression<T>{
+pub struct Regression<T> {
     pub sample_set: SampleSet<T>,
     pub loss_function: ErrorFunction,
 }
 
 impl<T> Regression<T> {
     pub fn new(sample_set: SampleSet<T>, loss_function: ErrorFunction) -> Self {
-        Regression { sample_set, loss_function }
+        Regression {
+            sample_set,
+            loss_function,
+        }
     }
 
-    pub fn from(loss_function: ErrorFunction, samples: Vec<(Vec<T>, Vec<T>)>, ) -> Self {
+    pub fn from(loss_function: ErrorFunction, samples: Vec<(Vec<T>, Vec<T>)>) -> Self {
         let mut sample_set = SampleSet::new();
         for (input, output) in samples {
             sample_set.add_sample(input, output);
         }
-        Regression { sample_set, loss_function }
+        Regression {
+            sample_set,
+            loss_function,
+        }
     }
 
-    pub fn error<F>(&self, mut error_fn: F) -> T 
+    pub fn error<F>(&self, mut error_fn: F) -> T
     where
-        T: Clone + PartialEq + Default
+        T: Clone
+            + PartialEq
+            + Default
             + Add<Output = T>
             + Div<Output = T>
             + Sub<Output = T>
@@ -36,9 +44,10 @@ impl<T> Regression<T> {
             + MulAssign
             + Float
             + FromPrimitive,
-        F: FnMut(&Vec<T>) -> Vec<T>
+        F: FnMut(&Vec<T>) -> Vec<T>,
     {
-        self.loss_function.calculate(&self.sample_set, &mut error_fn)
+        self.loss_function
+            .calculate(&self.sample_set, &mut error_fn)
     }
 
     pub fn get_samples(&self) -> &[Sample<T>] {

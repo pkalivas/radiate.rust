@@ -5,18 +5,17 @@ use radiate_rust::Alterer;
 use crate::architects::node_collections::*;
 use crate::operations::op::Ops;
 
-
 pub struct NodeCrossover<T>
 where
-    T: Clone + PartialEq + Default + 'static
+    T: Clone + PartialEq + Default + 'static,
 {
     pub rate: f32,
     _marker: std::marker::PhantomData<T>,
 }
 
 impl<T> NodeCrossover<T>
-where 
-    T: Clone + PartialEq + Default + 'static
+where
+    T: Clone + PartialEq + Default + 'static,
 {
     pub fn alterer(rate: f32) -> Alterer<Node<T>, Ops<T>> {
         Alterer::Crossover(Box::new(Self {
@@ -26,9 +25,9 @@ where
     }
 }
 
-impl<T> Crossover<Node<T>, Ops<T>> for NodeCrossover<T> 
+impl<T> Crossover<Node<T>, Ops<T>> for NodeCrossover<T>
 where
-    T: Clone + PartialEq + Default
+    T: Clone + PartialEq + Default,
 {
     fn cross_rate(&self) -> f32 {
         self.rate
@@ -38,7 +37,7 @@ where
     fn cross_chromosomes(
         &self,
         chrom_one: &mut Chromosome<Node<T>, Ops<T>>,
-        chrom_two: &mut Chromosome<Node<T>, Ops<T>>
+        chrom_two: &mut Chromosome<Node<T>, Ops<T>>,
     ) -> i32 {
         let rate = self.cross_rate();
         let mut cross_count = 0;
@@ -48,7 +47,9 @@ where
                 let gene_one = chrom_one.get_gene(i);
                 let gene_two = chrom_two.get_gene(i);
 
-                if gene_one.arity() != gene_two.arity() || gene_one.node_type() != gene_two.node_type() {
+                if gene_one.arity() != gene_two.arity()
+                    || gene_one.node_type() != gene_two.node_type()
+                {
                     continue;
                 }
 

@@ -38,10 +38,17 @@ impl Codex<IntGene, i32, Vec<Vec<i32>>> for IntCodex {
         Genotype {
             chromosomes: (0..self.num_chromosomes)
                 .into_iter()
-                .map(|_| Chromosome::from_genes((0..self.num_genes)
-                        .into_iter()
-                        .map(|_| IntGene::new(self.min, self.max).with_bounds(self.lower_bound, self.upper_bound))
-                        .collect::<Vec<IntGene>>()))
+                .map(|_| {
+                    Chromosome::from_genes(
+                        (0..self.num_genes)
+                            .into_iter()
+                            .map(|_| {
+                                IntGene::new(self.min, self.max)
+                                    .with_bounds(self.lower_bound, self.upper_bound)
+                            })
+                            .collect::<Vec<IntGene>>(),
+                    )
+                })
                 .collect::<Vec<Chromosome<IntGene, i32>>>(),
         }
     }

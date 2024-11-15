@@ -2,12 +2,12 @@ use std::collections::VecDeque;
 
 use crate::NodeCollection;
 
-use super::super::node::Node;
 use super::super::graph::Graph;
+use super::super::node::Node;
 
 pub struct GraphIterator<'a, T>
 where
-    T: Clone + PartialEq + Default
+    T: Clone + PartialEq + Default,
 {
     pub graph: &'a Graph<T>,
     pub completed: Vec<bool>,
@@ -15,13 +15,13 @@ where
     pub pending_index: usize,
 }
 
-impl<'a, T> GraphIterator<'a, T> 
+impl<'a, T> GraphIterator<'a, T>
 where
-    T: Clone + PartialEq + Default
+    T: Clone + PartialEq + Default,
 {
     pub fn new(graph: &'a Graph<T>) -> Self {
-        Self { 
-            graph, 
+        Self {
+            graph,
             completed: vec![false; graph.len()],
             index_queue: VecDeque::new(),
             pending_index: 0,
@@ -29,9 +29,9 @@ where
     }
 }
 
-impl<'a, T> Iterator for GraphIterator<'a, T> 
+impl<'a, T> Iterator for GraphIterator<'a, T>
 where
-    T: Clone + PartialEq + Default
+    T: Clone + PartialEq + Default,
 {
     type Item = &'a Node<T>;
 
@@ -52,7 +52,7 @@ where
                         }
                     }
                 }
-    
+
                 if degree == 0 {
                     self.completed[node.index] = true;
                     self.index_queue.push_back(node.index);
@@ -68,8 +68,8 @@ where
             return match self.graph.get(index) {
                 Some(node) => Some(node),
                 None => None,
-            }
-        } 
+            };
+        }
 
         None
     }

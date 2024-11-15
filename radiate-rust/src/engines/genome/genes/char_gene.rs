@@ -25,13 +25,11 @@ impl Gene<CharGene, char> for CharGene {
     }
 
     fn from_allele(&self, allele: &char) -> CharGene {
-        CharGene {
-            allele: *allele,
-        }
+        CharGene { allele: *allele }
     }
 }
 
-impl Valid for CharGene { }
+impl Valid for CharGene {}
 
 impl Clone for CharGene {
     fn clone(&self) -> Self {

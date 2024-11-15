@@ -1,4 +1,3 @@
-
 use std::collections::{HashSet, VecDeque};
 
 use radiate_rust::engines::genome::genes::gene::Valid;
@@ -8,13 +7,13 @@ use crate::architects::node_collections::node::Node;
 pub trait NodeCollection<C, T>: Valid
 where
     C: NodeCollection<C, T> + Default + Clone,
-    T: Clone + PartialEq + Default
+    T: Clone + PartialEq + Default,
 {
     fn from_nodes(nodes: Vec<Node<T>>) -> Self;
 
     fn get(&self, index: usize) -> Option<&Node<T>>;
     fn get_mut(&mut self, index: usize) -> Option<&mut Node<T>>;
-    
+
     fn get_nodes(&self) -> &[Node<T>];
     fn get_nodes_mut(&mut self) -> &mut [Node<T>];
 
@@ -34,32 +33,40 @@ where
     fn iter_mut(&mut self) -> std::slice::IterMut<Node<T>> {
         self.get_nodes_mut().iter_mut()
     }
-    
+
     fn len(&self) -> usize {
         self.get_nodes().len()
     }
 
     fn attach(&mut self, incoming: usize, outgoing: usize) -> &mut Self {
-        self.get_nodes_mut()[incoming].outgoing_mut().insert(outgoing);
-        self.get_nodes_mut()[outgoing].incoming_mut().insert(incoming);
+        self.get_nodes_mut()[incoming]
+            .outgoing_mut()
+            .insert(outgoing);
+        self.get_nodes_mut()[outgoing]
+            .incoming_mut()
+            .insert(incoming);
         self
     }
 
     fn detach(&mut self, incoming: usize, outgoing: usize) -> &mut Self {
-        self.get_nodes_mut()[incoming].outgoing_mut().remove(&outgoing);
-        self.get_nodes_mut()[outgoing].incoming_mut().remove(&incoming);
+        self.get_nodes_mut()[incoming]
+            .outgoing_mut()
+            .remove(&outgoing);
+        self.get_nodes_mut()[outgoing]
+            .incoming_mut()
+            .remove(&incoming);
         self
     }
 }
 
-
 pub fn get_cycles<T>(nodes: &[Node<T>], index: usize) -> Vec<usize>
 where
-    T: Clone + PartialEq + Default
+    T: Clone + PartialEq + Default,
 {
     let mut path = Vec::new();
     let mut seen = HashSet::new();
-    let mut current = nodes[index].incoming()
+    let mut current = nodes[index]
+        .incoming()
         .iter()
         .cloned()
         .collect::<VecDeque<usize>>();

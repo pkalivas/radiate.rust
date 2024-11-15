@@ -3,11 +3,16 @@ use crate::engines::genome::population::Population;
 use crate::Optimize;
 use rand::Rng;
 
-pub trait Select<G, A> 
+pub trait Select<G, A>
 where
-    G: Gene<G, A>
+    G: Gene<G, A>,
 {
-    fn select(&self, population: &Population<G, A>, optimize: &Optimize, count: usize) -> Population<G, A>;
+    fn select(
+        &self,
+        population: &Population<G, A>,
+        optimize: &Optimize,
+        count: usize,
+    ) -> Population<G, A>;
 }
 
 pub enum Selector {
@@ -18,12 +23,17 @@ pub enum Selector {
     Boltzmann(f32),
 }
 
-impl<G, A> Select<G, A> for Selector 
+impl<G, A> Select<G, A> for Selector
 where
-    G: Gene<G, A>
+    G: Gene<G, A>,
 {
     #[inline]
-    fn select(&self, population: &Population<G, A>, optimize: &Optimize, count: usize) -> Population<G, A> {
+    fn select(
+        &self,
+        population: &Population<G, A>,
+        optimize: &Optimize,
+        count: usize,
+    ) -> Population<G, A> {
         match self {
             Selector::Tournament(size) => {
                 let mut rng = rand::thread_rng();
@@ -47,7 +57,7 @@ where
                 let mut selected = Vec::with_capacity(count);
                 let mut fitness_values = Vec::with_capacity(population.len());
                 let mut rng = rand::thread_rng();
-                
+
                 let total = population
                     .iter()
                     .map(|individual| match individual.score() {

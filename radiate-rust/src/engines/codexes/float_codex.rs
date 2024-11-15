@@ -42,10 +42,17 @@ impl Codex<FloatGene, f32, Vec<Vec<f32>>> for FloatCodex {
         Genotype {
             chromosomes: (0..self.num_chromosomes)
                 .into_iter()
-                .map(|_| Chromosome::from_genes((0..self.num_genes)
-                        .into_iter()
-                        .map(|_| FloatGene::new(self.min, self.max).with_bounds(self.lower_bound, self.upper_bound))
-                        .collect::<Vec<FloatGene>>()))
+                .map(|_| {
+                    Chromosome::from_genes(
+                        (0..self.num_genes)
+                            .into_iter()
+                            .map(|_| {
+                                FloatGene::new(self.min, self.max)
+                                    .with_bounds(self.lower_bound, self.upper_bound)
+                            })
+                            .collect::<Vec<FloatGene>>(),
+                    )
+                })
                 .collect::<Vec<Chromosome<FloatGene, f32>>>(),
         }
     }

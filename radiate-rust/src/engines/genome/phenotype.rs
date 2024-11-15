@@ -2,27 +2,27 @@ use crate::engines::score::Score;
 
 use super::{genes::gene::Gene, genotype::Genotype};
 
-pub struct Phenotype<G, A> 
+pub struct Phenotype<G, A>
 where
-    G: Gene<G, A>
+    G: Gene<G, A>,
 {
     pub genotype: Genotype<G, A>,
     pub score: Option<Score>,
     pub generation: i32,
 }
 
-impl<G, A> Phenotype<G, A> 
+impl<G, A> Phenotype<G, A>
 where
-    G: Gene<G, A>
+    G: Gene<G, A>,
 {
     pub fn from_genotype(genotype: Genotype<G, A>, generation: i32) -> Self {
         Phenotype {
             genotype,
             score: None,
-            generation
+            generation,
         }
     }
-    
+
     pub fn genotype(&self) -> &Genotype<G, A> {
         &self.genotype
     }
@@ -44,9 +44,9 @@ where
     }
 }
 
-impl<G, A> Clone for Phenotype<G, A> 
+impl<G, A> Clone for Phenotype<G, A>
 where
-    G: Gene<G, A>
+    G: Gene<G, A>,
 {
     fn clone(&self) -> Self {
         Phenotype {
@@ -55,14 +55,14 @@ where
                 Some(score) => Some(score.clone()),
                 None => None,
             },
-            generation: self.generation
+            generation: self.generation,
         }
     }
 }
 
-impl<G, A> PartialEq for Phenotype<G, A> 
+impl<G, A> PartialEq for Phenotype<G, A>
 where
-    G: Gene<G, A>
+    G: Gene<G, A>,
 {
     fn eq(&self, other: &Self) -> bool {
         self.genotype == other.genotype
@@ -71,20 +71,24 @@ where
     }
 }
 
-impl<G, A> PartialOrd for Phenotype<G, A> 
+impl<G, A> PartialOrd for Phenotype<G, A>
 where
-    G: Gene<G, A>
+    G: Gene<G, A>,
 {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
         self.score.partial_cmp(&other.score)
     }
 }
 
-impl<G, A> std::fmt::Debug for Phenotype<G, A> 
+impl<G, A> std::fmt::Debug for Phenotype<G, A>
 where
-    G: Gene<G, A> + std::fmt::Debug
+    G: Gene<G, A> + std::fmt::Debug,
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{:?}, generation: {:?}, score: {:?}", self.genotype, self.generation, self.score)
+        write!(
+            f,
+            "{:?}, generation: {:?}, score: {:?}",
+            self.genotype, self.generation, self.score
+        )
     }
 }

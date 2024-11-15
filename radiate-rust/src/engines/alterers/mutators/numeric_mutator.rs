@@ -16,7 +16,7 @@ impl NumericMutator {
 
 impl<G, A> Mutate<G, A> for NumericMutator
 where
-    G: NumericGene<G, A>
+    G: NumericGene<G, A>,
 {
     fn mutate_rate(&self) -> f32 {
         self.rate
@@ -31,7 +31,7 @@ where
             if random.gen::<f32>() < self.rate {
                 let new_instance = gene.new_instance();
                 let operator = random.gen_range(0..4);
-                
+
                 mutations += 1;
 
                 *gene = match operator {

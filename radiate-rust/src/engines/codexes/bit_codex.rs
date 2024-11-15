@@ -12,7 +12,10 @@ pub struct BitCodex {
 
 impl BitCodex {
     pub fn new(num_chromosomes: usize, num_genes: usize) -> Self {
-        BitCodex { num_chromosomes, num_genes }
+        BitCodex {
+            num_chromosomes,
+            num_genes,
+        }
     }
 }
 
@@ -21,10 +24,14 @@ impl Codex<BitGene, bool, Vec<Vec<bool>>> for BitCodex {
         Genotype {
             chromosomes: (0..self.num_chromosomes)
                 .into_iter()
-                .map(|_| Chromosome::from_genes((0..self.num_genes)
-                        .into_iter()
-                        .map(|_| BitGene::new())
-                        .collect::<Vec<BitGene>>()))
+                .map(|_| {
+                    Chromosome::from_genes(
+                        (0..self.num_genes)
+                            .into_iter()
+                            .map(|_| BitGene::new())
+                            .collect::<Vec<BitGene>>(),
+                    )
+                })
                 .collect::<Vec<Chromosome<BitGene, bool>>>(),
         }
     }

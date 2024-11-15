@@ -1,20 +1,20 @@
 use super::{chromosome::Chromosome, genes::gene::Gene};
 
-pub struct Genotype<G, A> 
+pub struct Genotype<G, A>
 where
-    G: Gene<G, A>
+    G: Gene<G, A>,
 {
     pub chromosomes: Vec<Chromosome<G, A>>,
 }
 
-impl<G, A> Genotype<G, A> 
+impl<G, A> Genotype<G, A>
 where
-    G: Gene<G, A>
+    G: Gene<G, A>,
 {
     pub fn from_chromosomes(chromosomes: Vec<Chromosome<G, A>>) -> Self {
         Genotype { chromosomes }
     }
-    
+
     pub fn get_chromosome_mut(&mut self, index: usize) -> &mut Chromosome<G, A> {
         &mut self.chromosomes[index]
     }
@@ -50,9 +50,9 @@ where
     }
 }
 
-impl<G, A> Clone for Genotype<G, A> 
+impl<G, A> Clone for Genotype<G, A>
 where
-    G: Gene<G, A>
+    G: Gene<G, A>,
 {
     fn clone(&self) -> Self {
         Genotype {
@@ -61,18 +61,18 @@ where
     }
 }
 
-impl<G, A> PartialEq for Genotype<G, A> 
+impl<G, A> PartialEq for Genotype<G, A>
 where
-    G: Gene<G, A>
+    G: Gene<G, A>,
 {
     fn eq(&self, other: &Self) -> bool {
         self.chromosomes == other.chromosomes
     }
 }
 
-impl<G, A> std::fmt::Debug for Genotype<G, A> 
+impl<G, A> std::fmt::Debug for Genotype<G, A>
 where
-    G: Gene<G, A> + std::fmt::Debug
+    G: Gene<G, A> + std::fmt::Debug,
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "[")?;

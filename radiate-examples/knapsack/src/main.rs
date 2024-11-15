@@ -4,12 +4,10 @@ use radiate_rust::engines::codexes::subset_codex::SubSetCodex;
 use radiate_rust::engines::genetic_engine::GeneticEngine;
 use radiate_rust::engines::score::Score;
 
-
 const KNAPSACK_SIZE: usize = 15;
 const MAX_EPOCHS: i32 = 50;
 
-
-fn main() {    
+fn main() {
     let knapsack = Knapsack::new(KNAPSACK_SIZE);
 
     let codex = SubSetCodex::new(&knapsack.items);
@@ -23,13 +21,22 @@ fn main() {
         let value_total = Knapsack::value_total(&output.best);
         let weight_total = Knapsack::weight_total(&output.best);
 
-        println!("[ {:?} ]: Value={:?} Weight={:?}", output.index, value_total, weight_total);
+        println!(
+            "[ {:?} ]: Value={:?} Weight={:?}",
+            output.index, value_total, weight_total
+        );
 
         output.index == MAX_EPOCHS
     });
 
-    println!("Result Value Total=[ {:?} ]", Knapsack::value_total(&result.best));
-    println!("Result Weigh Total=[ {:?} ]", Knapsack::weight_total(&result.best));
+    println!(
+        "Result Value Total=[ {:?} ]",
+        Knapsack::value_total(&result.best)
+    );
+    println!(
+        "Result Weigh Total=[ {:?} ]",
+        Knapsack::weight_total(&result.best)
+    );
     println!("Max Weight=[{:?}]", knapsack.capacity);
 }
 
@@ -42,7 +49,11 @@ pub struct Knapsack {
 impl Knapsack {
     pub fn new(size: usize) -> Self {
         let items = Item::random_collection(size);
-        Knapsack { capacity: size as f32 * 100_f32 / 3_f32, size, items }
+        Knapsack {
+            capacity: size as f32 * 100_f32 / 3_f32,
+            size,
+            items,
+        }
     }
 
     pub fn fitness(capacity: &f32, genotype: &Vec<&Item>) -> Score {
@@ -76,10 +87,13 @@ impl std::fmt::Debug for Knapsack {
             sum += item.value;
         }
 
-        write!(f, "Knapsack[capacity={:.2}, size={:.2}, sum={:.2}]", self.capacity, self.size, sum)
+        write!(
+            f,
+            "Knapsack[capacity={:.2}, size={:.2}, sum={:.2}]",
+            self.capacity, self.size, sum
+        )
     }
 }
-
 
 #[derive(Debug, Clone)]
 pub struct Item {
