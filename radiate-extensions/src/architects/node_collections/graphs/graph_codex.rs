@@ -21,11 +21,11 @@ impl<'a, T> GraphCodex<'a, T>
 where
     T: Clone + PartialEq + Default
 {
-    pub fn from_factory(factory: &'a NodeFactory<T>) -> GraphCodex<T> {
+    pub fn from_factory(factory: &'a NodeFactory<T>) -> Self {
         GraphCodex::from_shape(1, 1, factory)
     }
 
-    pub fn from_shape(input_size: usize, output_size: usize, factory: &'a  NodeFactory<T>) -> GraphCodex<T> {
+    pub fn from_shape(input_size: usize, output_size: usize, factory: &'a NodeFactory<T>) -> Self {
         let nodes = Architect::<Graph<T>, T>::new(&factory)
             .acyclic(input_size, output_size)
             .iter()
@@ -35,7 +35,7 @@ where
         GraphCodex::from_nodes(nodes, factory)
     }
 
-    pub fn from_nodes(nodes: Vec<Node<T>>, factory: &'a NodeFactory<T>) -> GraphCodex<T> {
+    pub fn from_nodes(nodes: Vec<Node<T>>, factory: &'a NodeFactory<T>) -> Self {
         GraphCodex {
             input_size: nodes
                 .iter()

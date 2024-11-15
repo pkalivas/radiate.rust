@@ -10,11 +10,7 @@ fn main() {
     let factory = NodeFactory::<f32>::regression(2)
         .outputs(vec![op::sigmoid()]);
 
-    let graph_codex = GraphCodex::from_shape(2, 1, &factory)
-        .set_nodes(|arc, builder| builder.layer(vec![
-            &arc.weighted_acyclic(2, 3),
-            &arc.weighted_acyclic(3, 1)]
-        ).build());
+    let graph_codex = GraphCodex::from_shape(2, 1, &factory);
 
     let regression = Regression::new(get_sample_set(), ErrorFunction::MSE);
 
@@ -49,6 +45,12 @@ fn display(result: &EngineContext<Node<f32>, Ops<f32>, Graph<f32>>) {
     }
     println!("{:?}", result.timer.elapsed());
     let mut reducer = GraphReducer::new(&result.best);
+    let iterator = GraphIterator::new(&result.best.get_nodes());
+
+    for node in iterator {
+        println!("{:?}", node);
+    }
+
     for sample in get_sample_set().get_samples().iter() {
         let output = reducer.reduce(&sample.1);
         println!("{:?} -> epected: {:?}, actual: {:.3?}", sample.1, sample.2, output);
