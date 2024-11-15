@@ -9,13 +9,11 @@ pub mod graphs;
 pub mod node;
 pub mod tracer;
 pub mod node_factory;
-pub mod trees;
 
 pub use node_collection::NodeCollection;
 pub use node::Node;
 pub use node_factory::NodeFactory;
 pub use tracer::Tracer;
-pub use trees::*;
 pub use graphs::*;
 
 
@@ -137,14 +135,6 @@ where
             .iter()
             .filter(|node| node.node_type == NodeType::Aggregate)
             .collect::<Vec<&Node<T>>>(),
-        NodeType::Root => collection
-            .iter()
-            .filter(|node| node.node_type == NodeType::Root)
-            .collect::<Vec<&Node<T>>>(),
-        NodeType::Leaf => collection
-            .iter()
-            .filter(|node| node.node_type == NodeType::Leaf)
-            .collect::<Vec<&Node<T>>>()
     };
 
     if genes.len() == 0 {

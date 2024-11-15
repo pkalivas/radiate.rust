@@ -122,7 +122,7 @@ where
 
     fn input_size(node: &Node<T>) -> usize {
         match node.node_type {
-            NodeType::Input | NodeType::Link | NodeType::Leaf => 1,
+            NodeType::Input | NodeType::Link => 1,
             NodeType::Gate => node.value.arity() as usize,
             _ => node.incoming.len()
         }
