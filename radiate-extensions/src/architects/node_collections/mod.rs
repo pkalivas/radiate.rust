@@ -9,12 +9,14 @@ pub mod graphs;
 pub mod node;
 pub mod tracer;
 pub mod node_factory;
+pub mod iterators;
 
 pub use node_collection::NodeCollection;
 pub use node::Node;
 pub use node_factory::NodeFactory;
 pub use tracer::Tracer;
 pub use graphs::*;
+pub use iterators::*;
 
 
 #[inline]

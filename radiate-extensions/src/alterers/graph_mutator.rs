@@ -51,19 +51,11 @@ where
     T: Clone + PartialEq + Default + 'static
 {
     pub fn new(factory: NodeFactory<T>, mutations: Vec<NodeMutate>) -> Self {
-        Self {
-            factory,
-            mutations
-        }
+        Self { factory, mutations }
     }
 
     pub fn alterer(factory: NodeFactory<T>, mutations: Vec<NodeMutate>) -> Alterer<Node<T>, Ops<T>> {
-        let mutator = Self {
-            factory,
-            mutations
-        };
-
-        Alterer::Alterer(Box::new(mutator))
+        Alterer::Alterer(Box::new(GraphMutator::new(factory, mutations)))
     }
 
     #[inline]

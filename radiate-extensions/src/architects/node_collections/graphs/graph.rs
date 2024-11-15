@@ -5,7 +5,6 @@ use crate::{architects::node_collections::node::Node, node_collection, Direction
 
 use super::super::node_collection::NodeCollection;
 
-
 pub struct Graph<T>
 where
     T: Clone + PartialEq
@@ -100,7 +99,6 @@ where
         }
     }
 }
-
 
 impl<T> IntoIterator for Graph<T>
 where

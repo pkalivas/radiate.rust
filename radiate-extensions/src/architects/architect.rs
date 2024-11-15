@@ -35,24 +35,24 @@ where
         build_fn(self, NodeCollectionBuilder::new(&self.node_factory))
     }
 
-    pub fn input(&self, size: usize) -> C {
-        self.new_collection(NodeType::Input, size)
+    pub fn input(&self, siez: usize) -> C {
+        self.new_collection(NodeType::Input, siez)
     }
 
-    pub fn output(&self, size: usize) -> C {
-        self.new_collection(NodeType::Output, size)
+    pub fn output(&self, siez: usize) -> C {
+        self.new_collection(NodeType::Output, siez)
     }
 
-    pub fn gate(&self, size: usize) -> C {
-        self.new_collection(NodeType::Gate, size)
+    pub fn gate(&self, siez: usize) -> C {
+        self.new_collection(NodeType::Gate, siez)
     }
 
-    pub fn aggregate(&self, size: usize) -> C {
-        self.new_collection(NodeType::Aggregate, size)
+    pub fn aggregate(&self, siez: usize) -> C {
+        self.new_collection(NodeType::Aggregate, siez)
     }
 
-    pub fn weight(&self, size: usize) -> C {
-        self.new_collection(NodeType::Weight, size)
+    pub fn weight(&self, siez: usize) -> C {
+        self.new_collection(NodeType::Weight, siez)
     }
 
     pub fn new_collection(&self, node_type: NodeType, size: usize) -> C {

@@ -36,13 +36,7 @@ where
     }
 
     pub fn alterer(crossover_rate: f32, crossover_parent_node_rate: f32) -> Alterer<Node<T>, Ops<T>> {
-        let alterer = Self {
-            crossover_rate,
-            crossover_parent_node_rate, 
-            _marker: std::marker::PhantomData
-        };
-
-        Alterer::Alterer(Box::new(alterer))
+        Alterer::Alterer(Box::new(GraphCrossover::<T>::new(crossover_rate, crossover_parent_node_rate)))
     }
 
     #[inline]
