@@ -7,6 +7,7 @@ const MIN_SCORE: f32 = 0.01;
 
 
 fn main() {
+
     let factory = NodeFactory::<f32>::regression(2)
         .outputs(vec![op::sigmoid()]);
 

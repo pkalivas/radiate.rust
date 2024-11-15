@@ -85,14 +85,6 @@ where
         self.arity = Some(arity);
         self
     }
-
-    pub fn input_size(&self) -> usize {
-        match self.node_type {
-            NodeType::Input | NodeType::Link => 1,
-            NodeType::Gate => self.value.arity() as usize,
-            _ => self.incoming.len()
-        }
-    }
 }
 
 impl<T> Gene<Node<T>, Ops<T>> for Node<T>
@@ -144,7 +136,7 @@ where
             NodeType::Gate => self.incoming.len() == self.arity().unwrap() as usize,
             NodeType::Aggregate => !self.incoming.is_empty() && !self.outgoing.is_empty(),
             NodeType::Weight => self.incoming.len() == 1 && self.outgoing.len() == 1,
-            NodeType::Link => self.incoming.len() == 1 && self.outgoing.len() > 0
+            NodeType::Link => self.incoming.len() == 1 && self.outgoing.len() > 0,
         }
     }
 }

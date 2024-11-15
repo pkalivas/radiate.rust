@@ -27,6 +27,10 @@ where
         self.genes[index] = gene;
     }
 
+    pub fn get_genes(&self) -> &[G] {
+        &self.genes
+    }
+
     pub fn len(&self) -> usize {
         self.genes.len()
     }

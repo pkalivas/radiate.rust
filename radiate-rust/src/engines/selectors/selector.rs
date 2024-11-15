@@ -10,7 +10,6 @@ where
     fn select(&self, population: &Population<G, A>, optimize: &Optimize, count: usize) -> Population<G, A>;
 }
 
-#[allow(dead_code)]
 pub enum Selector {
     Tournament(u8),
     Roulette,

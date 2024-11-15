@@ -1,5 +1,6 @@
 use crate::architects::node_collections::tracer::Tracer;
 use crate::architects::schema::node_types::NodeType;
+use crate::Node;
 
 use super::graph::Graph;
 use super::super::node_collection::NodeCollection;
@@ -26,7 +27,7 @@ where
             graph, 
             tracers: graph
                 .iter()
-                .map(|node| Tracer::new(node.input_size()))
+                .map(|node| Tracer::new(GraphReducer::input_size(node)))
                 .collect::<Vec<Tracer<T>>>(), 
             order: Vec::with_capacity(graph.len())
         }
@@ -117,5 +118,13 @@ where
         }
 
         result
+    }
+
+    fn input_size(node: &Node<T>) -> usize {
+        match node.node_type {
+            NodeType::Input | NodeType::Link => 1,
+            NodeType::Gate => node.value.arity() as usize,
+            _ => node.incoming.len()
+        }
     }
 }

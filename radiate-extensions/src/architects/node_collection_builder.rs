@@ -140,22 +140,34 @@ where
     }
 
     fn connect(&mut self, connection: ConnectTypes, one: &'a C, two: &'a C) {
-        for node in one.iter().chain(two.iter()) {
-            if !self.nodes.contains_key(node.id()) {
-                let node_id = node.id();
-
-                self.nodes.insert(&node_id, node);
-                self.node_order.insert(self.node_order.len(), &node_id);
-            }
-        }
+        self.attach(one);
+        self.attach(two);
 
         match connection {
             ConnectTypes::OneToOne => self.one_to_one_connect(one, two),
             ConnectTypes::OneToMany => self.one_to_many_connect(one, two),
             ConnectTypes::ManyToOne => self.many_to_one_connect(one, two),
             ConnectTypes::AllToAll => self.all_to_all_connect(one, two),
-            ConnectTypes::AllToAllSelf => self.self_connect(one, two),
+            ConnectTypes::AllToAllSelf => self.all_to_all_self_connect(one, two),
             ConnectTypes::ParentToChild => self.parent_to_child_connect(one, two),
+        }
+    }
+
+    fn attach(&mut self, group: &'a C) {
+        for node in group.iter() {
+            if !self.nodes.contains_key(node.id()) {
+                let node_id = node.id();
+
+                self.nodes.insert(&node_id, node);
+                self.node_order.insert(self.node_order.len(), &node_id);
+
+                for outgoing in group.iter().filter(|item| node.outgoing().contains(item.index())) {
+                    self.relationships.push(NodeRelationship {
+                        source_id: node.id(),
+                        target_id: outgoing.id(),
+                    });
+                }
+            }
         }
     }
 
@@ -225,7 +237,7 @@ where
         }
     }
 
-    fn self_connect(&mut self, one: &'a C, two: &'a C) {
+    fn all_to_all_self_connect(&mut self, one: &'a C, two: &'a C) {
         let one_outputs = self.get_outputs(one);
         let two_inputs = self.get_inputs(two);
 

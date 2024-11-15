@@ -5,7 +5,6 @@ use radiate_rust::engines::genome::genes::gene::Valid;
 
 use crate::architects::node_collections::node::Node;
 
-
 pub trait NodeCollection<C, T>: Valid
 where
     C: NodeCollection<C, T> + Default + Clone,
@@ -64,6 +63,8 @@ where
             })
             .collect::<Vec<Node<T>>>();
 
+        let ref_new_nodes = new_nodes.clone();
+
         let old_nodes = self.get_nodes()
             .iter()
             .enumerate()
@@ -76,15 +77,15 @@ where
 
             for incoming in old_node.incoming.iter() {
                 if let Some(old_index) = old_nodes.get(incoming) {
-                    let old_incoming = self.get(*old_index).unwrap();
-                    new_node.incoming_mut().insert(old_incoming.index);
+                    // let old_incoming = self.get(*old_index).unwrap();
+                    new_node.incoming_mut().insert(ref_new_nodes[*old_index].index);
                 }
             }
 
             for outgoing in old_node.outgoing.iter() {
                 if let Some(old_index) = old_nodes.get(outgoing) {
-                    let old_outgoing = self.get(*old_index).unwrap();
-                    new_node.outgoing_mut().insert(old_outgoing.index);
+                    // let old_outgoing = self.get(*old_index).unwrap();
+                    new_node.outgoing_mut().insert(ref_new_nodes[*old_index].index);
                 }
             }
         }

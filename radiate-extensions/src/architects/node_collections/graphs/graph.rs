@@ -18,7 +18,7 @@ where
     T: Clone + PartialEq + Default
 {
     fn from_nodes(nodes: Vec<Node<T>>) -> Self {
-        Graph { nodes }
+        Self { nodes }
     }
 
     fn get(&self, index: usize) -> Option<&Node<T>> {

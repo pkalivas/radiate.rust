@@ -11,6 +11,10 @@ impl<G, A> Genotype<G, A>
 where
     G: Gene<G, A>
 {
+    pub fn from_chromosomes(chromosomes: Vec<Chromosome<G, A>>) -> Self {
+        Genotype { chromosomes }
+    }
+    
     pub fn get_chromosome_mut(&mut self, index: usize) -> &mut Chromosome<G, A> {
         &mut self.chromosomes[index]
     }
