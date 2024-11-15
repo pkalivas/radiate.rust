@@ -105,8 +105,7 @@ where
 
         let indecies = new_collection.iter().map(|node| *node.index()).collect::<Vec<usize>>();
         NodeCollectionBuilder::<C, T>::repair(&self.factory, &mut new_collection
-            .set_cycles(indecies)
-            .reindex(0))
+            .set_cycles(indecies))
     }
 
     pub fn layer(&self, collections: Vec<&'a C>) -> Self {
