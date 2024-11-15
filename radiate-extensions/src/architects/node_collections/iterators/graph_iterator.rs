@@ -11,7 +11,6 @@ where
 {
     pub graph: &'a Graph<T>,
     pub completed: Vec<bool>,
-    pub index_order: Vec<usize>,
     pub index_queue: VecDeque<usize>,
     pub pending_index: usize,
 }
@@ -24,7 +23,6 @@ where
         Self { 
             graph, 
             completed: vec![false; graph.len()],
-            index_order: Vec::new(),
             index_queue: VecDeque::new(),
             pending_index: 0,
         }
@@ -37,10 +35,8 @@ where
 {
     type Item = &'a Node<T>;
 
+    #[inline]
     fn next(&mut self) -> Option<Self::Item> {
-        if self.index_order.len() == self.graph.len() {
-            
-        }
         let mut min_pending_index = self.graph.len();
         for index in self.pending_index..self.graph.len() {
             if self.completed[index] {
