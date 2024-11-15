@@ -220,9 +220,7 @@ where
             .collect::<Vec<String>>()
             .join(", ");
         
-        write!(
-            f,
-            "[{:<3}] {:>10?} :: {:<12} E: {:<5} V:{:<5} R:{:<5} {:<2} {:<2} < [{}]",
+        write!(f, "[{:<3}] {:>10?} :: {:<12} E: {:<5} V:{:<5} R:{:<5} {:<2} {:<2} < [{}]",
             self.index,
             format!("{:?}", self.node_type)[..3].to_owned(),
             format!("{:?}", self.value).to_owned(),
