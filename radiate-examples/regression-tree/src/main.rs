@@ -21,7 +21,7 @@ fn main() {
     let engine = GeneticEngine::from_codex(&tree_codex)
         .minimizing()
         .alterer(vec![
-            TreeCrossover::alterer(15, 0.5),
+            // TreeCrossover::alterer(15, 0.5),
             OpMutator::alterer(factory.clone(), 0.01, 0.05),
         ])
         .fitness_fn(move |genotype: Tree<f32>| {
