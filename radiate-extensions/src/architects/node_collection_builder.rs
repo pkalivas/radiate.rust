@@ -1,12 +1,11 @@
 use std::collections::BTreeMap;
 
-use crate::architects::node_collections::node_collection::NodeCollection;
-use crate::architects::schema::node_types::NodeType;
 use crate::architects::node_collections::node::Node;
+use crate::architects::node_collections::node_collection::NodeCollection;
 use crate::architects::node_collections::node_factory::NodeFactory;
+use crate::architects::schema::node_types::NodeType;
 
 use uuid::Uuid;
-
 
 pub enum ConnectTypes {
     OneToOne,
@@ -22,24 +21,23 @@ pub struct NodeRelationship<'a> {
     pub target_id: &'a Uuid,
 }
 
-pub struct NodeCollectionBuilder<'a, C, T> 
+pub struct NodeCollectionBuilder<'a, C, T>
 where
     C: NodeCollection<C, T> + Clone + Default,
-    T: Clone + PartialEq + Default
+    T: Clone + PartialEq + Default,
 {
     pub factory: &'a NodeFactory<T>,
     pub nodes: BTreeMap<&'a Uuid, &'a Node<T>>,
     pub node_order: BTreeMap<usize, &'a Uuid>,
     pub relationships: Vec<NodeRelationship<'a>>,
     _phantom_c: std::marker::PhantomData<C>,
-    _phantom_t: std::marker::PhantomData<T>
+    _phantom_t: std::marker::PhantomData<T>,
 }
 
-
-impl<'a, C, T> NodeCollectionBuilder<'a, C, T> 
+impl<'a, C, T> NodeCollectionBuilder<'a, C, T>
 where
     C: NodeCollection<C, T> + Clone + Default,
-    T: Clone + PartialEq + Default
+    T: Clone + PartialEq + Default,
 {
     pub fn new(factory: &'a NodeFactory<T>) -> Self {
         NodeCollectionBuilder {
@@ -48,7 +46,7 @@ where
             node_order: BTreeMap::new(),
             relationships: Vec::new(),
             _phantom_c: std::marker::PhantomData,
-            _phantom_t: std::marker::PhantomData
+            _phantom_t: std::marker::PhantomData,
         }
     }
 
@@ -102,10 +100,14 @@ where
             new_collection.attach(*source_idx, *target_idx);
         }
 
-
-        let indecies = new_collection.iter().map(|node| *node.index()).collect::<Vec<usize>>();
-        NodeCollectionBuilder::<C, T>::repair(&self.factory, &mut new_collection
-            .set_cycles(indecies))
+        let indecies = new_collection
+            .iter()
+            .map(|node| *node.index())
+            .collect::<Vec<usize>>();
+        NodeCollectionBuilder::<C, T>::repair(
+            &self.factory,
+            &mut new_collection.set_cycles(indecies),
+        )
     }
 
     pub fn layer(&self, collections: Vec<&'a C>) -> Self {
@@ -146,7 +148,10 @@ where
                 self.nodes.insert(&node_id, node);
                 self.node_order.insert(self.node_order.len(), &node_id);
 
-                for outgoing in group.iter().filter(|item| node.outgoing().contains(item.index())) {
+                for outgoing in group
+                    .iter()
+                    .filter(|item| node.outgoing().contains(item.index()))
+                {
                     self.relationships.push(NodeRelationship {
                         source_id: node.id(),
                         target_id: outgoing.id(),
@@ -202,7 +207,7 @@ where
             for (source, target) in sources.iter().zip(two_inputs.iter()) {
                 self.relationships.push(NodeRelationship {
                     source_id: source.id(),
-                    target_id: target.id()
+                    target_id: target.id(),
                 });
             }
         }
@@ -216,7 +221,7 @@ where
             for target in two_inputs.iter() {
                 self.relationships.push(NodeRelationship {
                     source_id: source.id(),
-                    target_id: target.id()
+                    target_id: target.id(),
                 });
             }
         }
@@ -233,7 +238,7 @@ where
         for (one, two) in one_outputs.into_iter().zip(two_inputs.into_iter()) {
             self.relationships.push(NodeRelationship {
                 source_id: one.id(),
-                target_id: two.id()
+                target_id: two.id(),
             });
             self.relationships.push(NodeRelationship {
                 source_id: two.id(),
@@ -274,9 +279,12 @@ where
         let recurrent_outputs = collection
             .iter()
             .enumerate()
-            .filter(|(_, node)| node.outgoing().len() == 1 
-                && node.is_recurrent() 
-                && (node.node_type() == &NodeType::Gate || node.node_type() == &NodeType::Aggregate))
+            .filter(|(_, node)| {
+                node.outgoing().len() == 1
+                    && node.is_recurrent()
+                    && (node.node_type() == &NodeType::Gate
+                        || node.node_type() == &NodeType::Aggregate)
+            })
             .map(|(idx, _)| collection.get(idx).unwrap())
             .collect::<Vec<&Node<T>>>();
 
@@ -291,7 +299,6 @@ where
             .map(|(idx, _)| collection.get(idx).unwrap())
             .collect::<Vec<&Node<T>>>()
     }
-
 
     fn get_inputs(&self, collection: &'a C) -> Vec<&'a Node<T>> {
         let inputs = collection
@@ -308,9 +315,11 @@ where
         let recurrent_inputs = collection
             .iter()
             .enumerate()
-            .filter(|(_, node)| node.outgoing().len() == 1 
-                && node.is_recurrent() 
-                && node.node_type() == &NodeType::Gate)
+            .filter(|(_, node)| {
+                node.outgoing().len() == 1
+                    && node.is_recurrent()
+                    && node.node_type() == &NodeType::Gate
+            })
             .map(|(idx, _)| collection.get(idx).unwrap())
             .collect::<Vec<&Node<T>>>();
 

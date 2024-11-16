@@ -1,15 +1,14 @@
-
+use radiate_rust::engines::codexes::Codex;
+use radiate_rust::engines::genome::chromosome::Chromosome;
 use radiate_rust::engines::genome::genes::gene::Gene;
 use radiate_rust::engines::genome::genotype::Genotype;
-use radiate_rust::engines::genome::chromosome::Chromosome;
-use radiate_rust::engines::codexes::Codex;
 
 use crate::architects::*;
 use crate::operations::op::Ops;
 
-pub struct GraphCodex<'a, T> 
+pub struct GraphCodex<'a, T>
 where
-    T: Clone + PartialEq + Default
+    T: Clone + PartialEq + Default,
 {
     pub input_size: usize,
     pub output_size: usize,
@@ -19,7 +18,7 @@ where
 
 impl<'a, T> GraphCodex<'a, T>
 where
-    T: Clone + PartialEq + Default
+    T: Clone + PartialEq + Default,
 {
     pub fn from_factory(factory: &'a NodeFactory<T>) -> Self {
         GraphCodex::from_shape(1, 1, factory)
@@ -46,13 +45,13 @@ where
                 .filter(|node| node.node_type == NodeType::Output)
                 .count(),
             factory,
-            nodes
+            nodes,
         }
     }
 
     pub fn set_nodes<F>(mut self, node_fn: F) -> Self
     where
-        F: Fn(&Architect<Graph<T>, T>, NodeCollectionBuilder<Graph<T>, T>) -> Graph<T>
+        F: Fn(&Architect<Graph<T>, T>, NodeCollectionBuilder<Graph<T>, T>) -> Graph<T>,
     {
         let graph = Architect::<Graph<T>, T>::new(&self.factory)
             .build(|arc, builder| node_fn(arc, builder));
@@ -75,32 +74,36 @@ where
 
 impl<'a, T> Codex<Node<T>, Ops<T>, Graph<T>> for GraphCodex<'a, T>
 where
-    T: Clone + PartialEq + Default
+    T: Clone + PartialEq + Default,
 {
     fn encode(&self) -> Genotype<Node<T>, Ops<T>> {
         Genotype {
-            chromosomes: vec![Chromosome::from_genes(self.nodes
-                .iter()
-                .map(|node| {
-                    let temp_node = self.factory.new_node(node.index, node.node_type);
+            chromosomes: vec![Chromosome::from_genes(
+                self.nodes
+                    .iter()
+                    .map(|node| {
+                        let temp_node = self.factory.new_node(node.index, node.node_type);
 
-                    if temp_node.value.arity() == node.value.arity() {
-                        node.from_allele(&temp_node.allele());
-                    }
+                        if temp_node.value.arity() == node.value.arity() {
+                            node.from_allele(&temp_node.allele());
+                        }
 
-                    node.clone()
-                })
-                .collect::<Vec<Node<T>>>())]
+                        node.clone()
+                    })
+                    .collect::<Vec<Node<T>>>(),
+            )],
         }
     }
 
     fn decode(&self, genotype: &Genotype<Node<T>, Ops<T>>) -> Graph<T> {
-        Graph::from_nodes(genotype
-            .iter()
-            .next()
-            .unwrap()
-            .iter()
-            .map(|node| node.clone())
-            .collect::<Vec<Node<T>>>())
+        Graph::from_nodes(
+            genotype
+                .iter()
+                .next()
+                .unwrap()
+                .iter()
+                .map(|node| node.clone())
+                .collect::<Vec<Node<T>>>(),
+        )
     }
 }

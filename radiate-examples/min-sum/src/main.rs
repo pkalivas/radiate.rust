@@ -5,9 +5,7 @@ use radiate_rust::engines::genetic_engine::GeneticEngine;
 use radiate_rust::engines::score::Score;
 use radiate_rust::engines::selectors::selector::Selector;
 
-
 const MIN_SCORE: i32 = 0;
-
 
 fn main() {
     let codex = IntCodex::new(1, 10, 0, 100).with_bounds(0, 100);
@@ -19,7 +17,7 @@ fn main() {
         .survivor_selector(Selector::Tournament(4))
         .alterer(vec![
             Alterer::mutation(NumericMutator::new(0.01)),
-            Alterer::UniformCrossover(0.5)
+            Alterer::UniformCrossover(0.5),
         ])
         .fitness_fn(|genotype: Vec<Vec<i32>>| {
             Score::from_int(genotype.iter().fold(0, |acc, chromosome| {

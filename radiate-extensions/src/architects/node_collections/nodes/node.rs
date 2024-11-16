@@ -1,14 +1,13 @@
+use radiate_rust::engines::genome::genes::gene::{Gene, Valid};
 use std::collections::HashSet;
 use uuid::Uuid;
-use radiate_rust::engines::genome::genes::gene::{Gene, Valid};
 
 use crate::architects::schema::{direction::Direction, node_types::NodeType};
 use crate::operations::op::Ops;
 
-
 pub struct Node<T>
 where
-    T: Clone + PartialEq
+    T: Clone + PartialEq,
 {
     pub id: Uuid,
     pub index: usize,
@@ -18,12 +17,12 @@ where
     pub node_type: NodeType,
     pub direction: Direction,
     pub incoming: HashSet<usize>,
-    pub outgoing: HashSet<usize>
+    pub outgoing: HashSet<usize>,
 }
 
-impl<T> Node<T> 
+impl<T> Node<T>
 where
-    T: Clone + PartialEq 
+    T: Clone + PartialEq,
 {
     pub fn new(index: usize, node_type: NodeType, value: Ops<T>) -> Self {
         Self {
@@ -35,7 +34,7 @@ where
             direction: Direction::Forward,
             node_type,
             incoming: HashSet::new(),
-            outgoing: HashSet::new()
+            outgoing: HashSet::new(),
         }
     }
 
@@ -89,7 +88,7 @@ where
 
 impl<T> Gene<Node<T>, Ops<T>> for Node<T>
 where
-    T: Clone + PartialEq + Default
+    T: Clone + PartialEq + Default,
 {
     fn allele(&self) -> &Ops<T> {
         &self.value
@@ -105,7 +104,7 @@ where
             direction: self.direction.clone(),
             node_type: self.node_type.clone(),
             incoming: self.incoming.clone(),
-            outgoing: self.outgoing.clone()
+            outgoing: self.outgoing.clone(),
         }
     }
 
@@ -119,15 +118,14 @@ where
             direction: self.direction.clone(),
             node_type: self.node_type.clone(),
             incoming: self.incoming.clone(),
-            outgoing: self.outgoing.clone()
+            outgoing: self.outgoing.clone(),
         }
     }
 }
 
-
 impl<T> Valid for Node<T>
 where
-    T: Clone + PartialEq  
+    T: Clone + PartialEq,
 {
     fn is_valid(&self) -> bool {
         match self.node_type {
@@ -141,10 +139,9 @@ where
     }
 }
 
-
 impl<T> Clone for Node<T>
 where
-    T: Clone + PartialEq
+    T: Clone + PartialEq,
 {
     fn clone(&self) -> Self {
         Node {
@@ -156,32 +153,30 @@ where
             direction: self.direction.clone(),
             node_type: self.node_type.clone(),
             incoming: self.incoming.clone(),
-            outgoing: self.outgoing.clone()
+            outgoing: self.outgoing.clone(),
         }
     }
 }
 
-
 impl<T> PartialEq for Node<T>
 where
-    T: Clone + PartialEq
+    T: Clone + PartialEq,
 {
     fn eq(&self, other: &Self) -> bool {
-        self.id == other.id 
+        self.id == other.id
             && self.index == other.index
             && self.arity == other.arity
             && self.value == other.value
             && self.direction == other.direction
-            && self.node_type == other.node_type 
-            && self.incoming == other.incoming 
+            && self.node_type == other.node_type
+            && self.incoming == other.incoming
             && self.outgoing == other.outgoing
     }
 }
 
-
 impl<T> Default for Node<T>
 where
-    T: Clone + PartialEq + Default
+    T: Clone + PartialEq + Default,
 {
     fn default() -> Self {
         Node {
@@ -193,34 +188,35 @@ where
             direction: Direction::Forward,
             node_type: NodeType::Input,
             incoming: HashSet::new(),
-            outgoing: HashSet::new()
+            outgoing: HashSet::new(),
         }
     }
 }
 
-
 impl<T> std::fmt::Display for Node<T>
 where
-    T: Clone + PartialEq
+    T: Clone + PartialEq,
 {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(f, "{}", self.index)
     }
 }
 
-
 impl<T> std::fmt::Debug for Node<T>
 where
-    T: Clone + PartialEq + std::fmt::Debug
+    T: Clone + PartialEq + std::fmt::Debug,
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-
-        let incoming = self.incoming.iter()
+        let incoming = self
+            .incoming
+            .iter()
             .map(|idx| idx.to_string())
             .collect::<Vec<String>>()
             .join(", ");
-        
-        write!(f, "[{:<3}] {:>10?} :: {:<12} E: {:<5} V:{:<5} R:{:<5} {:<2} {:<2} < [{}]",
+
+        write!(
+            f,
+            "[{:<3}] {:>10?} :: {:<12} E: {:<5} V:{:<5} R:{:<5} {:<2} {:<2} < [{}]",
             self.index,
             format!("{:?}", self.node_type)[..3].to_owned(),
             format!("{:?}", self.value).to_owned(),

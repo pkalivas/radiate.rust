@@ -1,19 +1,11 @@
-
 use radiate_extensions::*;
 use radiate_rust::*;
-
 
 const MIN_SCORE: f32 = 0.01;
 const MAX_SECONDS: f64 = 5.0;
 
-
 fn main() {
-    let factory = NodeFactory::<f32>::regression(1)
-        .gates(vec![
-            op::add(),
-            op::sub(),
-            op::mul(),
-        ]);
+    let factory = NodeFactory::<f32>::regression(1);
 
     let graph_codex = GraphCodex::from_shape(1, 1, &factory);
 
@@ -24,17 +16,18 @@ fn main() {
         .alterer(vec![
             GraphCrossover::alterer(0.5, 0.5),
             OpMutator::alterer(factory.clone(), 0.01, 0.05),
-            GraphMutator::alterer(factory.clone(), vec![
-                NodeMutate::Forward(NodeType::Weight, 0.05),
-                NodeMutate::Forward(NodeType::Aggregate, 0.03),
-                NodeMutate::Forward(NodeType::Gate, 0.03),
-            ])
+            GraphMutator::alterer(
+                factory.clone(),
+                vec![
+                    NodeMutate::Forward(NodeType::Weight, 0.05),
+                    NodeMutate::Forward(NodeType::Aggregate, 0.03),
+                    NodeMutate::Forward(NodeType::Gate, 0.03),
+                ],
+            ),
         ])
         .fitness_fn(move |genotype: Graph<f32>| {
             let mut reducer = GraphReducer::new(&genotype);
-            Score::from_f32(regression.error(|input| {
-                reducer.reduce(&input)
-            }))
+            Score::from_f32(regression.error(|input| reducer.reduce(&input)))
         })
         .build();
 

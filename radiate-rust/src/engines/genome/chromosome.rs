@@ -18,7 +18,7 @@ where
             _allele: std::marker::PhantomData,
         }
     }
-    
+
     pub fn get_gene(&self, index: usize) -> &G {
         &self.genes[index]
     }
@@ -36,13 +36,7 @@ where
     }
 
     pub fn is_valid(&self) -> bool {
-        for gene in &self.genes {
-            if !gene.is_valid() {
-                return false;
-            }
-        }
-
-        true
+        self.genes.iter().all(|gene| gene.is_valid())
     }
 
     pub fn iter(&self) -> std::slice::Iter<G> {
@@ -54,9 +48,9 @@ where
     }
 }
 
-impl<G, A> Clone for Chromosome<G, A> 
+impl<G, A> Clone for Chromosome<G, A>
 where
-    G: Gene<G, A>
+    G: Gene<G, A>,
 {
     fn clone(&self) -> Self {
         Chromosome {
@@ -66,9 +60,9 @@ where
     }
 }
 
-impl<G, A> PartialEq for Chromosome<G, A> 
+impl<G, A> PartialEq for Chromosome<G, A>
 where
-    G: Gene<G, A>
+    G: Gene<G, A>,
 {
     fn eq(&self, other: &Self) -> bool {
         for (a, b) in self.genes.iter().zip(other.genes.iter()) {
@@ -81,9 +75,9 @@ where
     }
 }
 
-impl<G, A> std::fmt::Debug for Chromosome<G, A> 
+impl<G, A> std::fmt::Debug for Chromosome<G, A>
 where
-    G: Gene<G, A> + std::fmt::Debug
+    G: Gene<G, A> + std::fmt::Debug,
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "[")?;

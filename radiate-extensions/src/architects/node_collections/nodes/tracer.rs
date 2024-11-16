@@ -2,10 +2,9 @@ use crate::operations::op::Ops;
 
 use super::node::Node;
 
-
 pub struct Tracer<T>
 where
-    T: Clone
+    T: Clone,
 {
     pub input_size: usize,
     pub pending_idx: usize,
@@ -14,9 +13,9 @@ where
     pub previous_result: Option<T>,
 }
 
-impl<T> Tracer<T> 
+impl<T> Tracer<T>
 where
-    T: Clone + PartialEq + Default
+    T: Clone + PartialEq + Default,
 {
     pub fn new(input_size: usize) -> Self {
         Tracer {
@@ -63,9 +62,13 @@ where
 
 impl<T> std::fmt::Debug for Tracer<T>
 where
-    T: Clone + std::fmt::Debug
+    T: Clone + std::fmt::Debug,
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Tracer: {{ in_size: {:?}, pending_idx: {:?},  args: {:?}, result: {:?} }}", self.input_size, self.pending_idx, self.args, self.result)
+        write!(
+            f,
+            "Tracer: {{ in_size: {:?}, pending_idx: {:?},  args: {:?}, result: {:?} }}",
+            self.input_size, self.pending_idx, self.args, self.result
+        )
     }
 }

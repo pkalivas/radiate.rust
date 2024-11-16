@@ -12,7 +12,10 @@ pub struct CharCodex {
 
 impl CharCodex {
     pub fn new(num_chromosomes: usize, num_genes: usize) -> Self {
-        CharCodex { num_chromosomes, num_genes }
+        CharCodex {
+            num_chromosomes,
+            num_genes,
+        }
     }
 }
 
@@ -21,10 +24,14 @@ impl Codex<CharGene, char, String> for CharCodex {
         Genotype {
             chromosomes: (0..self.num_chromosomes)
                 .into_iter()
-                .map(|_| Chromosome::from_genes((0..self.num_genes)
-                        .into_iter()
-                        .map(|_| CharGene::new())
-                        .collect::<Vec<CharGene>>()))
+                .map(|_| {
+                    Chromosome::from_genes(
+                        (0..self.num_genes)
+                            .into_iter()
+                            .map(|_| CharGene::new())
+                            .collect::<Vec<CharGene>>(),
+                    )
+                })
                 .collect::<Vec<Chromosome<CharGene, char>>>(),
         }
     }

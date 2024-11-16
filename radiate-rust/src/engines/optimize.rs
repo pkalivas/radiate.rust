@@ -9,7 +9,7 @@ pub enum Optimize {
 impl Optimize {
     pub fn sort<G, A>(&self, population: &mut Population<G, A>)
     where
-        G: Gene<G, A>
+        G: Gene<G, A>,
     {
         match self {
             Optimize::Minimize => population.sort_by(|a, b| a.partial_cmp(&b).unwrap()),
@@ -19,7 +19,7 @@ impl Optimize {
 
     pub fn is_better<T>(&self, a: &T, b: &T) -> bool
     where
-        T: PartialOrd
+        T: PartialOrd,
     {
         match self {
             Optimize::Minimize => a < b,

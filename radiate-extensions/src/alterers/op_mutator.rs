@@ -1,36 +1,39 @@
-use std::ops::{Mul, Sub, Add};
+use std::ops::{Add, Mul, Sub};
 
 use num_traits::Float;
-use radiate_rust::Alterer;
-use rand::{prelude::Distribution, distributions::Standard, random};
 use radiate_rust::engines::alterers::mutators::mutate::Mutate;
 use radiate_rust::engines::genome::genes::gene::Gene;
+use radiate_rust::Alterer;
+use rand::{distributions::Standard, prelude::Distribution, random};
 
 use crate::architects::node_collections::node::Node;
 use crate::architects::node_collections::node_factory::NodeFactory;
 use crate::operations::op::Ops;
 
-
 pub struct OpMutator<T>
 where
     Standard: Distribution<T>,
-    T: Clone + PartialEq + Default + Float
+    T: Clone + PartialEq + Default + Float,
 {
     pub rate: f32,
     pub replace_rate: f32,
     pub factory: NodeFactory<T>,
 }
 
-impl<T> OpMutator<T> 
+impl<T> OpMutator<T>
 where
     Standard: Distribution<T>,
-    T: Clone + PartialEq + Default + Float + 'static
+    T: Clone + PartialEq + Default + Float + 'static,
 {
-    pub fn alterer(factory: NodeFactory<T>, rate: f32, replace_rate: f32) -> Alterer<Node<T>, Ops<T>> {
+    pub fn alterer(
+        factory: NodeFactory<T>,
+        rate: f32,
+        replace_rate: f32,
+    ) -> Alterer<Node<T>, Ops<T>> {
         Alterer::Mutation(Box::new(Self {
             rate,
             replace_rate,
-            factory
+            factory,
         }))
     }
 }
@@ -51,12 +54,24 @@ where
                 let random_value = random::<T>() * T::from(2).unwrap() - T::from(1).unwrap();
 
                 if random::<f32>() < self.replace_rate {
-                    gene.from_allele(&Ops::MutableConst(&name, *arity, random_value, supplier.clone(), operation.clone()))
+                    gene.from_allele(&Ops::MutableConst(
+                        &name,
+                        *arity,
+                        random_value,
+                        supplier.clone(),
+                        operation.clone(),
+                    ))
                 } else {
                     let new_value = random_value + value.clone();
-                    gene.from_allele(&Ops::MutableConst(&name, *arity, new_value, supplier.clone(), operation.clone()))
+                    gene.from_allele(&Ops::MutableConst(
+                        &name,
+                        *arity,
+                        new_value,
+                        supplier.clone(),
+                        operation.clone(),
+                    ))
                 }
-            },
+            }
             _ => {
                 let temp_node = self.factory.new_node(gene.index, gene.node_type);
                 if temp_node.value.arity() == gene.value.arity() {

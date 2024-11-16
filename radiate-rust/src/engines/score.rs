@@ -5,7 +5,6 @@ pub struct Score {
 }
 
 impl Score {
-
     pub fn from_any(value: &dyn std::any::Any) -> Self {
         if let Some(value) = value.downcast_ref::<f32>() {
             Score::from_f32(*value)
@@ -33,7 +32,9 @@ impl Score {
             panic!("Score value cannot be NaN")
         }
 
-        Score { values: vec![value] }
+        Score {
+            values: vec![value],
+        }
     }
 
     pub fn from_int(value: i32) -> Self {
@@ -89,7 +90,9 @@ impl Score {
 
 impl Clone for Score {
     fn clone(&self) -> Self {
-        Score { values: self.values.clone() }
+        Score {
+            values: self.values.clone(),
+        }
     }
 }
 

@@ -29,7 +29,7 @@ where
     pub fitness_fn: Option<Arc<dyn Fn(T) -> Score>>,
 }
 
-impl<'a, G, A, T> GeneticEngineParams<'a, G, A, T> 
+impl<'a, G, A, T> GeneticEngineParams<'a, G, A, T>
 where
     G: Gene<G, A>,
     T: Clone,

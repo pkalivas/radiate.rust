@@ -13,10 +13,7 @@ pub fn individual_indexes(
     }
 
     sub_set[i] = index as i32;
-    let mut result = sub_set
-        .iter()
-        .map(|x| *x as usize)
-        .collect::<Vec<usize>>();
+    let mut result = sub_set.iter().map(|x| *x as usize).collect::<Vec<usize>>();
     result.sort();
     result
 }

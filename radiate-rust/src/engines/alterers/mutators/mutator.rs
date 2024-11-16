@@ -12,7 +12,7 @@ impl Mutator {
     }
 }
 
-impl<G, A> Mutate<G, A> for Mutator where G: Gene<G, A> {
+impl<G: Gene<G, A>, A> Mutate<G, A> for Mutator {
     fn mutate_rate(&self) -> f32 {
         self.rate
     }

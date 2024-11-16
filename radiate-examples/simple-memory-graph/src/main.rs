@@ -1,17 +1,13 @@
-use radiate_rust::*;
 use radiate_extensions::*;
-
+use radiate_rust::*;
 
 const MAX_INDEX: i32 = 500;
 const MIN_SCORE: f32 = 0.01;
 
-
 fn main() {
-    let factory = NodeFactory::<f32>::regression(2)
-        .outputs(vec![op::sigmoid()]);
+    let factory = NodeFactory::<f32>::regression(2).outputs(vec![op::sigmoid()]);
 
-    let graph_codex = GraphCodex::from_shape(1, 1, &factory)
-        .set_nodes(|arc, _| arc.lstm(1, 1, 1));
+    let graph_codex = GraphCodex::from_shape(1, 1, &factory).set_nodes(|arc, _| arc.lstm(1, 1, 1));
 
     let regression = Regression::new(get_sample_set(), ErrorFunction::MSE);
 
@@ -21,11 +17,14 @@ fn main() {
         .alterer(vec![
             GraphCrossover::alterer(0.5, 0.5),
             OpMutator::alterer(factory.clone(), 0.01, 0.05),
-            GraphMutator::alterer(factory.clone(), vec![
-                NodeMutate::Recurrent(NodeType::Weight, 0.05),
-                NodeMutate::Recurrent(NodeType::Aggregate, 0.03),
-                NodeMutate::Recurrent(NodeType::Gate, 0.03),
-            ])
+            GraphMutator::alterer(
+                factory.clone(),
+                vec![
+                    NodeMutate::Recurrent(NodeType::Weight, 0.05),
+                    NodeMutate::Recurrent(NodeType::Aggregate, 0.03),
+                    NodeMutate::Recurrent(NodeType::Gate, 0.03),
+                ],
+            ),
         ])
         .fitness_fn(move |genotype: Graph<f32>| {
             let mut reducer = GraphReducer::new(&genotype);
@@ -45,13 +44,16 @@ fn display(result: &EngineContext<Node<f32>, Ops<f32>, Graph<f32>>) {
     for node in result.best.nodes.iter() {
         println!("{:?}", node);
     }
-    
-     println!("{:?}", result.timer.elapsed());
+
+    println!("{:?}", result.timer.elapsed());
 
     let mut reducer = GraphReducer::new(&result.best);
     for sample in get_sample_set().get_samples().iter() {
         let output = reducer.reduce(&sample.1);
-        println!("{:?} -> epected: {:?}, actual: {:.3?}", sample.1, sample.2, output);
+        println!(
+            "{:?} -> epected: {:?}, actual: {:.3?}",
+            sample.1, sample.2, output
+        );
     }
 }
 
@@ -63,7 +65,7 @@ fn get_sample_set() -> SampleSet<f32> {
         vec![1.0],
         vec![0.0],
         vec![0.0],
-        vec![0.0]
+        vec![0.0],
     ];
 
     let answers = vec![
@@ -73,7 +75,7 @@ fn get_sample_set() -> SampleSet<f32> {
         vec![0.0],
         vec![0.0],
         vec![0.0],
-        vec![1.0]
+        vec![1.0],
     ];
 
     SampleSet::from_vecs(inputs, answers)

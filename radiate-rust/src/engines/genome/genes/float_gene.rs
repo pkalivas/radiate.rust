@@ -12,7 +12,7 @@ pub struct FloatGene {
 
 impl FloatGene {
     pub fn new(min: f32, max: f32) -> Self {
-        FloatGene {
+        Self {
             allele: random::<f32>() * (max - min) + min,
             min,
             max,
@@ -27,7 +27,6 @@ impl Valid for FloatGene {
         self.allele >= self.min && self.allele <= self.max
     }
 }
-
 
 impl Gene<FloatGene, f32> for FloatGene {
     fn allele(&self) -> &f32 {
@@ -50,7 +49,7 @@ impl Gene<FloatGene, f32> for FloatGene {
             min: self.min,
             max: self.max,
             upper_bound: self.upper_bound,
-            lower_bound: self.lower_bound
+            lower_bound: self.lower_bound,
         }
     }
 }
@@ -100,7 +99,7 @@ impl NumericGene<FloatGene, f32> for FloatGene {
             true => 1_f32,
             false => *other.allele(),
         };
-        
+
         FloatGene {
             allele: self.allele / other_allele,
             ..*self

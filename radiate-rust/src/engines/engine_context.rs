@@ -6,18 +6,18 @@ use super::score::Score;
 
 pub struct EngineContext<G, A, T>
 where
-    G: Gene<G, A>
+    G: Gene<G, A>,
 {
     pub population: Population<G, A>,
     pub best: T,
     pub index: i32,
     pub timer: Timer,
-    pub score: Option<Score>
+    pub score: Option<Score>,
 }
 
-impl<G, A, T> EngineContext<G, A, T> 
+impl<G, A, T> EngineContext<G, A, T>
 where
-    G: Gene<G, A>
+    G: Gene<G, A>,
 {
     pub fn score(&self) -> &Score {
         self.score.as_ref().unwrap()
@@ -28,10 +28,10 @@ where
     }
 }
 
-impl<G, A, T> Clone for EngineContext<G, A, T> 
+impl<G, A, T> Clone for EngineContext<G, A, T>
 where
     G: Gene<G, A>,
-    T: Clone
+    T: Clone,
 {
     fn clone(&self) -> Self {
         EngineContext {
@@ -39,14 +39,14 @@ where
             best: self.best.clone(),
             index: self.index,
             timer: self.timer.clone(),
-            score: self.score.clone()
+            score: self.score.clone(),
         }
     }
 }
 
-impl<G, A, T: std::fmt::Debug> std::fmt::Debug for EngineContext<G, A, T> 
+impl<G, A, T: std::fmt::Debug> std::fmt::Debug for EngineContext<G, A, T>
 where
-    G: Gene<G, A>
+    G: Gene<G, A>,
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "EngineOutput {{\n")?;

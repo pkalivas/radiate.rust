@@ -1,10 +1,9 @@
 use rand::random;
 
-use crate::NumericGene;
 use crate::Chromosome;
+use crate::NumericGene;
 
 use super::Crossover;
-
 
 pub struct MeanCrossover {
     pub rate: f32,
@@ -16,9 +15,9 @@ impl MeanCrossover {
     }
 }
 
-impl<G, A> Crossover<G, A> for MeanCrossover 
-where 
-    G: NumericGene<G, A>
+impl<G, A> Crossover<G, A> for MeanCrossover
+where
+    G: NumericGene<G, A>,
 {
     fn cross_rate(&self) -> f32 {
         self.rate
@@ -27,7 +26,7 @@ where
     fn cross_chromosomes(
         &self,
         chrom_one: &mut Chromosome<G, A>,
-        chrom_two: &mut Chromosome<G, A>
+        chrom_two: &mut Chromosome<G, A>,
     ) -> i32 {
         let mut count = 0;
 

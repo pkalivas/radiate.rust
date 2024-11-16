@@ -1,4 +1,3 @@
-
 #[allow(dead_code)]
 pub struct Sample<T>(pub usize, pub Vec<T>, pub Vec<T>);
 
@@ -8,7 +7,9 @@ pub struct SampleSet<T> {
 
 impl<T> SampleSet<T> {
     pub fn new() -> Self {
-        SampleSet { samples: Vec::new() }
+        SampleSet {
+            samples: Vec::new(),
+        }
     }
 
     pub fn from_samples(samples: Vec<Sample<T>>) -> Self {

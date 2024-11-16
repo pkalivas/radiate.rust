@@ -48,19 +48,19 @@ impl MultiPointCrossover {
     }
 }
 
-impl<G, A> Crossover<G, A> for MultiPointCrossover 
+impl<G, A> Crossover<G, A> for MultiPointCrossover
 where
-    G: Gene<G, A>
+    G: Gene<G, A>,
 {
     fn cross_rate(&self) -> f32 {
         self.rate
     }
-    
+
     #[inline]
     fn cross_chromosomes(
         &self,
         chrom_one: &mut Chromosome<G, A>,
-        chrom_two: &mut Chromosome<G, A>
+        chrom_two: &mut Chromosome<G, A>,
     ) -> i32 {
         let min_index = std::cmp::min(chrom_one.len(), chrom_two.len());
         let min_points = std::cmp::min(self.num_points, DEFAULT_NUM_POINTS);
