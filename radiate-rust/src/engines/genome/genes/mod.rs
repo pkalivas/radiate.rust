@@ -3,6 +3,7 @@ pub mod char_gene;
 pub mod float_gene;
 pub mod gene;
 pub mod int_gene;
+pub mod generic_gene;
 
 use rand::distributions::uniform::SampleUniform;
 use std::{
@@ -16,6 +17,7 @@ pub use char_gene::*;
 pub use float_gene::*;
 pub use gene::*;
 pub use int_gene::*;
+pub use generic_gene::*;
 
 pub trait Integer<T>:
     Copy
