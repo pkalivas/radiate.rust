@@ -2,7 +2,6 @@ use std::sync::Arc;
 
 use super::{Gene, Valid};
 
-
 pub struct GenericGene<A: Clone + PartialEq> {
     pub allele: A,
     pub supplier: Arc<dyn Fn() -> A>,

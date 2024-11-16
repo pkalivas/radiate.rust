@@ -1,5 +1,6 @@
 pub mod alterers;
 pub mod codexes;
+pub mod domain;
 pub mod engine_context;
 pub mod genetic_engine;
 pub mod genetic_engine_params;
@@ -8,10 +9,10 @@ pub mod optimize;
 pub mod schema;
 pub mod score;
 pub mod selectors;
-pub mod domain;
 
 pub use alterers::*;
 pub use codexes::*;
+pub use domain::*;
 pub use engine_context::*;
 pub use genetic_engine::*;
 pub use genetic_engine_params::*;
@@ -20,4 +21,3 @@ pub use optimize::*;
 pub use schema::*;
 pub use score::*;
 pub use selectors::*;
-pub use domain::*;
