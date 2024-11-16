@@ -6,11 +6,6 @@ const MAX_SECONDS: f64 = 5.0;
 
 fn main() {
     let factory = NodeFactory::<f32>::regression(1);
-    // .gates(vec![
-    //     op::add(),
-    //     op::sub(),
-    //     op::mul(),
-    // ]);
 
     let graph_codex = GraphCodex::from_shape(1, 1, &factory);
 

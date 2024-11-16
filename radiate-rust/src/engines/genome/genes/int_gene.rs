@@ -14,7 +14,7 @@ impl IntGene {
     pub fn new(min: i32, max: i32) -> Self {
         let (min, max) = if min > max { (max, min) } else { (min, max) };
         let mut rand = rand::thread_rng();
-        
+
         Self {
             allele: rand.gen_range(min..max),
             min,

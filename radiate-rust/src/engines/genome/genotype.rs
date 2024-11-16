@@ -32,7 +32,9 @@ where
     }
 
     pub fn is_valid(&self) -> bool {
-        self.chromosomes.iter().all(|chromosome| chromosome.is_valid())
+        self.chromosomes
+            .iter()
+            .all(|chromosome| chromosome.is_valid())
     }
 
     pub fn iter(&self) -> std::slice::Iter<Chromosome<G, A>> {
