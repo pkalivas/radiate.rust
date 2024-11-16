@@ -3,16 +3,16 @@ use radiate_rust::*;
 const N_QUEENS: usize = 16;
 
 fn main() {
-    let codex = IntCodex::new(1, N_QUEENS, 0, N_QUEENS as i32);
+    let codex = IntCodex::<i8>::new(1, N_QUEENS, 0, N_QUEENS as i8);
 
     let engine = GeneticEngine::from_codex(&codex)
         .minimizing()
-        .offspring_selector(Selector::Tournament(3))
+        .offspring_selector(Selector::Boltzmann(4_f32))
         .alterer(vec![
             Alterer::SinglePointCrossover(0.5),
             Alterer::Mutator(0.01),
         ])
-        .fitness_fn(|genotype: Vec<Vec<i32>>| {
+        .fitness_fn(|genotype: Vec<Vec<i8>>| {
             let queens = &genotype[0];
             let mut score = 0;
 
@@ -21,7 +21,7 @@ fn main() {
                     if queens[i] == queens[j] {
                         score += 1;
                     }
-                    if (i as i32 - j as i32).abs() == (queens[i] - queens[j]).abs() {
+                    if (i as i8 - j as i8).abs() == (queens[i] - queens[j]).abs() {
                         score += 1;
                     }
                 }
@@ -42,7 +42,7 @@ fn main() {
     let board = &result.best[0];
     for i in 0..N_QUEENS {
         for j in 0..N_QUEENS {
-            if board[j] == i as i32 {
+            if board[j] == i as i8 {
                 print!("Q ");
             } else {
                 print!(". ");

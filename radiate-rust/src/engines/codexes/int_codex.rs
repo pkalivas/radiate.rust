@@ -2,39 +2,40 @@ use crate::engines::genome::chromosome::Chromosome;
 use crate::engines::genome::genes::gene::{BoundGene, Gene};
 use crate::engines::genome::genes::int_gene::IntGene;
 use crate::engines::genome::genotype::Genotype;
+use crate::Integer;
 
 use super::Codex;
 
-pub struct IntCodex {
+pub struct IntCodex<T: Integer<T>> {
     pub num_chromosomes: usize,
     pub num_genes: usize,
-    pub min: i32,
-    pub max: i32,
-    pub lower_bound: i32,
-    pub upper_bound: i32,
+    pub min: T,
+    pub max: T,
+    pub lower_bound: T,
+    pub upper_bound: T,
 }
 
-impl IntCodex {
-    pub fn new(num_chromosomes: usize, num_genes: usize, min: i32, max: i32) -> Self {
+impl<T: Integer<T>> IntCodex<T> {
+    pub fn new(num_chromosomes: usize, num_genes: usize, min: T, max: T) -> Self {
         IntCodex {
             num_chromosomes,
             num_genes,
             min,
             max,
-            lower_bound: i32::MIN,
-            upper_bound: i32::MAX,
+            lower_bound: T::MIN,
+            upper_bound: T::MAX,
         }
     }
 
-    pub fn with_bounds(mut self, lower_bound: i32, upper_bound: i32) -> Self {
+    pub fn with_bounds(mut self, lower_bound: T, upper_bound: T) -> Self {
         self.lower_bound = lower_bound;
         self.upper_bound = upper_bound;
         self
     }
 }
 
-impl Codex<IntGene, i32, Vec<Vec<i32>>> for IntCodex {
-    fn encode(&self) -> Genotype<IntGene, i32> {
+impl<T: Integer<T>> Codex<IntGene<T>, T, Vec<Vec<T>>> for IntCodex<T> {
+    fn encode(&self) -> Genotype<IntGene<T>, T> {
         Genotype {
             chromosomes: (0..self.num_chromosomes)
                 .into_iter()
@@ -46,22 +47,22 @@ impl Codex<IntGene, i32, Vec<Vec<i32>>> for IntCodex {
                                 IntGene::new(self.min, self.max)
                                     .with_bounds(self.lower_bound, self.upper_bound)
                             })
-                            .collect::<Vec<IntGene>>(),
+                            .collect::<Vec<IntGene<T>>>(),
                     )
                 })
-                .collect::<Vec<Chromosome<IntGene, i32>>>(),
+                .collect::<Vec<Chromosome<IntGene<T>, T>>>(),
         }
     }
 
-    fn decode(&self, genotype: &Genotype<IntGene, i32>) -> Vec<Vec<i32>> {
+    fn decode(&self, genotype: &Genotype<IntGene<T>, T>) -> Vec<Vec<T>> {
         genotype
             .iter()
             .map(|chromosome| {
                 chromosome
                     .iter()
                     .map(|gene| *gene.allele())
-                    .collect::<Vec<i32>>()
+                    .collect::<Vec<T>>()
             })
-            .collect::<Vec<Vec<i32>>>()
+            .collect::<Vec<Vec<T>>>()
     }
 }
