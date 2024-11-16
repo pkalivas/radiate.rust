@@ -6,7 +6,7 @@ pub struct BitGene {
 
 impl BitGene {
     pub fn new() -> Self {
-        BitGene {
+        Self {
             allele: rand::random(),
         }
     }

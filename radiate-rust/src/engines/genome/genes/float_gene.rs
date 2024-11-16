@@ -12,7 +12,7 @@ pub struct FloatGene {
 
 impl FloatGene {
     pub fn new(min: f32, max: f32) -> Self {
-        FloatGene {
+        Self {
             allele: random::<f32>() * (max - min) + min,
             min,
             max,

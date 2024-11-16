@@ -36,13 +36,7 @@ where
     }
 
     pub fn is_valid(&self) -> bool {
-        for gene in &self.genes {
-            if !gene.is_valid() {
-                return false;
-            }
-        }
-
-        true
+        self.genes.iter().all(|gene| gene.is_valid())
     }
 
     pub fn iter(&self) -> std::slice::Iter<G> {

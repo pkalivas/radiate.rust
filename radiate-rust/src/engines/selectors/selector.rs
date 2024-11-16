@@ -48,6 +48,10 @@ where
 
                     tournament.sort();
 
+                    if optimize == &Optimize::Minimize {
+                        tournament.reverse();
+                    }
+
                     selected.push(population.get(tournament[0]).clone());
                 }
 

@@ -9,7 +9,7 @@ pub struct CharGene {
 impl CharGene {
     pub fn new() -> Self {
         let index = rand::random::<usize>() % ALPHABET.len();
-        CharGene {
+        Self {
             allele: ALPHABET.chars().nth(index).unwrap(),
         }
     }
