@@ -8,6 +8,7 @@ pub mod optimize;
 pub mod schema;
 pub mod score;
 pub mod selectors;
+pub mod domain;
 
 pub use alterers::*;
 pub use codexes::*;
@@ -19,3 +20,4 @@ pub use optimize::*;
 pub use schema::*;
 pub use score::*;
 pub use selectors::*;
+pub use domain::*;
