@@ -4,7 +4,6 @@ use crate::{Chromosome, Gene, GenericGene, Genotype};
 
 use super::Codex;
 
-
 pub struct GenericCodex<A>
 where
     A: Clone + PartialEq,
@@ -39,7 +38,9 @@ where
                     Chromosome::from_genes(
                         (0..self.num_genes)
                             .into_iter()
-                            .map(|_| GenericGene::new((self.supplier)(), Arc::clone(&self.supplier)))
+                            .map(|_| {
+                                GenericGene::new((self.supplier)(), Arc::clone(&self.supplier))
+                            })
                             .collect::<Vec<GenericGene<A>>>(),
                     )
                 })
